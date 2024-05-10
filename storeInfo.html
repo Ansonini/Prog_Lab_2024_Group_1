@@ -5,13 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Store Information</title>
 <link rel="stylesheet" href="storeInfo.css">
-<!--<style>
-  * { background-color:aliceblue ;}  
-  body { font-family: Arial, sans-serif; }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { border: 3px solid white; padding: 8px; text-align: center; }
-  th { background-color: dodgerblue; }
-</style>-->
 </head>
 <body>
 <h1>Store Information</h1>
@@ -39,20 +32,19 @@
 </table>
 
 <script>
-// Paste the JSON data directly inside the script tag or load it from an external file
+
 const storeData = [
-  // JSON data extracted earlier
-  // Include here your JSON data directly
+ 
 ];
 
-// Function to populate the table with store data
+// Function to fill the table with store data
 function populateTable(data) {
   const table = document.getElementById('storeTable').getElementsByTagName('tbody')[0];
   data.forEach(store => {
     let row = table.insertRow();
     Object.values(store).forEach(text => {
       let cell = row.insertCell();
-      cell.textContent = text.replace(/\"/g, ''); // Remove extra quotes
+      cell.textContent = text.replace(/\"/g, ''); 
     });
   });
 }

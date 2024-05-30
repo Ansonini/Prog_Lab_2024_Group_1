@@ -7,11 +7,18 @@ services:
     build: './build/mysql'
     environment:
       MYSQL_ROOT_PASSWORD: "1234"
-      MYSQL_DATABASE: "testDatabase"
+      MYSQL_DATABASE: "pizza"
       MYSQL_PASSWORD: "1234"
     volumes:
       - dbData:/var/lib/mysql
       - ./build/mysql/initdb.d:/docker-entrypoint-initdb.d:z
+      - ./build/mysql/initdb.d/products.csv:/docker-entrypoint-initdb.d/products.csv:z
+      - ./build/mysql/initdb.d/customers.csv:/docker-entrypoint-initdb.d/customers.csv:z
+      - ./build/mysql/initdb.d/orderItems.csv:/docker-entrypoint-initdb.d/orderItems.csv:z
+      - ./build/mysql/initdb.d/stores.csv:/docker-entrypoint-initdb.d/stores.csv:z
+      - ./build/mysql/initdb.d/orders.csv:/docker-entrypoint-initdb.d/orders.csv:z
+      - ./build/mysql/sql_conf:/etc/mysql/conf.d:z
+      
   php-apache:
     ports:
       - "8080:80"

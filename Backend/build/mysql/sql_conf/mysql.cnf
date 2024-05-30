@@ -1,0 +1,5 @@
+
+[mysqld]
+# To make local files accessible to mysql
+local-infile=1
+

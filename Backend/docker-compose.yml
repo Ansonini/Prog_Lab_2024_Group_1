@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+
+  mysql:
+    ports:
+      - "3306:3306"
+    build: './build/mysql'
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "testDatabase"
+      MYSQL_PASSWORD: "1234"
+    volumes:
+      - dbData:/var/lib/mysql
+      - ./build/mysql/initdb.d:/docker-entrypoint-initdb.d:z
+  php-apache:
+    ports:
+      - "8080:80"
+    build: './build/php'
+    volumes:
+      - ./app:/var/www/html:Z
+    links:
+    - mysql
+volumes:
+  app:
+  dbData:

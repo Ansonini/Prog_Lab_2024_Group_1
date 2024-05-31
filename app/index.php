@@ -20,6 +20,9 @@ $result = $conn->query($sql);
 $htmlcontent = file_get_contents('Frontend/managment_graph.html');
 echo $htmlcontent;
 
+$htmlcontent2 = file_get_contents('Frontend/storeInfo.html');
+echo $htmlcontent2;
+
 if ($result->num_rows > 0) {
     // Output data of each row
     echo "<table border='1'>

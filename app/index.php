@@ -17,8 +17,8 @@ if ($conn->connect_error) {
 $sql = "SELECT orderItemID, sku , orderID FROM orderItems where orderID=100";
 $result = $conn->query($sql);
 
-$htmlcontent = file_get_contents(./Frontend/managment_graph.html)
-echo $htmlcontent
+$htmlcontent = file_get_contents('Frontend/managment_graph.html');
+echo $htmlcontent;
 
 if ($result->num_rows > 0) {
     // Output data of each row

@@ -72,9 +72,9 @@ fabric.properties
 
 ### MariaDB ###
 # MariaDB databases storage folders (Can be removed if we run into issues)
-*.sql
-*.sql.gz
-*.csv
+#*.sql
+#*.sql.gz
+#*.csv
 *.tar
 *.xz
 *.log

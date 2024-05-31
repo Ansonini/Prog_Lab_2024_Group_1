@@ -1,6 +1,7 @@
 FROM mysql:latest
 USER root
 
+
 RUN chmod -R 755 /docker-entrypoint-initdb.d/
 
 # Copy the database initialization script

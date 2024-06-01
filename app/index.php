@@ -11,5 +11,4 @@ echo $htmlcontent2;
 // Choose here what .php file to test. It needs to return json data 
 $pathToPhpFile = "Backend/phpQueries/pizzaHeatMap.php"; 
 include 'Backend/phpQueries/testPhpFile.html';
-
 ?>

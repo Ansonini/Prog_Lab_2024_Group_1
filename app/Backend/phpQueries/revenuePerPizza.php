@@ -3,7 +3,12 @@
 // include the DB connect file. ../ because its outside of this folder
 include '../connectDB.php';
 
-$sql = "SELECT p.pizzaName, p.pizzaSize, p.Price, COUNT(oi.SKU) as soldPizzas, p.Price * COUNT(oi.SKU) as RevenuePerPizza
+$sql = "SELECT 
+            p.pizzaName, 
+            p.pizzaSize,
+            p.Price, 
+            COUNT(oi.SKU) as soldPizzas, 
+            p.Price * COUNT(oi.SKU) as RevenuePerPizza
         FROM products p 
         JOIN orderItems oi ON oi.SKU = p.SKU 
         JOIN orders o ON o.orderID = oi.orderID 

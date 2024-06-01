@@ -1,8 +1,8 @@
 <?php
 
 // Open some .html files
-//$htmlcontent = file_get_contents('Frontend/managment_graph.html');
-//echo $htmlcontent;
+$htmlcontent = file_get_contents('Frontend/managment_graph.html');
+echo $htmlcontent;
 
 $htmlcontent2 = file_get_contents('Frontend/storeInfo.html');
 echo $htmlcontent2;

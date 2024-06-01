@@ -11,21 +11,22 @@ ob_start();
 include '../connectDB.php';
 
 $sql = "SELECT
-p.pizzaName as name1,
-p2.pizzaName as name2
-FROM
-products p
-JOIN orderItems oi on
-oi.sku = p.sku
-JOIN orderItems oi2 on
-oi.orderID = oi2.orderID
-JOIN products p2 on
-oi2.sku = p2.sku
-WHERE
-oi.orderItemID != oi2.orderItemID 
-AND oi.orderID <100000
-order by
-oi.orderID";
+            p.pizzaName as name1,
+            p2.pizzaName as name2
+        FROM
+            products p
+        JOIN orderItems oi on
+            oi.sku = p.sku
+        JOIN orderItems oi2 on
+            oi.orderID = oi2.orderID
+        JOIN products p2 on
+            oi2.sku = p2.sku
+        WHERE
+            oi.orderItemID != oi2.orderItemID 
+        AND 
+            oi.orderID <100000
+        order by
+            oi.orderID";
 
 $result = $conn->query($sql);
 
@@ -88,4 +89,3 @@ ob_end_clean();
 // Return heatmap as JSON
 header('Content-Type: application/json');
 echo json_encode($heatmap);
-?>

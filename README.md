@@ -16,7 +16,7 @@ password: 0298753482ecbcc3be9d529b3df5d806b9da61cf727e51eb
 
 #### Prerequisite 
 - install [Docker](https://www.docker.com/products/docker-desktop/)
-- Download this GitHub repository eihter by:
+- Download this GitHub repository either by:
     - in the terminal with `git clone https://github.com/Ansonini/Prog_Lab_2024_Group_1`
     - Downloading the .zip from GitHub directly by clicking on the green `<>Code` -> `Download Zip` 
 

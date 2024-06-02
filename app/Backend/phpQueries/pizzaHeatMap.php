@@ -22,25 +22,22 @@ $sql = "SELECT
         JOIN products p2 on
             oi2.sku = p2.sku
         WHERE
-            oi.orderItemID != oi2.orderItemID 
-        AND 
-            oi.orderID <100000
-        order by
-            oi.orderID";
+            oi.orderItemID < oi2.orderItemID";
 
 $result = $conn->query($sql);
 
-// Pizza mapping
+
+// Pizza mapping in alphabetical order
 $pizzaMap = [
-    "Margherita Pizza" => 0,
-    "Pepperoni Pizza" => 1,
+    "BBQ Chicken Pizza" => 0,
+    "Buffalo Chicken Pizza" => 1,
     "Hawaiian Pizza" => 2,
-    "Meat Lover's Pizza" => 3,
-    "Veggie Pizza" => 4,
-    "BBQ Chicken Pizza" => 5,
-    "Buffalo Chicken Pizza" => 6,
+    "Margherita Pizza" => 3,
+    "Meat Lover's Pizza" => 4,
+    "Oxtail Pizza" => 5,
+    "Pepperoni Pizza" => 6,
     "Sicilian Pizza" => 7,
-    "Oxtail Pizza" => 8,
+    "Veggie Pizza" => 8,
 ];
 
 // Initialize 9x9 heatmap
@@ -59,6 +56,9 @@ if ($result) {
             $x = $pizzaMap[$pizza1];
             $y = $pizzaMap[$pizza2];
             $heatmap[$x][$y]++;
+            if ($x != $y) {
+                $heatmap[$y][$x]++;
+            }         
 
             // Debugging output to verify increments
             error_log("Incrementing heatmap[$x][$y]: " . $heatmap[$x][$y]);
@@ -73,13 +73,6 @@ if ($result) {
     die(json_encode(["error" => "Query failed: " . $conn->error]));
 }
 
-// Divide diagonal elements by 2
-for ($i = 0; $i < 9; $i++) {
-    $heatmap[$i][$i] /= 2;
-
-    // Debugging output to verify division
-    error_log("Dividing heatmap[$i][$i] by 2: " . $heatmap[$i][$i]);
-}
 
 $conn->close();
 

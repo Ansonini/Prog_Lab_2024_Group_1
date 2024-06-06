@@ -16,7 +16,7 @@ $pathToPhpFile = "Backend/phpQueries/pizzaHeatMap.php";
 include 'Backend/phpQueries/testPhpFile.html';
 
 
-$result = getSalesFromWeek(2020,3);
+$result = getSalesFromWeek(2020,1,'units');
 
 // Save the result in a variable
 $data = json_decode($result, true);
@@ -24,7 +24,6 @@ $data = json_decode($result, true);
 // Do something with $data
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,23 +50,29 @@ $data = json_decode($result, true);
 
 <table>
     <tr>
-        <th>Sold Pizzas</th>
-        <th>Selling Year</th>
-        <th>Selling Week</th>
-        <th>Selling Day</th>
+        <?php
+        // Generate table headers dynamically based on the first row of data
+        if (!empty($data) && is_array($data)) {
+            $firstRow = $data[0];
+            foreach ($firstRow as $key => $value) {
+                echo "<th>" . htmlspecialchars($key) . "</th>";
+            }
+        } else {
+            echo "<th>No data available</th>";
+        }
+        ?>
     </tr>
     <?php
     if (!empty($data) && is_array($data)) {
         foreach ($data as $row) {
             echo "<tr>";
-            echo "<td>" . htmlspecialchars($row['soldPizzas']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['sellingYear']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['sellingWeek']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['sellingDay']) . "</td>";
+            foreach ($row as $value) {
+                echo "<td>" . htmlspecialchars($value) . "</td>";
+            }
             echo "</tr>";
         }
     } else {
-        echo "<tr><td colspan='4'>No results found</td></tr>";
+        echo "<tr><td colspan='" . (count($firstRow) ?? 1) . "'>No results found</td></tr>";
     }
     ?>
 </table>

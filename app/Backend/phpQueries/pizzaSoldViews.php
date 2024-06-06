@@ -4,22 +4,42 @@
 global $conn;
 
 // get sales numbers for specific year and week 
-function getSalesFromWeek($year, $week)
+function getSalesFromWeek($year, $week, $mode)
 {
   global $conn;
+if($mode == 'units') {
 
-  $sql =
-    "SELECT COUNT(oi.SKU)        as soldPizzas,
-            YEAR(o.orderDate)    as sellingYear,
-            week(o.orderDate, 1) as sellingWeek,
-            DAYNAME(o.orderDate) as sellingDay
-    FROM products p
-          JOIN orderItems oi on oi.SKU = p.SKU
-          JOIN orders o on o.orderID = oi.orderID
+    $sql =
+    "SELECT   YEAR(o.orderDate)     as sellingYear,
+              week(o.orderDate, 1)  as sellingWeek,
+              DAYNAME(o.orderDate)  as sellingDay,
+              sum(o.nItems)         as pizzaSold
+    FROM orders o
     WHERE YEAR(o.orderDate) = $year
     AND WEEK(o.orderDate, 1) = $week
     GROUP BY sellingYear, sellingWeek, weekday(o.orderDate), sellingDay
     ORDER BY sellingYear, sellingweek, weekday(o.orderDate)";
+
+}
+elseif($mode == 'revenue') {
+
+  $sql = "SELECT  YEAR(o.orderDate)     as sellingYear,
+                  week(o.orderDate, 1)  as sellingWeek,
+                  DAYNAME(o.orderDate)  as sellingDay,
+                  sum(o.total)          as revenuePerDay
+        FROM orders o
+        WHERE YEAR(o.orderDate) = $year
+          AND WEEK(o.orderDate, 1) = $week
+        GROUP BY sellingYear, sellingWeek, weekday(o.orderDate), sellingDay
+        ORDER BY sellingYear, sellingweek, weekday(o.orderDate)";
+
+}
+else
+{
+  echo 'no valid mode selected, chose units or revenue';
+}
+
+
 
   $result = $conn->query($sql);
 
@@ -35,3 +55,4 @@ function getSalesFromWeek($year, $week)
 
   return json_encode($data);
 }
+?>

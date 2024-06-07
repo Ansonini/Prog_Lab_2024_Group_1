@@ -1,0 +1,29 @@
+header {
+    background-color: #008C45;
+    padding: 20px 40px;
+    text-align: center;
+}
+header-text {
+    font-size: 48px;
+    color: #FFFFFF;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    text-align: center;
+}
+.chart-container {
+    display: flex;
+    justify-content: space-around;
+    width: 30%;
+}
+
+#line-chart-sales{
+    flex: 0 1 auto;
+    margin: 10px;
+    width: 1000px;
+    height: 400px;
+}
+#stores-sold {
+    flex: 0 1 auto;
+    margin: 10px;
+    width: 100%; /* Use 100% instead of 1000px */
+    height: 100%; /* Use 100% instead of 400px */
+}

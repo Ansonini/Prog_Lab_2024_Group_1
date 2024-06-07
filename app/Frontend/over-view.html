@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Statistics</title>
+    <link rel="stylesheet" href="css/over-view.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="javascript/over-view.js"></script>
+
+</head>
+
+<header>
+    <header-text>Stores Information</header-text>
+</header>
+
+<!-- <body> -->
+<body onload="lineChartSales();storesBarChart();">
+    <div class="sold-Overview">
+        <sub-header-text>Pizzas Sold</sub-header-text>
+        <div class="chart-container">
+            <canvas id="line-chart-sales"></canvas>
+            <canvas id="stores-sold"></canvas>
+        </div>
+        <button class="btn" onclick="lineChartSales()">Update</button>
+        <button-settings>Settings</button-settings>
+    </div>
+    <canvas id="line-chart-pizza-sold"></canvas>
+<!--<script>
+    Old script of trying to load the javascript files functions
+    document.addEventListener('DOMContentLoaded', function() {
+        lineChartSales();
+    });
+</script> -->
+</body>
+</html>

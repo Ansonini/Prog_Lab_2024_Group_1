@@ -3,7 +3,7 @@ services:
 
   mysql:
     ports:
-      - "3306:3306"
+      - "3307:3306"
     build: './build/mysql'
     environment:
       MYSQL_ROOT_PASSWORD: "1234"

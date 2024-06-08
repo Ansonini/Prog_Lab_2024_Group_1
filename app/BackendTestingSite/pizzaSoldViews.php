@@ -3,9 +3,10 @@
 // include the DB connect file. ../ because its outside of this folder
 global $conn;
 
-// get sales numbers for specific year and week 
+// get sales numbers for specific year and week either in 'units' or in 'revenue' mode 
 function getSalesFromWeek($year, $week, $mode)
 {
+
   global $conn;
   if ($mode == 'units') {
 
@@ -19,6 +20,7 @@ function getSalesFromWeek($year, $week, $mode)
     AND WEEK(o.orderDate, 1) = $week
     GROUP BY sellingYear, sellingWeek, weekday(o.orderDate), sellingDay
     ORDER BY sellingYear, sellingweek, weekday(o.orderDate)";
+
   } elseif ($mode == 'revenue') {
 
     $sql = "SELECT  YEAR(o.orderDate)     as sellingYear,
@@ -30,6 +32,7 @@ function getSalesFromWeek($year, $week, $mode)
           AND WEEK(o.orderDate, 1) = $week
         GROUP BY sellingYear, sellingWeek, weekday(o.orderDate), sellingDay
         ORDER BY sellingYear, sellingweek, weekday(o.orderDate)";
+
   } else {
     echo 'no valid mode selected, chose units or revenue';
   }
@@ -53,29 +56,30 @@ function getSalesFromWeek($year, $week, $mode)
 
 
 
-
+// get the sales per store for a specific week either in 'units' or in 'revenue' mode 
 function getSalesFromWeekPerStore($year, $week, $mode)
 {
-  if ($mode == 'units') {
+  global $conn;
+  
+  if ($mode == 'units') {    
 
-    global $conn;
     $sql =
-
-      "SELECT  o.storeID,
-      sum(o.nItems)   as unitsPerDay
+      "SELECT o.storeID,
+              sum(o.nItems)  as unitsPerDay
       FROM orders o
       WHERE YEAR(o.orderDate) = $year
-      AND WEEK(o.orderDate, 1) = $week
+        AND WEEK(o.orderDate, 1) = $week
       GROUP BY o.storeID
       ORDER BY unitsPerDay desc";
 
   } elseif ($mode == 'revenue') {
 
-    $sql = "SELECT  o.storeID,
-    sum(o.total)   as revenuePerDay
+    $sql = 
+    "SELECT o.storeID,
+            sum(o.total) as revenuePerDay
     FROM orders o
     WHERE YEAR(o.orderDate) = $year
-    AND WEEK(o.orderDate, 1) = $week
+      AND WEEK(o.orderDate, 1) = $week
     GROUP BY o.storeID
     ORDER BY unitsPerDay desc";
 

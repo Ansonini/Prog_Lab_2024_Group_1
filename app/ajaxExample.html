@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown Test</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+
+    <h1>Select Options</h1>
+
+    <label for="mode">Mode:</label>
+    <select id="mode">
+        <option value="">Select Mode</option>
+        <option value="units">Units</option>
+        <option value="revenue">Revenue</option>
+    </select>
+
+    <label for="year">Year:</label>
+    <select id="year">
+        <option value="">Select Year</option>
+        <option value="2020">2020</option>
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+    </select>
+
+    <label for="week">Week:</label>
+    <select id="week">
+        <option value="">Select Week</option>
+        <!-- Generate week options from 1 to 52 -->
+        <script>
+            for (let i = 1; i <= 52; i++) {
+                document.write('<option value="' + i + '">' + i + '</option>');
+            }
+        </script>
+    </select>
+
+
+    <h1>Pizza Sales Data per week</h1>
+    <div id="loading" style="display: none;">Loading...</div> <!-- Loading indicator -->
+    <div id="salesPerTime">
+        <div id="tablePerWeek"> <!-- This div will contain the JSON data displayed as a table -->
+            <!-- The table will be generated here by JavaScript -->
+        </div>
+    </div>
+
+    <h1>Pizza Sales Data Per Store</h1>
+    <div id="loading2" style="display: none;">Loading...</div> <!-- Loading indicator -->
+    <div id="salesPerStore">
+        <div id="tablePerStore"> <!-- This div will contain the JSON data displayed as a table -->
+            <!-- The table will be generated here by JavaScript -->
+        </div>
+    </div>
+
+    <script src="assets/js/showTable.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to fetch and display data
+            function fetchData() {
+                var mode = $('#mode').val();
+                var year = $('#year').val();
+                var week = $('#week').val();
+
+                if (mode && year && week) {
+                    $('#loading').show(); // Show loading indicator for first table
+                    $.ajax({
+                        url: 'ajax/getSalesPerTimeframe.php',
+                        type: 'POST',
+                        data: {
+                            mode: mode,
+                            year: year,
+                            week: week
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // Call the function from showTable.js
+                                displayJsonTable(response.data, "tablePerWeek");
+                            } else {
+                                $('#result').html('<p>' + response.message + '</p>');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('AJAX Error:', status, error);
+                        },
+                        complete: function () {
+                            $('#loading').hide(); // Hide loading indicator when request is complete
+                        }
+                    });
+
+                    $('#loading2').show(); // Show loading indicator for second table 
+                    // AJAX request for the second table
+                    $.ajax({
+                        url: 'ajax/getSalesPerStore.php',
+                        type: 'POST',
+                        data: {
+                            mode: mode,
+                            year: year,
+                            week: week
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // Call the function from showTable.js
+                                displayJsonTable(response.data, "tablePerStore");
+                            } else {
+                                $('#result').html('<p>' + response.message + '</p>');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('AJAX Error:', status, error);
+                        },
+                        complete: function () {
+                            $('#loading2').hide(); // Hide loading indicator when request is complete
+                        }
+                    });
+                }
+            }
+
+            // Trigger fetchData when any dropdown value changes
+            $('#mode, #year, #week').change(fetchData);
+        });
+    </script>
+</body>
+
+</html>

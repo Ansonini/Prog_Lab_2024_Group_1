@@ -28,6 +28,14 @@
 <body>
 
     <h1>Select Options</h1>
+    <label for="view">View:</label>
+    <select id="view">
+        <option value="">Select View</option>
+        <option value="completeView">Complete View</option>
+        <option value="yearView">Year View</option>
+        <option value="monthView">Month View</option>
+        <option value="weekView">Week View</option>
+    </select>
 
     <label for="mode">Mode:</label>
     <select id="mode">
@@ -44,6 +52,17 @@
         <option value="2022">2022</option>
     </select>
 
+    <label for="month">Month:</label>
+    <select id="month">
+        <option value="">Select Month</option>
+        <!-- Generate month options from 1 to 12 -->
+        <script>
+            for (let i = 1; i <= 12; i++) {
+                document.write('<option value="' + i + '">' + i + '</option>');
+            }
+        </script>
+    </select>
+
     <label for="week">Week:</label>
     <select id="week">
         <option value="">Select Week</option>
@@ -56,7 +75,7 @@
     </select>
 
 
-    <h1>Pizza Sales Data per week</h1>
+    <h1>Pizza Sales Data per Timeframe</h1>
     <div id="loading" style="display: none;">Loading...</div> <!-- Loading indicator -->
     <div id="salesPerTime">
         <div id="tablePerWeek"> <!-- This div will contain the JSON data displayed as a table -->
@@ -77,18 +96,22 @@
         $(document).ready(function () {
             // Function to fetch and display data
             function fetchData() {
+                var view = $('#view').val();
                 var mode = $('#mode').val();
                 var year = $('#year').val();
+                var month = $('#month').val();
                 var week = $('#week').val();
 
-                if (mode && year && week) {
+                if (view && mode && year && month && week) {
                     $('#loading').show(); // Show loading indicator for first table
                     $.ajax({
                         url: 'ajax/getSalesPerTimeframe.php',
                         type: 'POST',
                         data: {
+                            view: view,
                             mode: mode,
                             year: year,
+                            month: month,
                             week: week
                         },
                         success: function (response) {
@@ -113,8 +136,10 @@
                         url: 'ajax/getSalesPerStore.php',
                         type: 'POST',
                         data: {
+                            view: view,
                             mode: mode,
                             year: year,
+                            month: month,
                             week: week
                         },
                         success: function (response) {
@@ -136,7 +161,7 @@
             }
 
             // Trigger fetchData when any dropdown value changes
-            $('#mode, #year, #week').change(fetchData);
+            $('#view, #mode, #year, #month, #week').change(fetchData);
         });
     </script>
 </body>

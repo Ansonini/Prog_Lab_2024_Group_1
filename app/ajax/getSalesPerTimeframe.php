@@ -1,61 +1,78 @@
 <?php
-header('Content-Type: application/json');
+// file for ajax request to get sales figures for a time frame. Needs input view, mode, year, and viewIndex
+// Verify input
+include './includes/checkInput.php';
+// Start Connection
+include '../conf/connectDB.php';
 
-
-
-
-// Check if parameters are set
-if (isset($_POST['mode'], $_POST['year'], $_POST['week'])) {
-
-  include '../conf/connectDB.php';
-  // Sanitize input
-  $mode = $_POST['mode'] === 'units' ? 'units' : 'revenue';
-  $year = intval($_POST['year']);
-  $week = intval($_POST['week']);
-
-  // Validate input
-  if ($year <= 0 || $week <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Invalid year or week']);
-    exit;
-  }
-
-  // Check connection
-  if ($conn->connect_error) {
+// Check connection
+if ($conn->connect_error) {
     echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error]);
     exit;
-  }
+}
 
-  // Prepare and execute SQL query
-  $sql = "SELECT YEAR(o.orderDate) as sellingYear,
-                   WEEK(o.orderDate, 1) as sellingWeek,
-                   DAYNAME(o.orderDate) as sellingDay";
+// Prepare and execute SQL query
+// set the selected field depending on the view
+$sql = "SELECT YEAR(o.orderDate) as sellingYear";
 
-  if ($mode === 'units') {
-    $sql .= ", SUM(o.nItems) as pizzaSold";
-  } else {
-    $sql .= ", SUM(o.total) as revenuePerDay";
-  }
+switch ($view) {
+    case 'completeView':
+        $sql = "SELECT YEAR(o.orderDate) as sellingYear";
+        break;
+    case 'yearView':
+        $sql = "SELECT MONTH(o.orderDate) as sellingMonth";
+        break;
+    case 'monthView':
+        $sql = "SELECT WEEK(o.orderDate, 1) as sellingWeek";
+        break;
+    case 'weekView':
+        $sql = "SELECT DAYNAME(o.orderDate) as sellingDay";
+        break;
+}
 
-  $sql .= " FROM orders o
-              WHERE YEAR(o.orderDate) = $year
-              AND WEEK(o.orderDate, 1) = $week
-              GROUP BY sellingYear, sellingWeek, WEEKDAY(o.orderDate), sellingDay
-              ORDER BY sellingYear, sellingWeek, WEEKDAY(o.orderDate)";
+// set the mode 
+if ($mode === 'units') {
+    $sql .= ", SUM(o.nItems) as unitsSold";
+} else {
+    $sql .= ", SUM(o.total) as revenue";
+}
 
-  $result = $conn->query($sql);
+$sql .= " FROM orders o";
 
-  if ($result) {
+// set the where and group statement depending on the view
+switch ($view) {
+    case 'completeView':
+        $sql .= " GROUP BY sellingYear ORDER BY sellingYear";
+        break;
+    case 'yearView':
+        $sql .= " WHERE YEAR(o.orderDate) = $year
+                GROUP BY sellingMonth
+                ORDER BY sellingMonth";
+        break;
+    case 'monthView':
+        $sql .= " WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month
+                GROUP BY sellingWeek
+                ORDER BY sellingWeek";
+        break;
+    case 'weekView':
+        $sql .= " WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week
+                GROUP BY WEEKDAY(o.orderDate), sellingDay
+                ORDER BY WEEKDAY(o.orderDate)";
+        break;
+}
+
+
+$result = $conn->query($sql);
+
+if ($result) {
     $data = [];
     while ($row = $result->fetch_assoc()) {
-      $data[] = $row;
+        $data[] = $row;
     }
     echo json_encode(['success' => true, 'data' => $data]);
-  } else {
-    echo json_encode(['success' => false, 'message' => 'Query failed: ' . $conn->error]);
-  }
-
-  // Close connection
-  $conn->close();
 } else {
-  echo json_encode(['success' => false, 'message' => 'Missing parameters']);
+    echo json_encode(['success' => false, 'message' => 'Query failed: ' . $conn->error]);
 }
+
+// Close connection
+$conn->close();

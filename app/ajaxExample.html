@@ -78,7 +78,7 @@
     <h1>Pizza Sales Data per Timeframe</h1>
     <div id="loading" style="display: none;">Loading...</div> <!-- Loading indicator -->
     <div id="salesPerTime">
-        <div id="tablePerWeek"> <!-- This div will contain the JSON data displayed as a table -->
+        <div id="tablePerWeek">
             <!-- The table will be generated here by JavaScript -->
         </div>
     </div>
@@ -86,7 +86,7 @@
     <h1>Pizza Sales Data Per Store</h1>
     <div id="loading2" style="display: none;">Loading...</div> <!-- Loading indicator -->
     <div id="salesPerStore">
-        <div id="tablePerStore"> <!-- This div will contain the JSON data displayed as a table -->
+        <div id="tablePerStore">
             <!-- The table will be generated here by JavaScript -->
         </div>
     </div>
@@ -119,7 +119,7 @@
                                 // Call the function from showTable.js
                                 displayJsonTable(response.data, "tablePerWeek");
                             } else {
-                                $('#result').html('<p>' + response.message + '</p>');
+                                $('#salesPerTime').html('<p>' + response.message + '</p>');
                             }
                         },
                         error: function (xhr, status, error) {
@@ -147,7 +147,7 @@
                                 // Call the function from showTable.js
                                 displayJsonTable(response.data, "tablePerStore");
                             } else {
-                                $('#result').html('<p>' + response.message + '</p>');
+                                $('#salesPerStore').html('<p>' + response.message + '</p>');
                             }
                         },
                         error: function (xhr, status, error) {

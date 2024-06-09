@@ -1,5 +1,5 @@
 <?php
-// file for ajax request to get sales figures for a time frame. Needs input view, mode, year, and viewIndex
+// file for ajax request to get sales figures for a time frame. Needs input view, mode and depending on selected view the input year/month/week
 // Verify input
 include './includes/checkInput.php';
 // Start Connection
@@ -61,18 +61,9 @@ switch ($view) {
         break;
 }
 
+//make query and return result
+include './includes/makeAndVerifyQuery.php';
 
-$result = $conn->query($sql);
+?>
 
-if ($result) {
-    $data = [];
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
-    }
-    echo json_encode(['success' => true, 'data' => $data]);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Query failed: ' . $conn->error]);
-}
 
-// Close connection
-$conn->close();

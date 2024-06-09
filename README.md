@@ -17,7 +17,7 @@ password: 0298753482ecbcc3be9d529b3df5d806b9da61cf727e51eb
 #### Prerequisite 
 - install [Docker](https://www.docker.com/products/docker-desktop/)
 - Download this GitHub repository either by:
-    - in the terminal with `git clone https://github.com/Ansonini/Prog_Lab_2024_Group_1`
+    - using git the terminal with `git clone https://github.com/Ansonini/Prog_Lab_2024_Group_1` (git needs to be installed)
     - Downloading the .zip from GitHub directly by clicking on the green `<>Code` -> `Download Zip` 
 
 #### Preparation
@@ -25,9 +25,7 @@ password: 0298753482ecbcc3be9d529b3df5d806b9da61cf727e51eb
 - Navigate to  the folder `Prog_Lab_2024_Group_1\build\mysql\sql_conf`
 - Right click file `mysql.cnf` and select properties
 - enable the Attribute `Read only` (german `Schreibgeschütz`) and click ok
-- open the task manager (ctrl+shift+esc) and at the bottom of the sidebar select `Services` (in german `Dienste`)
-- search for mysql in the search bar at the top of the window
-- if it finds a mysql service, right click it and stop it (otherwise the port 3306 will be occupied)
+- the mysql container will be connected to the port 3307 of the host machine, make sure it isn't occupied (Default is 3306 so it's unlikely) 
 
 #### Docker 
 - Navigate back to the `Prog_Lab_2024_Group_1` Folder 

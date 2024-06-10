@@ -23,7 +23,8 @@ switch ($view) {
         $sql = "SELECT MONTH(o.orderDate) as sellingMonth";
         break;
     case 'monthView':
-        $sql = "SELECT WEEK(o.orderDate, 1) as sellingWeek";
+        //$sql = "SELECT WEEK(o.orderDate, 1) as sellingWeek";
+        $sql = "SELECT DAY(o.orderDate) as sellingDay";
         break;
     case 'weekView':
         $sql = "SELECT DAYNAME(o.orderDate) as sellingDay";
@@ -51,8 +52,10 @@ switch ($view) {
         break;
     case 'monthView':
         $sql .= " WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month
-                GROUP BY sellingWeek
-                ORDER BY sellingWeek";
+                GROUP BY sellingDay
+                ORDER BY sellingDay";
+        //         GROUP BY sellingWeek
+        //         ORDER BY sellingWeek";
         break;
     case 'weekView':
         $sql .= " WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week
@@ -63,7 +66,3 @@ switch ($view) {
 
 //make query and return result
 include './includes/makeAndVerifyQuery.php';
-
-?>
-
-

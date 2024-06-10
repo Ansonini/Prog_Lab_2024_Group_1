@@ -55,7 +55,7 @@ if (isset($_POST['view'])) {
             if (isset($_POST['week'])) {
                 $week = intval($_POST['week']);
                 if ($week <= 0) {
-                    echo json_encode(['success' => false, 'message' => 'Invalid stiweek']);
+                    echo json_encode(['success' => false, 'message' => 'Invalid week']);
                     exit;
                 }
             } else {

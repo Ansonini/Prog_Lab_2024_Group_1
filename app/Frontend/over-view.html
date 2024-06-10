@@ -15,24 +15,74 @@
 </header>
 
 <!-- <body> -->
-<body onload="lineChartSales();testfunc();">
-    <div class="sold-Overview">
-        <!-- <sub-header-text>Pizzas Sold</sub-header-text> -->
-        <div class="chart-container">
-            <canvas id="line-chart-sales"></canvas>
-            <canvas id="stores-sold"></canvas>
-        </div>
-        <div class="setting-btn-container">
-            <setting-button-header>Settings</setting-button-header>
-            <button class="btn" onclick="lineChartSales()">Update</button>
-            <label for="sold-time">Choose Timeframe</label>
-            <select id="sold-time">
-                <option value="week">Week</option>
-                <option value="month">Month</option>
-                <option value="year">Year</option>
-        </div>
+<!-- loading the javascript files functions -->
+<body onload="lineChartSales();storesBarChart();">
+
+<div class="sold-Overview">
+    <!-- <sub-header-text>Pizzas Sold</sub-header-text> -->
+    <div class="chart-container">
+        <canvas id="line-chart-sales"></canvas>
+        <canvas id="stores-sold"></canvas>
     </div>
-    <canvas id="line-chart-pizza-sold"></canvas>
+
+    <div class="setting-btn-container">
+        <!-- Button row to change the graphs -->
+        <setting-button-header>Settings</setting-button-header>
+        <button class="btn" onclick="lineChartSales()">Update</button>
+        <!-- choose the time frame -->
+        <label for="sold-time">Choose Timeframe</label>
+        <select id="sold-time">
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+        </select>
+        <!-- choose what Data will be visualized by the Graphs -->
+        <label for="data-display">Select Data to Display</label>
+        <select id="data-display">
+            <option value="units">Units</option>
+            <option value="revenue">Revenue</option>
+        </select>
+
+        <!-- if time is week, show the week selection dropdown -->
+        <label for="weekDropdown">Select the Week:</label>
+        <select id="weekDropdown">
+            <!-- Generate week options from the first week (1) of the year until the last week of the year (52) -->
+            <!-- ignoring leap years for simplicity even though year 2020 is a leap year-->
+            <script>
+                for (let i = 1; i <= 52; i++) {
+                    document.write('<option value="' + i + '">' + "Week " + i + '</option>');
+                }
+            </script>
+        </select>
+        <!-- if time is month, show the month selection dropdown -->
+        <label for="monthDropdown">Select the Month:</label>
+        <select id="monthDropdown">
+            <option value="1">Jan</option>
+            <option value="2">Feb</option>
+            <option value="3">Mar</option>
+            <option value="4">Apr</option>
+            <option value="5">May</option>
+            <option value="6">Jun</option>
+            <option value="7">Jul</option>
+            <option value="8">Aug</option>
+            <option value="9">Sep</option>
+            <option value="10">Oct</option>
+            <option value="11">Nov</option>
+            <option value="12">Dec</option>
+        </select>
+
+        <!-- if time is year, show the year selection dropdown -->
+        <label for="yearDropdown">Select the Year:</label>
+        <select id="yearDropdown">
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+        </select>
+
+
+    </div>
+</div>
+<canvas id="line-chart-pizza-sold"></canvas>
 <!--<script>
     Old script of trying to load the javascript files functions
     document.addEventListener('DOMContentLoaded', function() {

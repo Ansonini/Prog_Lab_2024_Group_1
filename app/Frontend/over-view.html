@@ -15,15 +15,22 @@
 </header>
 
 <!-- <body> -->
-<body onload="lineChartSales();storesBarChart();">
+<body onload="lineChartSales();testfunc();">
     <div class="sold-Overview">
-        <sub-header-text>Pizzas Sold</sub-header-text>
+        <!-- <sub-header-text>Pizzas Sold</sub-header-text> -->
         <div class="chart-container">
             <canvas id="line-chart-sales"></canvas>
             <canvas id="stores-sold"></canvas>
         </div>
-        <button class="btn" onclick="lineChartSales()">Update</button>
-        <button-settings>Settings</button-settings>
+        <div class="setting-btn-container">
+            <setting-button-header>Settings</setting-button-header>
+            <button class="btn" onclick="lineChartSales()">Update</button>
+            <label for="sold-time">Choose Timeframe</label>
+            <select id="sold-time">
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+        </div>
     </div>
     <canvas id="line-chart-pizza-sold"></canvas>
 <!--<script>

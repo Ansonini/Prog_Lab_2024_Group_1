@@ -23,6 +23,7 @@
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -81,6 +82,7 @@
         <div id="tablePerTime">
             <!-- The table will be generated here by JavaScript -->
         </div>
+        <canvas id="salesChart" width="400" height="200"></canvas>
     </div>
 
     <h1>Pizza Sales Data Per Store</h1>
@@ -89,9 +91,11 @@
         <div id="tablePerStore">
             <!-- The table will be generated here by JavaScript -->
         </div>
+        <canvas id="salesChartPerStore" width="400" height="200"></canvas>
     </div>
 
     <script src="assets/js/showTable.js"></script>
+    <script src="assets/js/showBarChart.js"></script>
     <script>
         $(document).ready(function () {
             // Function to fetch and display data
@@ -146,6 +150,8 @@
                             if (response.success) {
                                 // Call the function from showTable.js
                                 displayJsonTable(response.data, "tablePerTime");
+
+                                createBarChart(response.data, 'salesChart');
                             } else {
                                 $('#salesPerTime').html('<p>' + response.message + '</p>');
                             }
@@ -174,6 +180,8 @@
                             if (response.success) {
                                 // Call the function from showTable.js
                                 displayJsonTable(response.data, "tablePerStore");
+
+                                createBarChart(response.data, 'salesChartPerStore');
                             } else {
                                 $('#salesPerStore').html('<p>' + response.message + '</p>');
                             }

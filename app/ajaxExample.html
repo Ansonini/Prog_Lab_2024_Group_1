@@ -6,20 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dropdown Test</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
+         .container {
+            display: flex; /* Use flexbox for layout */
         }
 
-        th,
-        td {
+        .table-container {
+            flex: 1; /* Table container takes up remaining space */
+            margin-right: 20px; /* Add some spacing between table and chart */
+        }
+
+        .chart-container {
+            flex: 1; /* Chart container takes up remaining space */
+        }
+
+        /* Style for table and chart */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
             border: 1px solid black;
             padding: 8px;
             text-align: left;
         }
 
-        th {
-            background-color: #f2f2f2;
+        canvas {
+            border: 1px solid black;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -77,22 +90,27 @@
 
 
     <h1>Pizza Sales Data per Timeframe</h1>
-    <div id="loading" style="display: none;">Loading...</div> <!-- Loading indicator -->
-    <div id="salesPerTime">
-        <div id="tablePerTime">
-            <!-- The table will be generated here by JavaScript -->
-        </div>
+<div id="loading" style="display: none;">Loading...</div> <!-- Loading indicator -->
+<div id="salesPerTime" class="container">
+    <div id="tablePerTime" class="table-container">
+        <!-- The table will be generated here by JavaScript -->
+    </div>
+    <div class="chart-container">
         <canvas id="salesChart" width="400" height="200"></canvas>
     </div>
+</div>
 
-    <h1>Pizza Sales Data Per Store</h1>
-    <div id="loading2" style="display: none;">Loading...</div> <!-- Loading indicator -->
-    <div id="salesPerStore">
-        <div id="tablePerStore">
-            <!-- The table will be generated here by JavaScript -->
-        </div>
+<h1>Pizza Sales Data Per Store</h1>
+<div id="loading2" style="display: none;">Loading...</div> <!-- Loading indicator -->
+<div id="salesPerStore" class="container">
+    <div id="tablePerStore" class="table-container">
+        <!-- The table will be generated here by JavaScript -->
+    </div>
+    <div class="chart-container">
         <canvas id="salesChartPerStore" width="400" height="200"></canvas>
     </div>
+</div>
+
 
     <script src="assets/js/showTable.js"></script>
     <script src="assets/js/showBarChart.js"></script>

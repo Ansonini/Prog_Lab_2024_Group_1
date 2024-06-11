@@ -6,17 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dropdown Test</title>
     <style>
-         .container {
-            display: flex; /* Use flexbox for layout */
+        .container {
+            display: flex;
+            /* Use flexbox for layout */
         }
 
         .table-container {
-            flex: 1; /* Table container takes up remaining space */
-            margin-right: 20px; /* Add some spacing between table and chart */
+            flex: 1;
+            /* Table container takes up remaining space */
+            margin: 40px;
+            /* Add some spacing between table and chart */
         }
 
         .chart-container {
-            flex: 1; /* Chart container takes up remaining space */
+            flex: 1;
+            /* Chart container takes up remaining space */
+            margin: 40px;
         }
 
         /* Style for table and chart */
@@ -25,7 +30,8 @@
             width: 100%;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid black;
             padding: 8px;
             text-align: left;
@@ -36,11 +42,14 @@
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+
 </head>
 
 <body>
-
+    <!-- create the dropdown to select the options -->
     <h1>Select Options</h1>
 
     <select id="view">
@@ -89,31 +98,59 @@
     </select>
 
 
-    <h1>Pizza Sales Data per Timeframe</h1>
-<div id="loading" style="display: none;">Loading...</div> <!-- Loading indicator -->
-<div id="salesPerTime" class="container">
-    <div id="tablePerTime" class="table-container">
-        <!-- The table will be generated here by JavaScript -->
-    </div>
-    <div class="chart-container">
-        <canvas id="salesChart" width="400" height="200"></canvas>
-    </div>
-</div>
 
-<h1>Pizza Sales Data Per Store</h1>
-<div id="loading2" style="display: none;">Loading...</div> <!-- Loading indicator -->
-<div id="salesPerStore" class="container">
-    <div id="tablePerStore" class="table-container">
-        <!-- The table will be generated here by JavaScript -->
+
+    <div id="salesPerStorePerMonth" class="container">
+
+        <div class="chart-container">
+            <h3>Monthly Pizza Sales Data Per Store over the 3 years</h3>
+            <div id="loading3" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <canvas id="salesChartPerStorePerMonth" width="400" height="100"></canvas>
+            <!-- The chart will be generated here by JavaScript -->
+        </div>
+
     </div>
-    <div class="chart-container">
-        <canvas id="salesChartPerStore" width="400" height="200"></canvas>
+
+
+    <div id="salesPerStore" class="container">
+
+        
+        <div class="chart-container">
+
+            <h3>Pizza Sales Data for selected timeframe </h3>
+            <div id="loading" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <canvas id="salesChart" width="400" height="200"></canvas>
+            <!-- The chart will be generated here by JavaScript -->
+        </div>
+
+        
+        <div class="chart-container">
+
+            <h3>Pizza Sales Data Per Store for selected timeframe </h3>
+            <div id="loading2" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <canvas id="salesChartPerStore" width="400" height="200"></canvas>
+            <!-- The chart will be generated here by JavaScript -->
+        </div>
+
+
     </div>
-</div>
+
+    
+    <div id="salesPerTime" class="container">
+        <div id="tablePerTime" class="table-container">
+            <!-- The table will be generated here by JavaScript -->
+        </div>
+        <div id="tablePerStore" class="table-container">
+            <!-- The table will be generated here by JavaScript -->
+        </div>
+    </div>
+
+
 
 
     <script src="assets/js/showTable.js"></script>
     <script src="assets/js/showBarChart.js"></script>
+
     <script>
         $(document).ready(function () {
             // Function to fetch and display data
@@ -152,10 +189,12 @@
                         break;
                 }
 
+                // if all the relevant data is set, the function continues to make ajax request
                 if (ready) {
                     $('#loading').show(); // Show loading indicator for first table
+                    // ajax request for the first data
                     $.ajax({
-                        url: 'ajax/getSalesPerTimeframe.php',
+                        url: 'ajax/getRevenuePerPizza.php',
                         type: 'POST',
                         data: {
                             view: view,
@@ -166,7 +205,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                // Call the function from showTable.js
+                                // Call the functions from to display the table and the chart
                                 displayJsonTable(response.data, "tablePerTime");
 
                                 createBarChart(response.data, 'salesChart');
@@ -183,7 +222,7 @@
                     });
 
                     $('#loading2').show(); // Show loading indicator for second table 
-                    // AJAX request for the second table
+                    // AJAX request for the second data
                     $.ajax({
                         url: 'ajax/getSalesPerStore.php',
                         type: 'POST',
@@ -209,6 +248,34 @@
                         },
                         complete: function () {
                             $('#loading2').hide(); // Hide loading indicator when request is complete
+                        }
+                    });
+
+                    $('#loading3').show(); // Show loading indicator for first table
+                    // ajax request for the first data
+                    $.ajax({
+                        url: 'ajax/getSalesPerStorePerMonth.php',
+                        type: 'POST',
+                        data: {
+                            view: view,
+                            mode: mode,
+                            year: year,
+                            month: month,
+                            week: week
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // Call the functions from to display the table and the chart
+                                createLineChart(response.data, 'salesChartPerStorePerMonth');
+                            } else {
+                                $('#salesPerStorePerMonth').html('<p>' + response.message + '</p>');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('AJAX Error:', status, error);
+                        },
+                        complete: function () {
+                            $('#loading3').hide(); // Hide loading indicator when request is complete
                         }
                     });
                 }

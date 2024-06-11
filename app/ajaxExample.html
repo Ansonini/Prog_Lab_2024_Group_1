@@ -148,8 +148,7 @@
 
 
 
-    <script src="assets/js/showTable.js"></script>
-    <script src="assets/js/showBarChart.js"></script>
+    <script src="assets/js/displayJsonData.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -194,7 +193,7 @@
                     $('#loading').show(); // Show loading indicator for first table
                     // ajax request for the first data
                     $.ajax({
-                        url: 'ajax/getRevenuePerPizza.php',
+                        url: 'ajax/getSalesPerTimeframe.php',
                         type: 'POST',
                         data: {
                             view: view,

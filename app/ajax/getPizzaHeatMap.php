@@ -11,7 +11,7 @@ error_reporting(E_ALL);
 ob_start();
 
 // include the DB connect file. ../ because its outside of this folder
-include '../conf/connectDB.php';
+include '/var/www/html/ajax/includes/connectDB.php';
 
 $sql = "SELECT
             p.pizzaName as name1,

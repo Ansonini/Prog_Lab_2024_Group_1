@@ -3,7 +3,7 @@
 // Verify input
 include './includes/checkInput.php';
 // Start Connection
-include '../conf/connectDB.php';
+include '/var/www/html/ajax/includes/connectDB.php';
 
 // Check connection
 if ($conn->connect_error) {

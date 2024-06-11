@@ -1,9 +1,9 @@
 <?php
 // file for ajax request to get sales figures per Store for a time frame. Needs input view, mode and depending on selected view the input year/month/week
 // Verify input
-include './includes/checkInput.php';
+include '/var/www/html/ajax/includes/checkInput.php';
 // Start Connection
-include '../conf/connectDB.php';
+include '/var/www/html/ajax/includes/connectDB.php';
 
 // Check connection
 if ($conn->connect_error) {
@@ -49,6 +49,6 @@ if ($mode === 'units') {
 }
 
 //make query and return result
-include './includes/makeAndVerifyQuery.php';
+include '/var/www/html/ajax/includes/makeAndVerifyQuery.php';
 
 ?>

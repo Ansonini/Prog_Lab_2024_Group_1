@@ -1,6 +1,6 @@
 <?php
 // File to set up connection to the Database
-include 'conf/connectDB.php';
+include '/var/www/html/ajax/includes/connectDB.php';
 
 
 // Open .html files that you want to display on homepage http://localhost:8080/ 

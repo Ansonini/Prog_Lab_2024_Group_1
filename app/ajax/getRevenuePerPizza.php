@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 
 
 // include the DB connect file. ../ because its outside of this folder
-include '../conf/connectDB.php';
+include '/var/www/html/ajax/includes/connectDB.php';
 
 $sql = "SELECT 
             p.pizzaName, 
@@ -17,16 +17,6 @@ $sql = "SELECT
         JOIN orders o ON o.orderID = oi.orderID 
         GROUP BY p.pizzaName, p.pizzaSize, p.Price";
 
-$result = $conn->query($sql);
 
-$data = array();
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
-    }
-} else {
-    $data[] = "0 results";
-}
-$conn->close();
-
-echo json_encode($data);
+//make query and return result
+include '/var/www/html/ajax/includes/makeAndVerifyQuery.php';

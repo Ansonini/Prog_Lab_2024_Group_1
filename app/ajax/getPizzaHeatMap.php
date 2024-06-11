@@ -84,4 +84,4 @@ ob_end_clean();
 
 // Return heatmap as JSON
 
-echo json_encode($heatmap);
+echo json_encode(['success' => true, 'data' => $heatmap]);

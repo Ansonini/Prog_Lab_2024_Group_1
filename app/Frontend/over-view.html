@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="css/over-view.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-    <script src="javascript/over-view.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script> src="app/Frontend/javascript/over-view.js"</script>
 
 </head>
 
@@ -14,21 +15,23 @@
     <header-text>Stores Information</header-text>
 </header>
 
-<!-- <body> -->
+<body>
 <!-- loading the javascript files functions -->
-<body onload="lineChartSales();storesBarChart();">
+<!-- <body onload="lineChartSales();storesBarChart();">     -->
 
 <div class="sold-Overview">
     <!-- <sub-header-text>Pizzas Sold</sub-header-text> -->
     <div class="chart-container">
+        <div id="loading-line-chart" style="display: none;">Loading...</div>
         <canvas id="line-chart-sales"></canvas>
+        <div id="loading-stores-sold" style="display: none;">Loading...</div>
         <canvas id="stores-sold"></canvas>
     </div>
 
     <div class="setting-btn-container">
         <!-- Button row to change the graphs -->
         <setting-button-header>Settings</setting-button-header>
-        <button class="btn" onclick="lineChartSales()">Update</button>
+        <button id="updateButton">Update</button>
         <!-- choose the time frame -->
         <label for="sold-time">Choose Timeframe</label>
         <select id="sold-time">

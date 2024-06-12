@@ -53,7 +53,6 @@
     <h1>Select Options</h1>
 
     <select id="view">
-        <option value="">Select View</option>
         <option value="completeView">Complete View</option>
         <option value="yearView">Year View</option>
         <option value="monthView">Month View</option>
@@ -62,14 +61,12 @@
 
 
     <select id="mode">
-        <option value="">Select Mode</option>
         <option value="units">Units</option>
         <option value="revenue">Revenue</option>
     </select>
 
 
     <select id="year">
-        <option value="">Select Year</option>
         <option value="2020">2020</option>
         <option value="2021">2021</option>
         <option value="2022">2022</option>
@@ -77,7 +74,6 @@
 
 
     <select id="month">
-        <option value="">Select Month</option>
         <!-- Generate month options from 1 to 12 -->
         <script>
             for (let i = 1; i <= 12; i++) {
@@ -88,7 +84,6 @@
 
 
     <select id="week">
-        <option value="">Select Week</option>
         <!-- Generate week options from 1 to 52 -->
         <script>
             for (let i = 1; i <= 52; i++) {
@@ -114,7 +109,7 @@
 
     <div id="salesPerStore" class="container">
 
-        
+
         <div class="chart-container">
 
             <h3>Pizza Sales Data for selected timeframe </h3>
@@ -123,7 +118,7 @@
             <!-- The chart will be generated here by JavaScript -->
         </div>
 
-        
+
         <div class="chart-container">
 
             <h3>Pizza Sales Data Per Store for selected timeframe </h3>
@@ -135,7 +130,7 @@
 
     </div>
 
-    
+
     <div id="salesPerTime" class="container">
         <div id="tablePerTime" class="table-container">
             <!-- The table will be generated here by JavaScript -->
@@ -282,6 +277,9 @@
 
             // Trigger fetchData when any dropdown value changes
             $('#view, #mode, #year, #month, #week').change(fetchData);
+
+            // Trigger fetchData when the page loads
+            fetchData();
         });
     </script>
 </body>

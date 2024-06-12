@@ -79,7 +79,7 @@ function createBarChart(data, chartID) {
 }
 
 
-// Create line chart out of any 2 layer json datasets
+// Create single or multi line chart out of any 2 layer json datasets
 function createLineChart(data, chartID) {
     var canvas = document.getElementById(chartID);
     var ctx = canvas.getContext('2d');
@@ -130,14 +130,14 @@ function createLineChart(data, chartID) {
                     type: 'category', // Use 'category' for string x-axis
                     title: {
                         display: true,
-                        text: 'X Axis Title'
+                        text: 'X Axis'
                     }
                 },
                 y: {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Units Sold'
+                        text: 'Y Axis'
                     }
                 }
             },

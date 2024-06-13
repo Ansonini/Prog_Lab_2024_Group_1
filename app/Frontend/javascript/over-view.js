@@ -1,3 +1,4 @@
+// function needed to interact with the ajax calls and the data from the database
 $(document).ready(function () {
     function fetchData() {
         var view = $('#sold-time').val();
@@ -9,27 +10,33 @@ $(document).ready(function () {
 
         var ready = false;
         switch (view) {
-            case "year":
+            case "yearView":
                 $('#yearDropdown').show();
                 $('#monthDropdown, #weekDropdown').hide();
-                if (mode && year) { ready = true; }
+                if (mode && year) {
+                    ready = true;
+                }
                 break;
-            case "month":
+            case "monthView":
                 $('#yearDropdown, #monthDropdown').show();
                 $('#weekDropdown').hide();
-                if (mode && year && month) { ready = true; }
+                if (mode && year && month) {
+                    ready = true;
+                }
                 break;
-            case "week":
+            case "weekView":
                 $('#yearDropdown, #weekDropdown').show();
                 $('#monthDropdown').hide();
-                if (mode && year && week) { ready = true; }
+                if (mode && year && week) {
+                    ready = true;
+                }
                 break;
         }
 
         if (ready) {
             $('#loading-line-chart').show();
             $.ajax({
-                url: 'ajax/getSalesPerTimeframe.php',
+                url: '../ajax/getSalesPerTimeframe.php',
                 type: 'POST',
                 data: {
                     view: view,
@@ -40,8 +47,7 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.success) {
-                        lineChartSales(response.data, "line-chart-sales");
-                        storesBarChart(response.data, 'stores-sold');
+                        lineChartSales(response.data);
                     } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
@@ -56,7 +62,7 @@ $(document).ready(function () {
 
             $('#loading-stores-sold').show();
             $.ajax({
-                url: 'ajax/getSalesPerStore.php',
+                url: '../ajax/getSalesPerStore.php',
                 type: 'POST',
                 data: {
                     view: view,
@@ -67,8 +73,7 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.success) {
-                        lineChartSales(response.data, "line-chart-sales");
-                        storesBarChart(response.data, 'stores-sold');
+                        storesValueBarChart(response.data);
                     } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
@@ -85,18 +90,18 @@ $(document).ready(function () {
 
     $('#updateButton').click(fetchData);
 
-    $('#sold-time').change(function() {
+    $('#sold-time').change(function () {
         var view = $(this).val();
         switch (view) {
-            case "year":
+            case "yearView":
                 $('#yearDropdown').show();
                 $('#monthDropdown, #weekDropdown').hide();
                 break;
-            case "month":
+            case "monthView":
                 $('#yearDropdown, #monthDropdown').show();
                 $('#weekDropdown').hide();
                 break;
-            case "week":
+            case "weekView":
                 $('#yearDropdown, #weekDropdown').show();
                 $('#monthDropdown').hide();
                 break;
@@ -105,13 +110,18 @@ $(document).ready(function () {
                 break;
         }
     }).trigger('change');
+    fetchData();
 });
 
-function lineChartSales(data, chartID) {
+// Showing the total Sales in a given timeframe
+function lineChartSales(data) {
 
     var keys = Object.keys(data[0]);
-    var storeData = keys[0];
-    var timeValue = keys[1];
+    var storeID = keys[0];
+    var storeValue = keys[1];
+
+    var storeNames = data.map(item => item[storeID]);
+    var storeValues = data.map(item => item[storeValue]);
 
     const overAllSold = echarts.init(document.getElementById('line-chart-sales'));
 
@@ -132,19 +142,18 @@ function lineChartSales(data, chartID) {
         },
         xAxis: {
             type: 'category',
-            data: timeValue
+            data: storeNames
         },
         yAxis: {
             type: 'value'
         },
         series: [{
             name: 'Sales',
-            type: 'bar',
-            data: storeData,
+            type: 'line',
+            data: storeValues,
             itemStyle: {
                 color: 'rgba(75, 192, 192, 0.8)'
             }
-
         }]
     };
 
@@ -153,10 +162,12 @@ function lineChartSales(data, chartID) {
     overAllSold.resize({width: 1000, height: 500})
 
 }
-function storesBarChart(){
+// Showing the total sales for each store in the selected time frame
+function storesValueBarChart(data) {
     var keys = Object.keys(data[0]);
-    var storeData = keys[0];
-    var storeID = keys[1];
+    var storeID = keys[0];
+    var storeValue = keys[1];
+
 
     const sortedBarchartStores = echarts.init(document.getElementById('stores-sold'));
 
@@ -166,13 +177,12 @@ function storesBarChart(){
     }
 
     var storeDataWithStoreID = data.map(item => ({
-        value: item[storeData],
+        value: item[storeValue],
         category: item[storeID]
     }));
 
-    storeDataWithStoreID.sort((a, b) => a.value - b.value);
+    storeDataWithStoreID.sort((a, b) => b.value - a.value);
 
-    // Extract the sorted data and categories
     var sortedStoreData = storeDataWithStoreID.map(item => item.value);
     var sortedStoreID = storeDataWithStoreID.map(item => item.category);
 
@@ -206,7 +216,85 @@ function storesBarChart(){
     option && sortedBarchartStores.setOption(option);
     sortedBarchartStores.resize({width: 1000, height: 500})
 }
-// tes Function used to test out changes on graphs
+// Showing the percentage of total sales for each store in comparison to the total sales in the selected time frame
+function storesPercentBarChart(data) {
+    // Extract the keys from the first data object
+    var keys = Object.keys(data[0]);
+    var storeData = keys[0];
+    var storeID = keys[1];
+
+    // Initialize echarts instance
+    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold'));
+
+    // Dispose existing chart instance if any
+    var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
+    if (existingChart) {
+        echarts.dispose(existingChart);
+    }
+
+    // Map the data to an array of objects containing value and category
+    var storeDataWithStoreID = data.map(item => ({
+        value: item[storeID],
+        category: item[storeData]
+    }));
+
+    // Sort the data in descending order
+    storeDataWithStoreID.sort((a, b) => b.value - a.value);
+
+    // Calculate the total value
+    var totalValue = storeDataWithStoreID.reduce((sum, item) => sum + item.value, 0);
+
+    // Calculate the percentage of total for each store
+    var storeDataWithPercentage = storeDataWithStoreID.map(item => ({
+        value: (item.value / totalValue * 100).toFixed(2), // convert to percentage and round to 2 decimal places
+        category: item.category
+    }));
+
+    // Extract the sorted data and categories
+    var sortedStoreData = storeDataWithPercentage.map(item => item.value);
+    var sortedStoreID = storeDataWithPercentage.map(item => item.category);
+
+    // Set the chart options
+    var option = {
+        title: {
+            text: 'Sales Data as Percentage of Total'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            },
+            formatter: function (params) {
+                return params[0].name + ': ' + params[0].data + '%';
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: sortedStoreID
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value}%'
+            }
+        },
+        series: [{
+            name: 'Sales',
+            type: 'bar',
+            data: sortedStoreData,
+            itemStyle: {
+                color: 'rgba(75, 192, 192, 0.8)'
+            }
+        }]
+    };
+
+    // Set the options on the echarts instance
+    sortedBarchartStores.setOption(option);
+    sortedBarchartStores.resize({width: 1000, height: 500});
+}
+
+
+// test Function used to test out changes on graphs
 function testfunc(data) {
     var keys = Object.keys(data[0]);
     var labelField = keys[0];

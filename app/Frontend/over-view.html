@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script> src="app/Frontend/javascript/over-view.js"</script>
+    <script src="javascript/over-view.js"></script>
 
 </head>
 
@@ -23,9 +23,9 @@
     <!-- <sub-header-text>Pizzas Sold</sub-header-text> -->
     <div class="chart-container">
         <div id="loading-line-chart" style="display: none;">Loading...</div>
-        <canvas id="line-chart-sales"></canvas>
+        <div id="line-chart-sales" style="width: 1000px; height: 400px;"></div>
         <div id="loading-stores-sold" style="display: none;">Loading...</div>
-        <canvas id="stores-sold"></canvas>
+        <div id="stores-sold" style="width: 1000px; height: 500px;"></div>
     </div>
 
     <div class="setting-btn-container">
@@ -35,9 +35,9 @@
         <!-- choose the time frame -->
         <label for="sold-time">Choose Timeframe</label>
         <select id="sold-time">
-            <option value="week">Week</option>
-            <option value="month">Month</option>
-            <option value="year">Year</option>
+            <option value="weekView">Week</option>
+            <option value="monthView">Month</option>
+            <option value="yearView">Year</option>
         </select>
         <!-- choose what Data will be visualized by the Graphs -->
         <label for="data-display">Select Data to Display</label>
@@ -47,7 +47,7 @@
         </select>
 
         <!-- if time is week, show the week selection dropdown -->
-        <label for="weekDropdown">Select the Week:</label>
+        <label for="weekDropdown" id="weekDropdownTitle">Select the Week:</label>
         <select id="weekDropdown">
             <!-- Generate week options from the first week (1) of the year until the last week of the year (52) -->
             <!-- ignoring leap years for simplicity even though year 2020 is a leap year-->
@@ -58,7 +58,7 @@
             </script>
         </select>
         <!-- if time is month, show the month selection dropdown -->
-        <label for="monthDropdown">Select the Month:</label>
+        <label for="monthDropdown" id="monthDropdownTitle">Select the Month:</label>
         <select id="monthDropdown">
             <option value="1">Jan</option>
             <option value="2">Feb</option>

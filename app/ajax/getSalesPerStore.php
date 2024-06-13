@@ -49,6 +49,6 @@ if ($mode === 'units') {
 }
 
 //make query and return result
-include '/var/www/html/ajax/includes/makeAndVerifyQuery.php';
+include '/var/www/html/ajax/includes/makeQuery.php';
 
 ?>

@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 // set the selected field depending on the view
 // Prepare and execute SQL query
 $sql = "SELECT o.storeID,";
-$sql .= " YEAR(o.orderDate) as sellingYear, MONTH(o.orderDate) as sellingMonth,";
+$sql .= " (YEAR(o.orderDate)*100 + MONTH(o.orderDate)) as sellingMonth,";
 
 // set the mode
 if ($mode === 'units') {
@@ -28,36 +28,12 @@ $sql .= " FROM orders o";
 
 
 $sql .=  " GROUP BY o.storeID";
-$sql .=  " , sellingYear, sellingMonth";
-$sql .= " ORDER BY o.storeID, sellingYear, sellingMonth";
+$sql .=  " , sellingMonth";
+$sql .= " ORDER BY o.storeID, sellingMonth";
 
-// Perform 
-$result = $conn->query($sql);
-// Close connection
-$conn->close();
-//make query and return result
-$data = [];
+// if query has mutliple dataset with first column as identifier and second and third as data
+$multipleDataset = true;
 
-foreach ($result as $row) {
-    $columns = array_values($row); // Get the row values as an array
-    $storeID = $columns[0];        // First column is storeID
-    $x = (int)$columns[1] * 100 + (int)$columns[2]; // Combining second and third columns to form x
-    $y = (int)$columns[3];         // Fourth column is y
 
-    if (!isset($data[$storeID])) {
-        $data[$storeID] = [
-            'storeID' => $storeID,
-            'data' => []
-        ];
-    }
+include '/var/www/html/ajax/includes/makeQuery.php';
 
-    $data[$storeID]['data'][] = ['x' => $x, 'y' => $y];
-}
-
-// Re-index the array to match the desired output format
-$output = array_values($data);
-
-// Convert to JSON and send response
-header('Content-Type: application/json');
-//esecho json_encode($output, JSON_PRETTY_PRINT);
-echo json_encode(['success' => true, 'data' => $output]);

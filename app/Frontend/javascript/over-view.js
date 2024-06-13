@@ -73,7 +73,7 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.success) {
-                        testfunction2(response.data);
+                        storesValueBarChart(response.data);
                     } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
@@ -129,7 +129,18 @@ function lineChartSales(data) {
     if (existingChart) {
         echarts.dispose(existingChart);
     }
-
+    if(document.getElementById('data-display').value === 'units') {
+        var yAxisLabel = 'Units Sold';
+    } else {
+        var yAxisLabel = 'Revenue';
+    }
+    if(document.getElementById('sold-time').value === 'weekView') {
+        var xAxisLabel = 'Week Days';
+    } else if (document.getElementById('sold-time').value === 'monthView') {
+        var xAxisLabel = 'Month in Days';
+    }else  {
+        var xAxisLabel = 'Year in Months';
+    }
     var option = {
         title: {
             text: 'Sales Data'
@@ -140,12 +151,28 @@ function lineChartSales(data) {
                 type: 'shadow'
             }
         },
+        grid: {
+            left: '2%',
+            right: '2%',
+            bottom: '10%',
+            containLabel: true
+        },
         xAxis: {
             type: 'category',
-            data: storeNames
+            data: storeNames,
+            name: xAxisLabel,
+            nameLocation: 'middle',
+            nameGap: 25,
+            nameTextStyle: {
+                fontSize: 16
+            }
         },
         yAxis: {
-            type: 'value'
+            type: 'value',
+            name: yAxisLabel,
+            nameTextStyle: {
+                fontSize: 16
+            },
         },
         series: [{
             name: 'Sales',
@@ -159,7 +186,7 @@ function lineChartSales(data) {
 
     overAllSold.setOption(option);
     option && overAllSold.setOption(option);
-    overAllSold.resize({width: 1000, height: 500})
+    overAllSold.resize({width: 1000, height: 400})
 
 }
 // Showing the total sales for each store in the selected time frame
@@ -189,7 +216,7 @@ function storesValueBarChart(data) {
     if(document.getElementById('data-display').value === 'units') {
         var yAxisLabel = 'Units Sold';
     } else {
-        var yAxisLabel = 'Sales';
+        var yAxisLabel = 'Revenue';
     }
     var option = {
         title: {
@@ -311,6 +338,90 @@ function storesPercentBarChart(data) {
     sortedBarchartStores.setOption(option);
     sortedBarchartStores.resize({width: 1000, height: 500});
 }
+function pieChartStores(data) {
+    const pieChart = echarts.init(document.getElementById('stores-sold'));
+    var option;
+
+    option = {
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            top: '5%',
+            left: 'center'
+        },
+        series: [
+            {
+                name: 'Access From',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: 40,
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: [
+                    { value: 1048, name: 'Search Engine' },
+                    { value: 735, name: 'Direct' },
+                    { value: 580, name: 'Email' },
+                    { value: 484, name: 'Union Ads' },
+                    { value: 300, name: 'Video Ads' }
+                ]
+            }
+        ]
+    };
+
+    option && pieChart.setOption(option);
+    pieChart.resize({width: 500, height: 500})
+}
+function mapStores(data) {
+    document.getElementById('loading-map').style.display = 'flex';
+
+    // Initialize the map and set its view to a specific location and zoom level
+    var map = L.map('mappyMap').setView([40.7128, -74.0060], 13);
+
+    // Load and display tile layer on the map (OpenStreetMap tiles)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Hide the loading indicator once the map is fully loaded
+    map.on('load', function() {
+        document.getElementById('loading-map').style.display = 'none';
+    });
+}
+
+// to filter the dropdown list of stores
+function filterDropdown() {
+    var input, filter, div, a, i;
+    input = document.getElementById("dropdownSearch");
+    filter = input.value.toUpperCase();
+    div = document.getElementsByClassName("dropdown-content")[0];
+    a = div.getElementsByTagName("a");
+
+    for (i = 0; i < a.length; i++) {
+        if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            a[i].style.display = "";
+        } else {
+            a[i].style.display = "none";
+        }
+    }
+}
+// to go to the store page of the store  that was selected
+function navigateToStore(storeId) {
+    console.log("Navigating to store " + storeId);
+}
+
 
 
 // test Function used to test out changes on graphs

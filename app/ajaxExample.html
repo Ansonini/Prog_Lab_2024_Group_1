@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dropdown Test</title>
+    <title>Dashboard testing</title>
     <style>
         .container {
             display: flex;
@@ -12,14 +12,18 @@
         }
 
         .table-container {
-            flex: 1;
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
             /* Table container takes up remaining space */
-            margin: 40px;
+            margin: 20px;
             /* Add some spacing between table and chart */
         }
 
         .chart-container {
-            flex: 1;
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
             /* Chart container takes up remaining space */
             margin: 20px;
         }
@@ -38,6 +42,9 @@
         }
 
         canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
             border: 1px solid black;
         }
 
@@ -118,8 +125,9 @@
 </head>
 
 <body>
+    <h1>Dashboard Testing</h1>
+
     <!-- create the dropdown to select the options -->
-    <h1>Dashboard</h1>
 
     <div class="dropdown-container">
         <div class="dropdown-group">
@@ -131,12 +139,12 @@
                 <option value="weekView">Week View</option>
             </select>
 
-
             <select class="dropdown" id="mode">
                 <option value="units">Units</option>
                 <option value="revenue">Revenue</option>
             </select>
         </div>
+
 
         <div class="dropdown-group">
             <label class="group-title">Timeframe Settings</label>
@@ -150,8 +158,6 @@
                 <label for="startDateLabel">Start Date:</label>
                 <input type="date" id="startDate" class="date-input" " value="2020-01-01" min="2020-01-01"
                     max="2022-12-31">
-                <label for="week">Select a week:</label>
-                <input type="week" id="week" name="week">
                 <label for="endDateLabel">End Date:</label>
                 <input type="date" id="endDate" class="date-input" value="2022-12-31" min="startDate" max="2022-12-31">
             </div>
@@ -184,11 +190,14 @@
         </div>
     </div>
 
+
+    <!-- create the container for the graph and table -->
     <div id="salesPerStorePerMonth" class="container">
 
         <div class="chart-container">
             <h3>Monthly Pizza Sales Data Per Store over the 3 years</h3>
-            <div class=loadingDiv id="loading3">Data is loading...</div><br> <!-- Loading indicator -->
+            <div class=loadingDiv style="display: none;" id="loading3">Data is loading...</div><br>
+            <!-- Loading indicator -->
             <canvas id="salesChartPerStorePerMonth" width="400" height="100"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
@@ -200,7 +209,8 @@
         <div class="chart-container">
 
             <h3>Pizza Sales Data for selected timeframe </h3>
-            <div class=loadingDiv id="loading">Data is loading...</div> <br><!-- Loading indicator -->
+            <div class=loadingDiv style="display: none;" id="loading">Data is loading...</div>
+            <br><!-- Loading indicator -->
             <canvas id="salesChart" width="400" height="200"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
@@ -208,7 +218,7 @@
         <div class="chart-container">
 
             <h3>Pizza Sales Data Per Store for selected timeframe </h3>
-            <div class=loadingDiv id="loading2" ">Data is loading...</div> <br><!-- Loading indicator -->
+            <div class=loadingDiv style="display: none;" id="loading2" ">Data is loading...</div> <br><!-- Loading indicator -->
             <canvas id="salesChartPerStore" width="400" height="200"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>

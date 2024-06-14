@@ -45,7 +45,9 @@ $(document).ready(function () {
         } else {
             $('#floatingTimeInput').show();
             $('#fixedTimeInput').hide();
-            if (startDate && endDate) { ready = true; } else {
+            if (startDate && endDate) {
+                ready = true;
+            } else {
                 ready = false;
                 console.log('date not selected', endDate, startDate);
 

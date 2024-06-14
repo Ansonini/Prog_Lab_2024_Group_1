@@ -24,7 +24,11 @@ if ($mode === 'units') {
     $sql .= "SUM(o.total) as revenue";
 }
 
-$sql .= " FROM orders o WHERE date(o.orderDate) between '$startDate' and '$endDate' ";
+$sql .= " FROM orders o WHERE date(o.orderDate) ";
+
+if ($timeframeType === 'floating'){
+    $sql .= " between '$startDate' and '$endDate' ";
+}
 
 
 $sql .=  " GROUP BY o.storeID";

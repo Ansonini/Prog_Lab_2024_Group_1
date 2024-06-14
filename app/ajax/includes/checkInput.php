@@ -48,12 +48,6 @@ if (isset($_POST['view'])) {
         if (isset($_POST['startDate']) || isset($_POST['endDate'])) {
             $startDate = $_POST['startDate'];
             $endDate = $_POST['endDate'];
-
-            // Validate input
-            if ($year <= 0) {
-                echo json_encode(['success' => false, 'message' => 'Invalid start or end date']);
-                exit;
-            }
         } else {
             echo json_encode(['success' => false, 'message' => 'Missing start or end date']);
             exit;

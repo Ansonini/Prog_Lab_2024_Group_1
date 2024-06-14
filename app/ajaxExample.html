@@ -21,7 +21,7 @@
         .chart-container {
             flex: 1;
             /* Chart container takes up remaining space */
-            margin: 40px;
+            margin: 20px;
         }
 
         /* Style for table and chart */
@@ -40,10 +40,71 @@
         canvas {
             border: 1px solid black;
         }
+
+        .dropdown-container {
+            display: flex;
+            /* Keep all dropdown groups on the same line */
+        }
+
+        .dropdown-group {
+            display: flex;
+            /* Keep dropdowns in the same group on the same line */
+            margin-right: 40px;
+            /* Space between groups */
+        }
+
+        .dropdown-group:last-child {
+            margin-right: 0;
+            /* Remove space after the last group */
+        }
+
+        .dropdown {
+            margin-right: 10px;
+            /* Space between dropdowns in the same group */
+        }
+
+        /* Optional: Remove margin-right for the last dropdown in a group */
+        .dropdown:last-child {
+            margin-right: 0;
+        }
+
+        .group-title {
+            margin-right: 10px;
+            /* Space between title and dropdowns */
+            font-weight: bold;
+            /* Optional: Make the title bold */
+        }
+
+        .inputs {
+            display: flex;
+            /* Arrange input labels and fields horizontally */
+            margin-right: 10px;
+            /* Space between inputs and dropdowns */
+        }
+
+        .inputs label,
+        .inputs .date-input {
+            margin-right: 10px;
+            /* Space between input elements */
+        }
+
+        .inputs .date-input:last-child {
+            margin-right: 0;
+            /* Remove margin-right for the last input */
+        }
+
+        h3,
+        .loadingDiv {
+            display: inline-block;
+            vertical-align: middle;
+            /* Adjust as needed */
+            margin: 10px;
+            /* Adjust as needed */
+        }
     </style>
 
     <!-- scripts for ajax -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" async></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
 
     <!-- scripts for chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@^3" defer></script>
@@ -58,49 +119,76 @@
 
 <body>
     <!-- create the dropdown to select the options -->
-    <h1>Select Options</h1>
+    <h1>Dashboard</h1>
 
-    <select id="view">
-        <option value="completeView">Complete View</option>
-        <option value="yearView">Year View</option>
-        <option value="monthView">Month View</option>
-        <option value="weekView">Week View</option>
-    </select>
+    <div class="dropdown-container">
+        <div class="dropdown-group">
+            <label class="group-title">View Settings</label>
+            <select class="dropdown" id="view">
+                <option value="completeView">Complete View</option>
+                <option value="yearView">Year View</option>
+                <option value="monthView">Month View</option>
+                <option value="weekView">Week View</option>
+            </select>
 
-    <select id="mode">
-        <option value="units">Units</option>
-        <option value="revenue">Revenue</option>
-    </select>
 
-    <select id="year">
-        <option value="2020">2020</option>
-        <option value="2021">2021</option>
-        <option value="2022">2022</option>
-    </select>
+            <select class="dropdown" id="mode">
+                <option value="units">Units</option>
+                <option value="revenue">Revenue</option>
+            </select>
+        </div>
 
-    <select id="month">
-        <!-- Generate month options from 1 to 12 -->
-        <script>
-            for (let i = 1; i <= 12; i++) {
-                document.write('<option value="' + i + '">' + i + '</option>');
-            }
-        </script>
-    </select>
+        <div class="dropdown-group">
+            <label class="group-title">Timeframe Settings</label>
 
-    <select id="week">
-        <!-- Generate week options from 1 to 52 -->
-        <script>
-            for (let i = 1; i <= 52; i++) {
-                document.write('<option value="' + i + '">' + i + '</option>');
-            }
-        </script>
-    </select>
+            <select class="dropdown" id="timeframeType">
+                <option value="fixed">Fixed Timeframe</option>
+                <option value="floating">Floating Timeframe</option>
+            </select>
+
+            <div id="floatingTimeInput" class="inputs">
+                <label for="startDateLabel">Start Date:</label>
+                <input type="date" id="startDate" class="date-input" " value="2020-01-01" min="2020-01-01"
+                    max="2022-12-31">
+                <label for="week">Select a week:</label>
+                <input type="week" id="week" name="week">
+                <label for="endDateLabel">End Date:</label>
+                <input type="date" id="endDate" class="date-input" value="2022-12-31" min="startDate" max="2022-12-31">
+            </div>
+
+            <div id="fixedTimeInput">
+                <select class="dropdown" id="year">
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                </select>
+
+                <select class="dropdown" id="month">
+                    <!-- Generate month options from 1 to 12 -->
+                    <script>
+                        for (let i = 1; i <= 12; i++) {
+                            document.write('<option value="' + i + '">' + i + '</option>');
+                        }
+                    </script>
+                </select>
+
+                <select class="dropdown" id="week">
+                    <!-- Generate week options from 1 to 52 -->
+                    <script>
+                        for (let i = 1; i <= 52; i++) {
+                            document.write('<option value="' + i + '">' + i + '</option>');
+                        }
+                    </script>
+                </select>
+            </div>
+        </div>
+    </div>
 
     <div id="salesPerStorePerMonth" class="container">
 
         <div class="chart-container">
             <h3>Monthly Pizza Sales Data Per Store over the 3 years</h3>
-            <div id="loading3" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <div class=loadingDiv id="loading3">Data is loading...</div><br> <!-- Loading indicator -->
             <canvas id="salesChartPerStorePerMonth" width="400" height="100"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
@@ -112,7 +200,7 @@
         <div class="chart-container">
 
             <h3>Pizza Sales Data for selected timeframe </h3>
-            <div id="loading" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <div class=loadingDiv id="loading">Data is loading...</div> <br><!-- Loading indicator -->
             <canvas id="salesChart" width="400" height="200"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
@@ -120,21 +208,21 @@
         <div class="chart-container">
 
             <h3>Pizza Sales Data Per Store for selected timeframe </h3>
-            <div id="loading2" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <div class=loadingDiv id="loading2" ">Data is loading...</div> <br><!-- Loading indicator -->
             <canvas id="salesChartPerStore" width="400" height="200"></canvas>
-            <!-- The chart will be generated here by JavaScript -->
+                <!-- The chart will be generated here by JavaScript -->
+            </div>
+
         </div>
 
-    </div>
-
-    <div id="salesPerTime" class="container">
-        <div id="tablePerTime" class="table-container">
-            <!-- The table will be generated here by JavaScript -->
+        <div id="salesPerTime" class="container">
+            <div id="tablePerTime" class="table-container">
+                <!-- The table will be generated here by JavaScript -->
+            </div>
+            <div id="tablePerStore" class="table-container">
+                <!-- The table will be generated here by JavaScript -->
+            </div>
         </div>
-        <div id="tablePerStore" class="table-container">
-            <!-- The table will be generated here by JavaScript -->
-        </div>
-    </div>
 
 </body>
 

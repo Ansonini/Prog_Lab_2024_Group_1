@@ -53,7 +53,7 @@ function createChart(data, chartID, chartType) {
         var keys = Object.keys(data[0].data[0]);
         var xLabel = keys[0];
         var yLabel = keys[1];
-        console.log('Several dataset in data with', datasetLabel, "as identifier and values", xLabel, "and", yLabel);
+        console.log('Display',chartID,': Several dataset in data with', datasetLabel, "as identifier and values", xLabel, "and", yLabel);
 
         // Extract all unique x values for the x axis scale 
         var allXValues = new Set();
@@ -92,7 +92,7 @@ function createChart(data, chartID, chartType) {
         var xLabel = keys[0];
         var yLabel = keys[1];
         
-        console.log("found one dataset with", xLabel, 'and', yLabel);
+        console.log('Display',chartID,': found one dataset with', xLabel, 'and', yLabel);
 
         labels = data.map(item => item[xLabel]);
         datasets = [{

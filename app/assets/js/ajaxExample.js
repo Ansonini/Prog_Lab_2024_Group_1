@@ -6,6 +6,10 @@ $(document).ready(function () {
         var year = $('#year').val();
         var month = $('#month').val();
         var week = $('#week').val();
+        var timeframeType = $('#timeframeType').val();
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+
 
         // empty the table of previous value each time a dropdown gets changed
         $('#tablePerTime').empty();
@@ -33,11 +37,56 @@ $(document).ready(function () {
                 $('#month').hide()
                 if (mode && year && week) { ready = true };
                 break;
+        };
+
+        if (timeframeType == 'fixed') {
+            $('#floatingTimeInput').hide();
+            $('#fixedTimeInput').show();
+        } else {
+            $('#floatingTimeInput').show();
+            $('#fixedTimeInput').hide();
+            if (startDate && endDate) { ready = true; } else {
+                ready = false;
+                console.log('date not selected', endDate, startDate);
+
+            }
         }
 
         // if all the relevant data is set, the function continues to make ajax request
         if (ready) {
-            $('#loading').show(); // Show loading indicator for first table
+
+            $('#loading3').show(); // Show loading indicator for first table
+            // ajax request for the first data
+            $.ajax({
+                url: '/ajax/getSalesPerStorePerMonth.php',
+                type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week,
+                    timeframeType: timeframeType,
+                    startDate: startDate,
+                    endDate: endDate
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Call the functions from to display the table and the chart
+                        createChart(response.data, 'salesChartPerStorePerMonth', 'line');
+                    } else {
+                        $('#salesPerStorePerMonth').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading3').hide(); // Hide loading indicator when request is complete
+                }
+            });
+
+            $('#loading').show(); // Show loading indicator for second table 
             // ajax request for the first data
             $.ajax({
                 url: '/ajax/getSalesPerTimeframe.php',
@@ -47,7 +96,11 @@ $(document).ready(function () {
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week
+                    week: week,
+                    timeframeType: timeframeType,
+                    startDate: startDate,
+                    endDate: endDate
+
                 },
                 success: function (response) {
                     if (response.success) {
@@ -77,7 +130,10 @@ $(document).ready(function () {
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week
+                    week: week,
+                    timeframeType: timeframeType,
+                    startDate: startDate,
+                    endDate: endDate
                 },
                 success: function (response) {
                     if (response.success) {
@@ -97,38 +153,12 @@ $(document).ready(function () {
                 }
             });
 
-            $('#loading3').show(); // Show loading indicator for first table
-            // ajax request for the first data
-            $.ajax({
-                url: '/ajax/getSalesPerStorePerMonth.php',
-                type: 'POST',
-                data: {
-                    view: view,
-                    mode: mode,
-                    year: year,
-                    month: month,
-                    week: week
-                },
-                success: function (response) {
-                    if (response.success) {
-                        // Call the functions from to display the table and the chart
-                        createChart(response.data, 'salesChartPerStorePerMonth', 'line');
-                    } else {
-                        $('#salesPerStorePerMonth').html('<p>' + response.message + '</p>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log('AJAX Error:', status, error);
-                },
-                complete: function () {
-                    $('#loading3').hide(); // Hide loading indicator when request is complete
-                }
-            });
+
         }
     }
 
     // Trigger fetchData when any dropdown value changes
-    $('#view, #mode, #year, #month, #week').change(fetchData);
+    $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType').change(fetchData);
 
     // Trigger fetchData when the page loads
     fetchData();

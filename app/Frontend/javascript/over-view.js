@@ -338,11 +338,9 @@ function storesPercentBarChart(data) {
     sortedBarchartStores.setOption(option);
     sortedBarchartStores.resize({width: 1000, height: 500});
 }
-function pieChartStores(data) {
-    const pieChart = echarts.init(document.getElementById('stores-sold'));
-    var option;
-
-    option = {
+function pieChartStores() {
+    const pieChart = echarts.init(document.getElementById('pie-chart'));
+    var option = {
         tooltip: {
             trigger: 'item'
         },
@@ -371,26 +369,24 @@ function pieChartStores(data) {
                     show: false
                 },
                 data: [
-                    { value: 1048, name: 'Search Engine' },
-                    { value: 735, name: 'Direct' },
-                    { value: 580, name: 'Email' },
-                    { value: 484, name: 'Union Ads' },
-                    { value: 300, name: 'Video Ads' }
-                ]
+                    { value: 1048, name: 'Others' },
+                    { value: 735, name: 'Pepperoni' },
+                    { value: 580, name: 'Margarita' },
+                    { value: 484, name: 'Hawaii' },
+                    { value: 300, name: 'Chicken BBQ' }
+                ],
+                color: ['#808080', '#98FF98', '#efc164', '#d287eb', '#87CEEB']
             }
         ]
     };
 
-    option && pieChart.setOption(option);
-    pieChart.resize({width: 500, height: 500})
+    pieChart.setOption(option);
+    pieChart.resize({ width: 500, height: 500 });
 }
-function mapStores(data) {
-    document.getElementById('loading-map').style.display = 'flex';
 
-    // Initialize the map and set its view to a specific location and zoom level
-    var map = L.map('mappyMap').setView([40.7128, -74.0060], 13);
+function mapStores() {
+    var map = L.map('mappyMap').setView([50.13053355, 8.69233311], 18);
 
-    // Load and display tile layer on the map (OpenStreetMap tiles)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
@@ -399,6 +395,9 @@ function mapStores(data) {
     map.on('load', function() {
         document.getElementById('loading-map').style.display = 'none';
     });
+
+    // Show the map container
+    document.getElementById('mappyMap').style.display = 'block';
 }
 
 // to filter the dropdown list of stores

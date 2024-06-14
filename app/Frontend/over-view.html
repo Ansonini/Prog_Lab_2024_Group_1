@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Main Statistics</title>
+    <!--The CSS stylesheets-->
     <link rel="stylesheet" href="css/over-view.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!--script libraryies-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="javascript/over-view.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!--My Javascript file where all the javascript functions are-->
+    <script src="javascript/over-view.js"></script>
 </head>
-
-<body>
+<!--When commenting the body to load all the testscripts you need to uncommen the body below-->
+<!--<body>-->
 <!-- loading the javascript files functions -->
-<!-- <body onload="lineChartSales();storesBarChart();">     -->
+<body onload="pieChartStores(), mapStores();">
 <header>
     <header-text>Stores Information</header-text>
     <div class="menu">
@@ -102,15 +106,26 @@
             <div id="loading-bar-nopercent" style="display: none;">Loading...</div>
             <div id="stores-sold-nopercent" style="width: 1000px; height: 500px;"></div>
         </div>
-        <div class="barchart-percent">
+        <div class="pie-charts">
             <div id="loading-pie-chart-pizza" style="display: none;">Loading...</div>
             <div id="pie-chart" style="width: 500px; height: 500px;"></div>
+            <div id="checkbox" style="margin-bottom: 10px">
+                <input type="checkbox" id="showAll" onclick="pieChartStores()"> Show All Sizes,
+                <input type="checkbox" id="showSmall" onclick="pieChartStores()"> Show Small Pizzas,
+                <input type="checkbox" id="showMedium" onclick="pieChartStores()"> Show Medium Pizzas,
+                <input type="checkbox" id="showLarge" onclick="pieChartStores()"> Show Large Pizzas
+            </div>
         </div>
         <div class="map">
-            <div id="loading-map" style="display: none;">Loading...</div>
-            <div id="mappyMap" style="width: 800px; height: 500px;"></div>
+<!--            <div id="loading-map">Loading...</div>-->
+            <div id="mappyMap"></div>
         </div>
     </div>
 </div>
 </body>
+<!--<script>-->
+<!--    window.onload = function() {-->
+<!--        pieChartStores();-->
+<!--    };-->
+<!--</script>-->
 </html>

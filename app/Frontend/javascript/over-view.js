@@ -73,7 +73,7 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.success) {
-                        storesValueBarChart(response.data);
+                        storesPercentBarChart(response.data);
                     } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
@@ -83,6 +83,31 @@ $(document).ready(function () {
                 },
                 complete: function () {
                     $('#loading-stores-sold').hide();
+                }
+            });
+            $('#loading-bar-no-percent').show();
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
+                success: function (response) {
+                    if (response.success) {
+                        storesValueBarChart(response.data);
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-bar-no-percent').hide();
                 }
             });
         }
@@ -130,9 +155,9 @@ function lineChartSales(data) {
         echarts.dispose(existingChart);
     }
     if(document.getElementById('data-display').value === 'units') {
-        var yAxisLabel = 'Units Sold';
+        var yAxisLabel = 'Units Sold in Thousands';
     } else {
-        var yAxisLabel = 'Revenue';
+        var yAxisLabel = 'Revenue in Thousands';
     }
     if(document.getElementById('sold-time').value === 'weekView') {
         var xAxisLabel = 'Week Days';
@@ -152,9 +177,9 @@ function lineChartSales(data) {
             }
         },
         grid: {
-            left: '2%',
+            left: '6%',
             right: '2%',
-            bottom: '10%',
+            bottom: '5%',
             containLabel: true
         },
         xAxis: {
@@ -189,14 +214,14 @@ function lineChartSales(data) {
     overAllSold.resize({width: 1000, height: 400})
 
 }
-// Showing the total sales for each store in the selected time frame
+// Showing the total Sales/Revenue for each store in the selected time frame
 function storesValueBarChart(data) {
     var keys = Object.keys(data[0]);
     var storeID = keys[0];
     var storeValue = keys[1];
 
 
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold'));
+    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-no-percent'));
 
     var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
     if (existingChart) {
@@ -214,9 +239,9 @@ function storesValueBarChart(data) {
     var sortedStoreID = storeDataWithStoreID.map(item => item.category);
 
     if(document.getElementById('data-display').value === 'units') {
-        var yAxisLabel = 'Units Sold';
+        var yAxisLabel = 'Units Sold in Thousands';
     } else {
-        var yAxisLabel = 'Revenue';
+        var yAxisLabel = 'Revenue in Thousands';
     }
     var option = {
         title: {
@@ -229,7 +254,7 @@ function storesValueBarChart(data) {
             }
         },
         grid: {
-            left: '3%',
+            left: '8%',
             right: '4%',
             bottom: '3%',
             containLabel: true
@@ -272,13 +297,13 @@ function storesValueBarChart(data) {
     option && sortedBarchartStores.setOption(option);
     sortedBarchartStores.resize({width: 1000, height: 500})
 }
-// Showing the percentage of total sales for each store in comparison to the total sales in the selected time frame
+// Showing the percentage of total Sales/Revenue for each store in comparison to the total sales in the selected time frame
 function storesPercentBarChart(data) {
     var keys = Object.keys(data[0]);
     var storeData = keys[0];
     var storeID = keys[1];
 
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold'));
+    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-percent'));
 
     var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
     if (existingChart) {
@@ -292,19 +317,24 @@ function storesPercentBarChart(data) {
 
     storeDataWithStoreID.sort((a, b) => b.value - a.value);
 
-    var totalValue = storeDataWithStoreID.reduce((sum, item) => sum + item.value, 0);
+    var totalValue = storeDataWithStoreID.reduce((sum, item) => sum + parseFloat(item.value), 0);
 
-    var storeDataWithPercentage = storeDataWithStoreID.map(item => ({
-        value: (item.value / totalValue * 100).toFixed(2), // convert to percentage and round to 2 decimal places
-        category: item.category
-    }));
+    var sortedStoreData = storeDataWithStoreID.map(item => {
+        return parseFloat(((item.value / totalValue) * 100).toFixed(2));
+    });
 
-    var sortedStoreData = storeDataWithPercentage.map(item => item.value);
-    var sortedStoreID = storeDataWithPercentage.map(item => item.category);
+    var sortedStoreID = storeDataWithStoreID.map(item => item.category);
+
+    var yAxisLabel;
+    if (document.getElementById('data-display').value === 'units') {
+        yAxisLabel = 'Percentage of Units Sold';
+    } else {
+        yAxisLabel = 'Percentage of Revenue';
+    }
 
     var option = {
         title: {
-            text: 'Sales Data as Percentage of Total'
+            text: 'Sales Data'
         },
         tooltip: {
             trigger: 'axis',
@@ -312,17 +342,48 @@ function storesPercentBarChart(data) {
                 type: 'shadow'
             },
             formatter: function (params) {
-                return params[0].name + ': ' + params[0].data + '%';
+                var total = 0;
+                params.forEach(function (item) {
+                    total += item.value;
+                });
+                return params[0].name + '<br>' + params.map(function (item) {
+                    return item.marker + item.seriesName + ' % : ' + item.value.toFixed(2) + '%';
+                })//.join('<br>') + '<br>Total: ' + total.toFixed(2) + '%';
             }
+        },
+
+        grid: {
+            left: '8%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
         },
         xAxis: {
             type: 'category',
-            data: sortedStoreID
+            data: sortedStoreID,
+            name: 'Store Names',
+            nameLocation: 'middle',
+            nameGap: 50,
+            nameTextStyle: {
+                fontSize: 16
+            },
+            axisLabel: {
+                formatter: '{value}',
+                rotate: 45
+            },
         },
         yAxis: {
             type: 'value',
+            name: yAxisLabel,
+            nameLocation: 'end',
+            nameGap: 10,
+            nameTextStyle: {
+                fontSize: 16
+            },
             axisLabel: {
-                formatter: '{value}%'
+                formatter: '{value}%',
+                rotate: 45,
+                padding: [0, 20, 0, 0]
             }
         },
         series: [{
@@ -414,9 +475,6 @@ function pieChartStores() {
     pieChart.resize({ width: 500, height: 500 });
 }
 
-// Initialize the pie chart when the page loads
-pieChartStores();
-
 function mapStores() {
     var map = L.map('mappyMap').setView([50.13053355, 8.69233311], 18);
 
@@ -462,7 +520,7 @@ function testfunc(data) {
     var storeID = keys[0];
     var storeValue = keys[1];
 
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold'));
+    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-percent'));
 
     var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
     if (existingChart) {
@@ -541,7 +599,7 @@ function testfunction2(data) {
         var storeID = keys[0];
         var storeValue = keys[1];
 
-        const sortedBarchartStores = echarts.init(document.getElementById('stores-sold'));
+        const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-percent'));
 
         var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
         if (existingChart) {

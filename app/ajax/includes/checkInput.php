@@ -36,8 +36,10 @@ if (isset($_POST['view'])) {
             exit;
         }
     } else {
-        echo json_encode(['success' => false, 'message' => 'Missing timeframeType']);
-        exit;
+        //echo json_encode(['success' => false, 'message' => 'Missing timeframeType']);
+        //exit;
+        // for now to avoid error messages
+        $timeframeType = 'fixed';
     }
 
 

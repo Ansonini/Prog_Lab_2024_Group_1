@@ -58,7 +58,7 @@
             <!-- choose what Data will be visualized by the Graphs -->
             <label for="data-display">Select Data to Display</label>
             <select id="data-display">
-                <option value="units">Units</option>
+                <option value="units">Units Sold</option>
                 <option value="revenue">Revenue</option>
             </select>
 
@@ -106,14 +106,14 @@
             <div id="loading-bar-nopercent" style="display: none;">Loading...</div>
             <div id="stores-sold-nopercent" style="width: 1000px; height: 500px;"></div>
         </div>
-        <div class="pie-charts">
+        <div class="pie-charts" style="position: relative;">
             <div id="loading-pie-chart-pizza" style="display: none;">Loading...</div>
-            <div id="pie-chart" style="width: 500px; height: 500px;"></div>
-            <div id="checkbox" style="margin-bottom: 10px">
-                <input type="checkbox" id="showAll" onclick="pieChartStores()"> Show All Sizes,
-                <input type="checkbox" id="showSmall" onclick="pieChartStores()"> Show Small Pizzas,
-                <input type="checkbox" id="showMedium" onclick="pieChartStores()"> Show Medium Pizzas,
-                <input type="checkbox" id="showLarge" onclick="pieChartStores()"> Show Large Pizzas
+            <div id="pie-chart" style="border: 1px solid grey; margin: 20px; width: 500px; height: 500px; position: relative;"></div>
+            <div id="checkboxes">
+                <input type="checkbox" id="showAll" onclick="updatePieChart()" checked> Show All Sizes,
+                <input type="checkbox" id="showSmall" onclick="updatePieChart()"> Show Small Pizzas,
+                <input type="checkbox" id="showMedium" onclick="updatePieChart()"> Show Medium Pizzas,
+                <input type="checkbox" id="showLarge" onclick="updatePieChart()"> Show Large Pizzas
             </div>
         </div>
         <div class="map">

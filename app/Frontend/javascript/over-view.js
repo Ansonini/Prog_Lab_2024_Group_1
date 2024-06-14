@@ -338,9 +338,39 @@ function storesPercentBarChart(data) {
     sortedBarchartStores.setOption(option);
     sortedBarchartStores.resize({width: 1000, height: 500});
 }
+function updatePieChart() {
+    const showAll = document.getElementById('showAll').checked;
+    const showSmall = document.getElementById('showSmall').checked;
+    const showMedium = document.getElementById('showMedium').checked;
+    const showLarge = document.getElementById('showLarge').checked;
+
+    if (event.target !== showAll && event.target.checked) {
+        showAll.checked = false;
+    }
+
+    const seriesData = [
+        { value: 1048, name: 'Others', size: 'Large' },
+        { value: 735, name: 'Pepperoni', size: 'Medium' },
+        { value: 580, name: 'Margarita', size: 'Small' },
+        { value: 484, name: 'Hawaii', size: 'Medium' },
+        { value: 300, name: 'Chicken BBQ', size: 'Large' }
+    ];
+
+    const filteredData = seriesData.filter(item => {
+        if (showAll) return true;
+        if (showSmall && item.size === 'Small') return true;
+        if (showMedium && item.size === 'Medium') return true;
+        if (showLarge && item.size === 'Large') return true;
+        return false;
+    });
+
+    option.series[0].data = filteredData;
+    pieChart.setOption(option);
+}
+
 function pieChartStores() {
     const pieChart = echarts.init(document.getElementById('pie-chart'));
-    var option = {
+    option = {
         tooltip: {
             trigger: 'item'
         },
@@ -369,11 +399,11 @@ function pieChartStores() {
                     show: false
                 },
                 data: [
-                    { value: 1048, name: 'Others' },
-                    { value: 735, name: 'Pepperoni' },
-                    { value: 580, name: 'Margarita' },
-                    { value: 484, name: 'Hawaii' },
-                    { value: 300, name: 'Chicken BBQ' }
+                    { value: 1048, name: 'Others', size: 'Large' },
+                    { value: 735, name: 'Pepperoni', size: 'Medium' },
+                    { value: 580, name: 'Margarita', size: 'Small' },
+                    { value: 484, name: 'Hawaii', size: 'Medium' },
+                    { value: 300, name: 'Chicken BBQ', size: 'Large' }
                 ],
                 color: ['#808080', '#98FF98', '#efc164', '#d287eb', '#87CEEB']
             }
@@ -383,6 +413,9 @@ function pieChartStores() {
     pieChart.setOption(option);
     pieChart.resize({ width: 500, height: 500 });
 }
+
+// Initialize the pie chart when the page loads
+pieChartStores();
 
 function mapStores() {
     var map = L.map('mappyMap').setView([50.13053355, 8.69233311], 18);

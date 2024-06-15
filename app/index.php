@@ -8,5 +8,6 @@ include '/var/www/html/ajax/includes/connectDB.php';
 // include 'Frontend/storeInfo.html';
 
 include 'ajaxExample.html';
+include 'storeInfoNew.html';
 ?>
 

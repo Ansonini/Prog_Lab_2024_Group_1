@@ -44,7 +44,7 @@ $(document).ready(function () {
             $('#loading3').show(); // Show loading indicator for first table
             // ajax request for the first data
             $.ajax({
-                url: '/ajax/getSalesPerStorePerMonth.php',
+                url: '/ajax/getRevenuePerPizza.php',
                 type: 'POST',
                 data: {
                     view: view,
@@ -72,7 +72,7 @@ $(document).ready(function () {
             $('#loading').show(); // Show loading indicator for second table 
             // ajax request for the first data
             $.ajax({
-                url: '/ajax/getSalesPerTimeframe.php',
+                url: '/ajax/getSalesPerPizza.php',
                 type: 'POST',
                 data: {
                     view: view,

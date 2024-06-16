@@ -26,9 +26,6 @@ if ($mode === 'units') {
 
 $sql .= " FROM orders o WHERE date(o.orderDate) ";
 
-if ($timeframeType === 'floating'){
-    $sql .= " between '$startDate' and '$endDate' ";
-}
 
 
 $sql .=  " GROUP BY o.storeID";

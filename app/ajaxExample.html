@@ -149,19 +149,6 @@
         <div class="dropdown-group">
             <label class="group-title">Timeframe Settings</label>
 
-            <select class="dropdown" id="timeframeType">
-                <option value="fixed">Fixed Timeframe</option>
-                <option value="floating">Floating Timeframe</option>
-            </select>
-
-            <div id="floatingTimeInput" class="inputs">
-                <label for="startDateLabel">Start Date:</label>
-                <input type="date" id="startDate" class="date-input" " value="2020-01-01" min="2020-01-01"
-                    max="2022-12-31">
-                <label for="endDateLabel">End Date:</label>
-                <input type="date" id="endDate" class="date-input" value="2022-12-31" min="startDate" max="2022-12-31">
-            </div>
-
             <div id="fixedTimeInput">
                 <select class="dropdown" id="year">
                     <option value="2020">2020</option>
@@ -218,21 +205,22 @@
         <div class="chart-container">
 
             <h3>Pizza Sales Data Per Store for selected timeframe </h3>
-            <div class=loadingDiv style="display: none;" id="loading2" ">Data is loading...</div> <br><!-- Loading indicator -->
+            <div class=loadingDiv style="display: none;" id="loading2">Data is loading...</div>
+            <br><!-- Loading indicator -->
             <canvas id="salesChartPerStore" width="400" height="200"></canvas>
-                <!-- The chart will be generated here by JavaScript -->
-            </div>
-
+            <!-- The chart will be generated here by JavaScript -->
         </div>
 
-        <div id="salesPerTime" class="container">
-            <div id="tablePerTime" class="table-container">
-                <!-- The table will be generated here by JavaScript -->
-            </div>
-            <div id="tablePerStore" class="table-container">
-                <!-- The table will be generated here by JavaScript -->
-            </div>
+    </div>
+
+    <div id="salesPerTime" class="container">
+        <div id="tablePerTime" class="table-container">
+            <!-- The table will be generated here by JavaScript -->
         </div>
+        <div id="tablePerStore" class="table-container">
+            <!-- The table will be generated here by JavaScript -->
+        </div>
+    </div>
 
 </body>
 

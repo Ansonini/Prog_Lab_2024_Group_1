@@ -6,9 +6,8 @@ $(document).ready(function () {
         var year = $('#year').val();
         var month = $('#month').val();
         var week = $('#week').val();
-        var timeframeType = $('#timeframeType').val();
-        var startDate = $('#startDate').val();
-        var endDate = $('#endDate').val();
+
+    
 
 
         // empty the table of previous value each time a dropdown gets changed
@@ -19,7 +18,6 @@ $(document).ready(function () {
         var ready = false
         switch (view) {
             case "completeView":
-                $('#year, #month, #week').hide()
                 if (mode) { ready = true };
                 break;
             case "yearView":
@@ -39,20 +37,6 @@ $(document).ready(function () {
                 break;
         };
 
-        if (timeframeType == 'fixed') {
-            $('#floatingTimeInput').hide();
-            $('#fixedTimeInput').show();
-        } else {
-            $('#floatingTimeInput').show();
-            $('#fixedTimeInput').hide();
-            if (startDate && endDate) {
-                ready = true;
-            } else {
-                ready = false;
-                console.log('date not selected', endDate, startDate);
-
-            }
-        }
 
         // if all the relevant data is set, the function continues to make ajax request
         if (ready) {
@@ -67,10 +51,7 @@ $(document).ready(function () {
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week,
-                    timeframeType: timeframeType,
-                    startDate: startDate,
-                    endDate: endDate
+                    week: week
                 },
                 success: function (response) {
                     if (response.success) {
@@ -98,10 +79,7 @@ $(document).ready(function () {
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week,
-                    timeframeType: timeframeType,
-                    startDate: startDate,
-                    endDate: endDate
+                    week: week
 
                 },
                 success: function (response) {
@@ -132,10 +110,7 @@ $(document).ready(function () {
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week,
-                    timeframeType: timeframeType,
-                    startDate: startDate,
-                    endDate: endDate
+                    week: week
                 },
                 success: function (response) {
                     if (response.success) {

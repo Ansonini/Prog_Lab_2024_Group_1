@@ -4,21 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Store Information</title>
-<link rel="stylesheet" href="storeInfo.css">
-<!--<style>
-  * { background-color:aliceblue ;}  
-  body { font-family: Arial, sans-serif; }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { border: 3px solid white; padding: 8px; text-align: center; }
-  th { background-color: dodgerblue; }
-</style>-->
+<link rel="stylesheet" href="storeInfoNew.css">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+
+<!-- scripts for chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@^3" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@^2" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1" defer></script>
+
+
 </head>
 <body>
 <h1>Store Information</h1>
 
 <!--search bar to retrieve stores-->
 <div class="searchbar">
-    <input type="text" placeholder="Search for stores...">
+    <input type="text" placeholder="Select a stores...">
   </div>
 
 <table id="storeTable">
@@ -39,11 +41,58 @@
 </table>
 
 <script>
-// Paste the JSON data directly inside the script tag or load it from an external file
-const storeData = [
-  // JSON data extracted earlier
-  // Include here your JSON data directly
-];
+/* Paste the JSON data directly inside the script tag or load it from an external file
+
+const storeData = [ 
+                    
+]
+// Function to populate the table with store data
+populateTable(data) {
+  const table = document.getElementById('storeTable').getElementsByTagName('tbody')[0];
+  data.forEach(store => {
+    let row = table.insertRow();
+    Object.values(store).forEach(text => {
+      let cell = row.insertCell();
+      cell.textContent = text.replace(/\"/g, ''); // Remove extra quotes
+    });
+});
+}
+
+// Call the function with the store data
+$.ajax({
+                url: '/ajax/getStoreInfo.php',
+                type: 'POST',
+                data: {
+                  storID : storeID,
+                  zipcode : zipcode,
+                  state : state_abbr,
+                  latitude : latitude,
+                  longitude : longitude,
+                  city : city,
+                  state : state,
+                  distance : distance
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Call the function from showTable.js
+                        displayJsonTable(response.data, "Store Informations");
+
+                    } else {
+                        $('#StoreInfoNew').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading2').hide(); // Hide loading indicator when request is complete
+                }
+            });
+
+populateTable(storeData);*/
+
+
+
 
 // Function to populate the table with store data
 function populateTable(data) {
@@ -52,13 +101,47 @@ function populateTable(data) {
     let row = table.insertRow();
     Object.values(store).forEach(text => {
       let cell = row.insertCell();
-      cell.textContent = text.replace(/\"/g, ''); // Remove extra quotes
+      cell.textContent = text ? text.replace(/\"/g, '') : ''; // Remove extra quotes
     });
   });
 }
 
-// Call the function with the store data
-populateTable(storeData);
+// Perform AJAX request to fetch store information
+$.ajax({
+  url: '/ajax/getStoreInfo.php', // Ensure this URL is correct and points to your PHP script
+  type: 'POST',
+  dataType: 'json', // Expect JSON response
+  data: {
+    storID: storeID,
+    zipcode: zipcode,
+    state: state_abbr,
+    latitude: latitude,
+    longitude: longitude,
+    city: city,
+    state: state,
+    distance: distance
+  },
+  success: function (response) {
+    if (response.success) {
+      populateTable(response.data); // Populate the table with response data
+    } else {
+      $('#StoreInfoNew').html('<p>' + response.message + '</p>');
+    }
+  },
+  error: function (xhr, status, error) {
+    console.log('AJAX Error:', status, error);
+    $('#StoreInfoNew').html('<p>An error occurred: ' + error + '</p>');
+  },
+  complete: function () {
+    $('#loading2').hide(); // Hide loading indicator when request is complete
+  }
+});
+
+// Dummy data placeholder, remove or replace with actual data fetch logic
+const storeData = []; // This is a placeholder and will not be used if AJAX works correctly
+populateTable(storeData); // Ensure this is called if you have some default data to display
+
+
 </script>
 
 </body>

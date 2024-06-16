@@ -18,20 +18,21 @@ $(document).ready(function () {
         var ready = false
         switch (view) {
             case "completeView":
+                $('#year, #month, #week, #timeframeSettingsLabel').hide()
                 if (mode) { ready = true };
                 break;
             case "yearView":
-                $('#year').show()
+                $('#year, #timeframeSettingsLabel').show()
                 $('#month, #week').hide()
                 if (mode && year) { ready = true };
                 break;
             case "monthView":
-                $('#year, #month').show()
+                $('#year, #month, #timeframeSettingsLabel').show()
                 $('#week').hide()
                 if (mode && year && month) { ready = true };
                 break;
             case "weekView":
-                $('#year, #week').show()
+                $('#year, #week, #timeframeSettingsLabel').show()
                 $('#month').hide()
                 if (mode && year && week) { ready = true };
                 break;

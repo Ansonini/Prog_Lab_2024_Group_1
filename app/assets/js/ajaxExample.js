@@ -133,18 +133,11 @@ $(document).ready(function () {
 
 
         }
-        
     }
 
     // Trigger fetchData when any dropdown value changes
-    $('#view, #mode, #year, #month, #week').change(fetchData);
+    $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType').change(fetchData);
 
     // Trigger fetchData when the page loads
     fetchData();
-    fetchSalesPerHours();
-    fetchStoreLocations();
-    fetchStoreClientDistance()
-    fetchPizzaSalesPerPlacement();
 });
-    
-

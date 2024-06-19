@@ -24,7 +24,8 @@ if ($mode === 'units') {
     $sql .= "SUM(o.total) as revenue";
 }
 
-$sql .= " FROM orders o";
+$sql .= " FROM orders o WHERE date(o.orderDate) ";
+
 
 
 $sql .=  " GROUP BY o.storeID";

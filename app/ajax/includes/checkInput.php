@@ -27,6 +27,34 @@ if (isset($_POST['view'])) {
         exit;
     }
 
+
+
+    // if we ever do floating timeframe
+
+    // if (isset($_POST['timeframeType'])) {
+    //     if ($_POST['timeframeType'] === 'fixed' || $_POST['timeframeType'] === 'floating') {
+    //         $timeframeType = $_POST['timeframeType'];
+    //     } else {
+    //         echo json_encode(['success' => false, 'message' => 'Invalid timeframeType']);
+    //         exit;
+    //     }
+    // } else {
+    //     //echo json_encode(['success' => false, 'message' => 'Missing timeframeType']);
+    //     //exit;
+    //     // for now to avoid error messages
+    //     $timeframeType = 'fixed';
+    // }
+    // if ($timeframeType === 'floating') {
+    //     if (isset($_POST['startDate']) || isset($_POST['endDate'])) {
+    //         $startDate = $_POST['startDate'];
+    //         $endDate = $_POST['endDate'];
+    //     } else {
+    //         echo json_encode(['success' => false, 'message' => 'Missing start or end date']);
+    //         exit;
+    //     }
+    // }
+
+
     if ($view !== 'completeView') {
         if (isset($_POST['year'])) {
             $year = intval($_POST['year']);

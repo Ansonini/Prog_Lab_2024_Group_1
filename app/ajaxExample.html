@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dropdown Test</title>
+    <title>Dashboard testing</title>
     <style>
         .container {
             display: flex;
@@ -12,16 +12,20 @@
         }
 
         .table-container {
-            flex: 1;
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
             /* Table container takes up remaining space */
-            margin: 40px;
+            margin: 20px;
             /* Add some spacing between table and chart */
         }
 
         .chart-container {
-            flex: 1;
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
             /* Chart container takes up remaining space */
-            margin: 40px;
+            margin: 20px;
         }
 
         /* Style for table and chart */
@@ -37,11 +41,13 @@
             text-align: left;
         }
 
-       
+        canvas {
+            border: 1px solid black;
+        }
     </style>
 
     <!-- scripts for ajax -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" async></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
 
     <!-- scripts for chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@^3" defer></script>
@@ -55,50 +61,66 @@
 </head>
 
 <body>
+    <h1>Dashboard Testing</h1>
+
     <!-- create the dropdown to select the options -->
-    <h1>Select Options</h1>
 
-    <select id="view">
-        <option value="completeView">Complete View</option>
-        <option value="yearView">Year View</option>
-        <option value="monthView">Month View</option>
-        <option value="weekView">Week View</option>
-    </select>
+    <div class="dropdown-container">
+        <div class="dropdown-group">
+            <label class="group-title">View Settings</label>
+            <select class="dropdown" id="view">
+                <option value="completeView">Complete View</option>
+                <option value="yearView">Year View</option>
+                <option value="monthView">Month View</option>
+                <option value="weekView">Week View</option>
+            </select>
 
-    <select id="mode">
-        <option value="units">Units</option>
-        <option value="revenue">Revenue</option>
-    </select>
+            <select class="dropdown" id="mode">
+                <option value="units">Units</option>
+                <option value="revenue">Revenue</option>
+            </select>
+        </div>
 
-    <select id="year">
-        <option value="2020">2020</option>
-        <option value="2021">2021</option>
-        <option value="2022">2022</option>
-    </select>
 
-    <select id="month">
-        <!-- Generate month options from 1 to 12 -->
-        <script>
-            for (let i = 1; i <= 12; i++) {
-                document.write('<option value="' + i + '">' + i + '</option>');
-            }
-        </script>
-    </select>
+        <div class="dropdown-group">
+            <label id="timeframeSettingsLabel" class="group-title">Timeframe Settings</label>
 
-    <select id="week">
-        <!-- Generate week options from 1 to 52 -->
-        <script>
-            for (let i = 1; i <= 52; i++) {
-                document.write('<option value="' + i + '">' + i + '</option>');
-            }
-        </script>
-    </select>
+            <div id="fixedTimeInput">
+                <select class="dropdown" id="year">
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                </select>
 
+                <select class="dropdown" id="month">
+                    <!-- Generate month options from 1 to 12 -->
+                    <script>
+                        for (let i = 1; i <= 12; i++) {
+                            document.write('<option value="' + i + '">' + i + '</option>');
+                        }
+                    </script>
+                </select>
+
+                <select class="dropdown" id="week">
+                    <!-- Generate week options from 1 to 52 -->
+                    <script>
+                        for (let i = 1; i <= 52; i++) {
+                            document.write('<option value="' + i + '">' + i + '</option>');
+                        }
+                    </script>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- create the container for the graph and table -->
     <div id="salesPerStorePerMonth" class="container">
 
         <div class="chart-container">
             <h3>Monthly Pizza Sales Data Per Store over the 3 years</h3>
-            <div id="loading3" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <div class=loadingDiv style="display: none;" id="loading3">Data is loading...</div><br>
+            <!-- Loading indicator -->
             <canvas id="salesChartPerStorePerMonth" width="400" height="100"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
@@ -110,7 +132,8 @@
         <div class="chart-container">
 
             <h3>Pizza Sales Data for selected timeframe </h3>
-            <div id="loading" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <div class=loadingDiv style="display: none;" id="loading">Data is loading...</div>
+            <br><!-- Loading indicator -->
             <canvas id="salesChart" width="400" height="200"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
@@ -118,7 +141,8 @@
         <div class="chart-container">
 
             <h3>Pizza Sales Data Per Store for selected timeframe </h3>
-            <div id="loading2" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <div class=loadingDiv style="display: none;" id="loading2">Data is loading...</div>
+            <br><!-- Loading indicator -->
             <canvas id="salesChartPerStore" width="400" height="200"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>

@@ -8,15 +8,15 @@ include '/var/www/html/ajax/includes/connectDB.php';
 
 $sql = "SELECT 
             p.pizzaName, 
-            p.pizzaSize,
-            p.Price, 
-            COUNT(oi.SKU) as soldPizzas, 
-            p.Price * COUNT(oi.SKU) as RevenuePerPizza
+            (YEAR(o.orderDate)*100 + MONTH(o.orderDate)) as sellingMonth,
+            COUNT(oi.SKU) as soldPizzas
         FROM products p 
         JOIN orderItems oi ON oi.SKU = p.SKU 
         JOIN orders o ON o.orderID = oi.orderID 
-        GROUP BY p.pizzaName, p.pizzaSize, p.Price";
+        GROUP BY p.pizzaName, sellingMonth";
 
+// if query has mutliple dataset with first column as identifier and second and third as data
+$multipleDataset = true;
 
 //make query and return result
 include '/var/www/html/ajax/includes/makeQuery.php';

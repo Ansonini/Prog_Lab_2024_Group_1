@@ -53,7 +53,7 @@ function createChart(data, chartID, chartType) {
         var keys = Object.keys(data[0].data[0]);
         var xLabel = keys[0];
         var yLabel = keys[1];
-        console.log('Several dataset in data with', datasetLabel, "as identifier and values", xLabel, "and", yLabel);
+        console.log('Display', chartID, ': Several dataset in data with', datasetLabel, "as identifier and values", xLabel, "and", yLabel);
 
         // Extract all unique x values for the x axis scale 
         var allXValues = new Set();
@@ -91,8 +91,8 @@ function createChart(data, chartID, chartType) {
         var keys = Object.keys(data[0]);
         var xLabel = keys[0];
         var yLabel = keys[1];
-        
-        console.log("found one dataset with", xLabel, 'and', yLabel);
+
+        console.log('Display', chartID, ': found one dataset with', xLabel, 'and', yLabel);
 
         labels = data.map(item => item[xLabel]);
         datasets = [{
@@ -191,12 +191,22 @@ function getColor(datasetLabel, opacity, multipleDataset, chartType = 'default')
         'S872983': 'rgba(255, 159, 64, ',
         'S918734': 'rgba(255, 99, 132, ',
         'S948821': 'rgba(54, 162, 235, ',
+        // for the pizza
+        "Margherita Pizza": "rgba(255, 99, 132, ",
+        "Pepperoni Pizza": "rgba(54, 130, 235, ",
+        "Hawaiian Pizza": "rgba(255, 206, 86, ",
+        "Meat Lover's Pizza": "rgba(75, 192, 192, ",
+        "Veggie Pizza": "rgba(34, 139, 34, ",
+        "BBQ Chicken Pizza": "rgba(255, 159, 64, ",
+        "Buffalo Chicken Pizza": "rgba(255, 99, 71, ",
+        "Sicilian Pizza": "rgba(123, 40, 238, ",
+        "Oxtail Pizza": "rgba(153, 102, 255, "
     };
 
     // Get the base color from the palette
     let baseColor = colorPalette[datasetLabel] || defaultColor; // Default color if label not found
 
-    baseColor= darkenColor(baseColor, 40);
+    baseColor = darkenColor(baseColor, 40);
     // Set opacity if the if it is for the border color
     if (opacity === 'border') {
         baseColor = baseColor + '1)';

@@ -37,9 +37,7 @@
             text-align: left;
         }
 
-        canvas {
-            border: 1px solid black;
-        }
+       
     </style>
 
     <!-- scripts for ajax -->
@@ -136,6 +134,128 @@
         </div>
     </div>
 
+    <div id="storeLocations" class="container">
+        <div class="table-container">
+            <h3>Store Locations</h3>
+            <div id="loading4" style="display: none;">Loading...</div> <!-- Loading indicator -->
+            <table id="storeLocationsTable">
+                <thead>
+                    <tr>
+                        <th>Store ID</th>
+                        <th>Zipcode</th>
+                        <th>State Abbreviation</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Distance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <h1>Select Options</h1>
+
+    <select id="view">
+        <option value="completeView">Complete View</option>
+        <option value="yearView">Year View</option>
+        <option value="monthView">Month View</option>
+        <option value="weekView">Week View</option>
+    </select>
+
+    <select id="mode">
+        <option value="absolute">Absolute</option>
+        <option value="average">Average</option>
+    </select>
+
+    <select id="year">
+        <option value="alltime">All Time</option>
+        <option value="2020">2020</option>
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+    </select>
+
+    <select id="month">
+        <option value="alltime">All Time</option>
+        <!-- Generate month options from 1 to 12 -->
+        <script>
+            for (let i = 1; i <= 12; i++) {
+                document.write('<option value="' + i + '">' + i + '</option>');
+            }
+        </script>
+    </select>
+
+    <select id="week">
+        <option value="alltime">All Time</option>
+        <!-- Generate week options from 1 to 52 -->
+        <script>
+            for (let i = 1; i <= 52; i++) {
+                document.write('<option value="' + i + '">' + i + '</option>');
+            }
+        </script>
+    </select>
+
+    <div id="salesPerTime" class="container">
+        <div id="tablePerTime" class="table-container">
+            <h3>Sales Figures by Hour</h3>
+            <div id="loading4" style="display: none;">Loading...</div>
+            <table id="salesByHourTable">
+                <thead>
+                    <tr>
+                        <th>Time Interval</th>
+                        <th>Total Pizzas Sold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Distance Between Customer and Store</h1>
+        <div id="loading">Loading...</div>
+        <table id="distanceTable">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer ID</th>
+                    <th>Store ID</th>
+                    <th>Distance (km)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h1>Pizza Sales Per Placement</h1>
+        <label for="filterType">Filter by:</label>
+        <select id="filterType">
+            <option value="zipcode">Zipcode</option>
+            <option value="state">State</option>
+            <option value="city">City</option>
+        </select>
+        <button id="fetchDataBtn">Fetch Data</button>
+        <div id="loading">Loading...</div>
+        <table id="salesTable">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Total Pizzas Sold</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
 </body>
+
 
 </html>

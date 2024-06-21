@@ -215,7 +215,7 @@
     <div id="storeLocation" class="container">
         <div class="table-container">
             <h3>Store Locations</h3>
-            <div id="loadingDiv" style="display: none;">Loading</div> 
+            <div id="loadingDiv4" class="loadingDiv">Loading...</div>
             <table id="storeLocationsTable">
                 <thead>
                     <tr>
@@ -235,53 +235,62 @@
             </table>
         </div>
     </div>
+    
 
     
     <h1>Select Options</h1>
 
-    <select id="view">
-        <option value="completeView">Complete View</option>
-        <option value="yearView">Year View</option>
-        <option value="monthView">Month View</option>
-        <option value="weekView">Week View</option>
-    </select>
+    <div class="dropdown-container">
+        <div class="dropdown-group">
+            <label class="group-title">View Settings</label>
+            <select class="dropdown" id="view">
+                <option value="completeView">Complete View</option>
+                <option value="yearView">Year View</option>
+                <option value="monthView">Month View</option>
+                <option value="weekView">Week View</option>
+            </select>
 
-    <select id="mode">
-        <option value="absolute">Absolute</option>
-        <option value="average">Average</option>
-    </select>
+            <select class="dropdown" id="mode">
+                <option value="average">Average</option>
+                <option value="absolute">Absolute</option>
+            </select>
+        </div>
 
-    <select id="year">
-        <option value="alltime">All Time</option>
-        <option value="2020">2020</option>
-        <option value="2021">2021</option>
-        <option value="2022">2022</option>
-    </select>
-
-    <select id="month">
-        <option value="alltime">All Time</option>
-        <!-- Generate month options from 1 to 12 -->
-        <script>
-            for (let i = 1; i <= 12; i++) {
-                document.write('<option value="' + i + '">' + i + '</option>');
-            }
-        </script>
-    </select>
-
-    <select id="week">
-        <option value="alltime">All Time</option>
-        <!-- Generate week options from 1 to 52 -->
-        <script>
-            for (let i = 1; i <= 52; i++) {
-                document.write('<option value="' + i + '">' + i + '</option>');
-            }
-        </script>
-    </select>
+        <div class="dropdown-group">
+            <label id="timeframeSettingsLabel" class="group-title">Timeframe Settings</label>
+            <div id="fixedTimeInput">
+                <select class="dropdown" id="year">
+                    <option value="alltime">All Time</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                </select>
+                <select class="dropdown" id="month">
+                    <option value="alltime">All Time</option>
+                    <!-- Generate month options from 1 to 12 -->
+                    <script>
+                        for (let i = 1; i <= 12; i++) {
+                            document.write('<option value="' + i + '">' + i + '</option>');
+                        }
+                    </script>
+                </select>
+                <select class="dropdown" id="week">
+                    <option value="alltime">All Time</option>
+                    <!-- Generate week options from 1 to 52 -->
+                    <script>
+                        for (let i = 1; i <= 52; i++) {
+                            document.write('<option value="' + i + '">' + i + '</option>');
+                        }
+                    </script>
+                </select>
+            </div>
+        </div>
+    </div>
 
     <div id="salesPerTime" class="container">
         <div id="tablePerTime" class="table-container">
-            <h3>Sales Figures by Hour</h3>
-            <div id="loading4" style="display: none;">Loading...</div>
+            <h3>Sales by Hours</h3>
+            <div id="loadingDiv5" class="loadingDiv">Loading...</div>
             <table id="salesByHourTable">
                 <thead>
                     <tr>
@@ -295,45 +304,51 @@
             </table>
         </div>
     </div>
-    <div class="container">
-        <h1>Distance Between Customer and Store</h1>
-        <div id="loading">Loading...</div>
-        <table id="distanceTable">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Customer ID</th>
-                    <th>Store ID</th>
-                    <th>Distance (km)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be dynamically added here by JavaScript -->
-            </tbody>
-        </table>
+
+    <div id="customerStoreDistance" class="container">
+        <div class="table-container">
+            <h3>Distance Between Customer and Store</h3>
+            <div id="loadingDiv6" class="loadingDiv">Loading...</div>
+            <table id="distanceTable">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer ID</th>
+                        <th>Store ID</th>
+                        <th>Distance (km)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be dynamically added here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="container">
-        <h1>Pizza Sales Per Placement</h1>
-        <label for="filterType">Filter by:</label>
-        <select id="filterType">
-            <option value="zipcode">Zipcode</option>
-            <option value="state">State</option>
-            <option value="city">City</option>
-        </select>
-        <button id="fetchDataBtn">Fetch Data</button>
-        <div id="loading">Loading...</div>
-        <table id="salesTable">
-            <thead>
-                <tr>
-                    <th>Location</th>
-                    <th>Total Pizzas Sold</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be added here by JavaScript -->
-            </tbody>
-        </table>
+    
+    <div id="pizzaSalesPerPlacement" class="container">
+        <div class="table-container">
+            <h3>Pizza Sales Per Placement</h3>
+            <label for="filterType">Filter by:</label>
+            <select id="filterType" class="dropdown">
+                <option value="zipcode">Zipcode</option>
+                <option value="state">State</option>
+                <option value="city">City</option>
+            </select>
+            <div id="loadingDiv7" class="loadingDiv">Loading...</div>
+            <table id="salesPlacementTable">
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Total Pizzas Sold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
+    
 
 
 </body>

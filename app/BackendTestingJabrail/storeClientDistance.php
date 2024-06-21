@@ -1,5 +1,6 @@
 <?php
 // Подключение к базе данных
+include '/var/www/html/ajax/includes/checkInput.php';
 include '/var/www/html/ajax/includes/connectDB.php';
 
 // Проверка соединения

@@ -303,7 +303,7 @@ $(document).ready(function () {
                         tableBody.append(row);
                     });
                 } else {
-                    $('#storeLocationsTable tbody').html('<tr><td colspan="8">Not available</td></tr>');
+                    $('#storeLocationsTable tbody').html('<p>' + response.message + '</p>');
                 }
             },
             error: function (xhr, status, error) {
@@ -311,14 +311,45 @@ $(document).ready(function () {
                 console.log('AJAX Error:', status, error);
             }
         });
+        // Function to fetch store count within a given range
+    function fetchStoreCountInRange() {
+        var minLatitude = $('#minLatitude').val();
+        var maxLatitude = $('#maxLatitude').val();
+        var minLongitude = $('#minLongitude').val();
+        var maxLongitude = $('#maxLongitude').val();
+
+        $.ajax({
+            url: '/BackendTestingJabrail/getStoreCountInRange.php',
+            type: 'POST',
+            data: {
+                minLatitude: minLatitude,
+                maxLatitude: maxLatitude,
+                minLongitude: minLongitude,
+                maxLongitude: maxLongitude
+            },
+            success: function (response) {
+                if (response.success) {
+                    $('#storeCount').text(response.data[0].store_count);
+                } else {
+                    $('#storeCountResult').text('<p>' + response.message + '</p>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log('AJAX Error:', status, error);
+                $('#storeCountResult').text('AJAX error occurred.');
+            }
+        });
+    }
     }
 
     // Trigger fetchData when any dropdown value changes
     $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType').change(fetchData);
     $('#filterType').change(fetchExtraData);
+    $('#findStoresBtn').click(fetchStoreCountInRange);
 
     // Trigger fetchData when the page loads
     fetchData();
     fetchStoreLocations();
     fetchExtraData(); 
+    fetchStoreCountInRange(); 
 });

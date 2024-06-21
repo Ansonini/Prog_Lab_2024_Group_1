@@ -348,6 +348,27 @@
             </table>
         </div>
     </div>
+    <div class="container">
+        <h1>Find Stores in Range</h1>
+        <div>
+            <label for="minLatitude">Min Latitude:</label>
+            <input type="number" id="minLatitude" step="0.01">
+        </div>
+        <div>
+            <label for="maxLatitude">Max Latitude:</label>
+            <input type="number" id="maxLatitude" step="0.01">
+        </div>
+        <div>
+            <label for="minLongitude">Min Longitude:</label>
+            <input type="number" id="minLongitude" step="0.01">
+        </div>
+        <div>
+            <label for="maxLongitude">Max Longitude:</label>
+            <input type="number" id="maxLongitude" step="0.01">
+        </div>
+        <button id="findStoresBtn">Find Stores</button>
+        <div id="storeCountResult">In this location range are <span id="storeCount"></span> stores.</div>
+    </div>
     
 
 

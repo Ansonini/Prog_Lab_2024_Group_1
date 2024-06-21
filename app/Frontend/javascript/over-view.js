@@ -6,6 +6,7 @@ $(document).ready(function () {
         var year = $('#yearDropdown').val();
         var month = $('#monthDropdown').val();
         var week = $('#weekDropdown').val();
+        var toggle_percent = $('#stores-sold-toggle').val();
 
 
         var ready = false;
@@ -73,7 +74,11 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.success) {
-                        storesPercentBarChart(response.data);
+                        if (toggle_percent === 'percent') {
+                            storesPercentBarChart(response.data);
+                        }else {
+                            storesValueBarChart(response.data);
+                        }
                     } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
@@ -98,7 +103,11 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.success) {
-                        storesValueBarChart(response.data);
+                        if (toggle_percent === 'percent') {
+                            storesPercentBarChart(response.data);
+                        }else {
+                            storesValueBarChart(response.data);
+                        }
                     } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
@@ -112,7 +121,7 @@ $(document).ready(function () {
             });
         }
     }
-
+    fetchData();
     $('#updateButton').click(fetchData);
 
     $('#sold-time').change(function () {
@@ -135,7 +144,7 @@ $(document).ready(function () {
                 break;
         }
     }).trigger('change');
-    fetchData();
+
 });
 
 // Showing the total Sales in a given timeframe
@@ -221,7 +230,7 @@ function storesValueBarChart(data) {
     var storeValue = keys[1];
 
 
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-no-percent'));
+    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
 
     var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
     if (existingChart) {
@@ -303,7 +312,7 @@ function storesPercentBarChart(data) {
     var storeData = keys[0];
     var storeID = keys[1];
 
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-percent'));
+    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
 
     var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
     if (existingChart) {
@@ -520,7 +529,7 @@ function testfunc(data) {
     var storeID = keys[0];
     var storeValue = keys[1];
 
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-percent'));
+    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
 
     var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
     if (existingChart) {
@@ -594,78 +603,84 @@ function testfunc(data) {
     sortedBarchartStores.resize({width: 1000, height: 500});
 }
 function testfunction2(data) {
+    var keys = Object.keys(data[0]);
+    var storeID = keys[0];
+    var storeValue = keys[1];
 
-        var keys = Object.keys(data[0]);
-        var storeID = keys[0];
-        var storeValue = keys[1];
 
-        const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-percent'));
+    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
 
-        var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
-        if (existingChart) {
-            echarts.dispose(existingChart);
-        }
+    var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
+    if (existingChart) {
+        echarts.dispose(existingChart);
+    }
 
-        var storeDataWithStoreID = data.map(item => ({
-            value: item[storeValue],
-            category: item[storeID]
-        }));
+    var storeDataWithStoreID = data.map(item => ({
+        value: item[storeValue],
+        category: item[storeID]
+    }));
 
-        storeDataWithStoreID.sort((a, b) => b.value - a.value);
+    storeDataWithStoreID.sort((a, b) => b.value - a.value);
 
-        var sortedStoreData = storeDataWithStoreID.map(item => item.value);
-        var sortedStoreID = storeDataWithStoreID.map(item => item.category);
+    var sortedStoreData = storeDataWithStoreID.map(item => item.value);
+    var sortedStoreID = storeDataWithStoreID.map(item => item.category);
 
-        var yAxisLabel = document.getElementById('data-display').value === 'units' ? 'Units Sold' : 'Sales';
-
-        var option = {
-            title: {
-                text: 'Sales Data'
+    if(document.getElementById('data-display').value === 'units') {
+        var yAxisLabel = 'Units Sold in Thousands';
+    } else {
+        var yAxisLabel = 'Revenue in Thousands';
+    }
+    var option = {
+        title: {
+            text: 'Sales Data'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        grid: {
+            left: '8%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: sortedStoreID,
+            name: 'Store Names',
+            nameLocation: 'middle',
+            nameGap: 50,
+            nameTextStyle: {
+                fontSize: 16
             },
-            tooltip: {
-                trigger: "axis",
-                axisPointer: {
-                    type: "shadow",
-                    axis: "x"
-                }
+            axisLabel: {
+                formatter: '{value}',
+                rotate: 45
             },
-            xAxis: {
-                type: 'category',
-                data: sortedStoreID,
-                name: 'Store Names',
-                nameLocation: 'middle',
-                nameGap: 50,
-                nameTextStyle: {
-                    fontSize: 16
-                },
-                axisLabel: {
-                    formatter: '{value}',
-                    rotate: 45,
-                    fontSize: 14
-                }
+        },
+        yAxis: {
+            type: 'value',
+            name: yAxisLabel,
+            nameTextStyle: {
+                fontSize: 16
             },
-            yAxis: {
-                type: 'value',
-                name: yAxisLabel,
-                nameTextStyle: {
-                    fontSize: 16
-                },
-                axisLabel: {
-                    formatter: '{value}',
-                    fontSize: 14
-                }
-            },
-            series: [{
-                name: 'Sales',
-                type: 'bar',
-                data: sortedStoreData,
-                itemStyle: {
-                    color: 'rgba(75, 192, 192, 0.8)'
-                }
-            }]
-        };
+            axisLabel: {
+                formatter: '{value}',
+                rotate: 45
+            }
+        },
+        series: [{
+            name: 'Sales',
+            type: 'bar',
+            data: sortedStoreData,
+            itemStyle: {
+                color: 'rgba(75, 192, 192, 0.8)'
+            }
+        }]
+    };
 
-        sortedBarchartStores.setOption(option);
-        sortedBarchartStores.resize({width: 1000, height: 500});
-
+    option && sortedBarchartStores.setOption(option);
+    sortedBarchartStores.resize({width: 1000, height: 500})
 }

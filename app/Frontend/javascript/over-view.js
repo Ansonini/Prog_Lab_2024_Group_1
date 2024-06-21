@@ -7,7 +7,7 @@ $(document).ready(function () {
         var month = $('#monthDropdown').val();
         var week = $('#weekDropdown').val();
         var toggle_percent = $('#stores-sold-toggle').val();
-
+        var pizzaSize = $('#pizza-size').val();
 
         var ready = false;
         switch (view) {
@@ -109,6 +109,25 @@ $(document).ready(function () {
                             storesValueBarChart(response.data);
                         }
                     } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-bar-no-percent').hide();
+                }
+            });
+            $('#loading-map').show();
+            $.ajax({
+                url: '../ajax/getStoreInfo.php',
+                type: 'POST',
+                data: {storeID: 'all'},
+                success: function (response) {
+                    if (response.success) {
+                        mapStores(response);
+                    }else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
                 },
@@ -484,7 +503,7 @@ function pieChartStores() {
     pieChart.resize({ width: 500, height: 500 });
 }
 
-function mapStores() {
+function mapStores(stores) {
     var map = L.map('mappyMap').setView([50.13053355, 8.69233311], 18);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -495,7 +514,10 @@ function mapStores() {
     map.on('load', function() {
         document.getElementById('loading-map').style.display = 'none';
     });
-
+    stores.forEach(store => {
+        var marker = L.marker([store.latitude, store.longitude]).addTo(map);
+        marker.bindTooltip(`Store ID: ${store.storeID}<br>X: ${store.distance}`, {permanent: false});
+    });
     // Show the map container
     document.getElementById('mappyMap').style.display = 'block';
 }

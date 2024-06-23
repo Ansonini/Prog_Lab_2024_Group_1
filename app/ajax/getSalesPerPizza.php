@@ -58,6 +58,7 @@ if ($perSize == "true") {
     $sql .= ", p.pizzaSize";
     $multipleDataset = true;
 };
+$sql .= " ORDER BY p.pizzaName";
 
 
 //make query and return result

@@ -43,10 +43,10 @@ $(document).ready(function () {
         // if all the relevant data is set, the function continues to make ajax request
         if (ready) {
 
-            $('#loading3').show(); // Show loading indicator for first table
+            $('#bigGraph1Loading').show(); // Show loading indicator for first table
             // ajax request for the first data
             $.ajax({
-                url: '/ajax/getSalesPerTimeframe.php',
+                url: '/ajax/getSalesPerPizzaOverTime.php',
                 type: 'POST',
                 data: {
                     view: view,
@@ -58,18 +58,77 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.success) {
                         // Call the functions from to display the table and the chart
-                        createChart(response.data, 'salesChartPerStorePerMonth', 'line');
+                        createChart(response.data, 'bigGraph1Canvas', 'line');
                     } else {
-                        $('#salesPerStorePerMonth').html('<p>' + response.message + '</p>');
+                        $('#bigGraph1').html('<p>' + response.message + '</p>');
                     }
                 },
                 error: function (xhr, status, error) {
                     console.log('AJAX Error:', status, error);
                 },
                 complete: function () {
-                    $('#loading3').hide(); // Hide loading indicator when request is complete
+                    $('#bigGraph1Loading').hide(); // Hide loading indicator when request is complete
                 }
             });
+
+            
+
+                $('#smallGraph1Canvas1Loading').show(); // Show loading indicator for first table
+                // ajax request for the first data
+                $.ajax({
+                    url: '/ajax/getSalesPerTimeframe.php',
+                    type: 'POST',
+                    data: {
+                        view: view,
+                        mode: mode,
+                        year: year,
+                        month: month,
+                        week: week
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Call the functions from to display the table and the chart
+                            createChart(response.data, 'smallGraph1Canvas1', 'line');
+                        } else {
+                            $('#smallGraph1Canvas1').html('<p>' + response.message + '</p>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('AJAX Error:', status, error);
+                    },
+                    complete: function () {
+                        $('#smallGraph1Canvas1Loading').hide(); // Hide loading indicator when request is complete
+                    }
+                });
+
+                $('#smallGraph1Canvas2Loading').show(); // Show loading indicator for first table
+                // ajax request for the first data
+                $.ajax({
+                    url: '/ajax/getSalesPerStorePerMonth.php',
+                    type: 'POST',
+                    data: {
+                        view: view,
+                        mode: mode,
+                        year: year,
+                        month: month,
+                        week: week
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Call the functions from to display the table and the chart
+                            createChart(response.data, 'smallGraph1Canvas2', 'line');
+                        } else {
+                            $('#smallGraph1Canvas2').html('<p>' + response.message + '</p>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('AJAX Error:', status, error);
+                    },
+                    complete: function () {
+                        $('#smallGraph1Canvas2Loading').hide(); // Hide loading indicator when request is complete
+                    }
+                });
+
 
             $('#loading').show(); // Show loading indicator for second table 
             // ajax request for the first data
@@ -90,7 +149,7 @@ $(document).ready(function () {
                         // Call the functions from to display the table and the chart
                         displayJsonTable(response.data, "tablePerTime");
 
-                        createChart(response.data, 'salesChart', 'bar', true);
+                        createChart(response.data, 'salesChart', 'line', true);
                     } else {
                         $('#salesPerTime').html('<p>' + response.message + '</p>');
                     }

@@ -184,13 +184,35 @@
 
 
     <!-- create the container for the graph and table -->
-    <div id="salesPerStorePerMonth" class="container">
+    <div id="bigGraph1" class="container">
 
         <div class="chart-container">
             <h3>Monthly Pizza Sales Data Per Store over the 3 years</h3>
-            <div class=loadingDiv style="display: none;" id="loading3">Data is loading...</div><br>
+            <div class=loadingDiv style="display: none;" id="bigGraph1Loading">Data is loading...</div><br>
             <!-- Loading indicator -->
-            <canvas id="salesChartPerStorePerMonth" width="400" height="100"></canvas>
+            <canvas id="bigGraph1Canvas" width="400" height="100"></canvas>
+            <!-- The chart will be generated here by JavaScript -->
+        </div>
+
+    </div>
+
+    <div id="smallGraph1" class="container">
+
+        <div class="chart-container">
+
+            <h3>Pizza Sales Data for selected timeframe </h3>
+            <div class=loadingDiv style="display: none;" id="smallGraph1Canvas1Loading">Data is loading...</div>
+            <br><!-- Loading indicator -->
+            <canvas id="smallGraph1Canvas1" width="400" height="200"></canvas>
+            <!-- The chart will be generated here by JavaScript -->
+        </div>
+
+        <div class="chart-container">
+
+            <h3>Pizza Sales Data Per Store for selected timeframe </h3>
+            <div class=loadingDiv style="display: none;" id="smallGraph1Canvas2Loading">Data is loading...</div>
+            <br><!-- Loading indicator -->
+            <canvas id="smallGraph1Canvas2" width="400" height="200"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
 

@@ -50,11 +50,8 @@ function createChart(data, chartID, chartType, reverseGrouping = false) {
     if ("data" in data[0]) {
 
         if (reverseGrouping) {
-            console.log('old data:', JSON.stringify(data));
             var flatenedData = flattenData(data);
-            console.log('flat data:', flatenedData);
             data = groupBy(flatenedData, 1);
-            console.log("group data: ", data);
         }
 
         var multipleDataset = true;

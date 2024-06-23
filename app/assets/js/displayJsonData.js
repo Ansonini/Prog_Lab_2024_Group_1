@@ -1,38 +1,41 @@
-// Display any Json table that has 1 layer
+// Display any Json table
 function displayJsonTable(data, tableContainerId) {
     if (!data || data.length === 0) {
         document.getElementById(tableContainerId).innerHTML = '<p>No data available</p>';
         return;
     }
 
-    let tableHtml = '<table>';
-    tableHtml += '<tr>';
+     // Flatten the data
+     let flattenedData = flattenData(data);
 
-    // Generate table headers based on keys of the first row
-    const headers = Object.keys(data[0]);
-    headers.forEach(key => {
-        tableHtml += '<th>' + key + '</th>';
-    });
-    tableHtml += '</tr>';
+     let tableHtml = '<table>';
+     tableHtml += '<tr>';
+ 
+     // Generate table headers based on keys of the first row of flattened data
+     const headers = Object.keys(flattenedData[0]);
+     headers.forEach(key => {
+         tableHtml += '<th>' + key + '</th>';
+     });
+     tableHtml += '</tr>';
+ 
+     // Generate table rows
+     flattenedData.forEach(row => {
+         tableHtml += '<tr>';
+         headers.forEach(key => {
+             tableHtml += '<td>' + row[key] + '</td>';
+         });
+         tableHtml += '</tr>';
+     });
+ 
+     tableHtml += '</table>';
+ 
+     document.getElementById(tableContainerId).innerHTML = tableHtml;
 
-    // Generate table rows
-    data.forEach(row => {
-        tableHtml += '<tr>';
-        headers.forEach(key => {
-            tableHtml += '<td>' + row[key] + '</td>';
-        });
-        tableHtml += '</tr>';
-    });
-
-    tableHtml += '</table>';
-
-    document.getElementById(tableContainerId).innerHTML = tableHtml;
 }
 
 
-
-// Create single or multi line chart out of any 2 layer json datasets
-function createChart(data, chartID, chartType) {
+// Create a line or bar chart out of any json file 
+function createChart(data, chartID, chartType, reverseGrouping = false) {
     var canvas = document.getElementById(chartID);
     var ctx = canvas.getContext('2d');
 
@@ -45,6 +48,15 @@ function createChart(data, chartID, chartType) {
     }
     var labels, datasets;
     if ("data" in data[0]) {
+
+        if (reverseGrouping) {
+            console.log('old data:', JSON.stringify(data));
+            var flatenedData = flattenData(data);
+            console.log('flat data:', flatenedData);
+            data = groupBy(flatenedData, 1);
+            console.log("group data: ", data);
+        }
+
         var multipleDataset = true;
         // Multiple datasets present
 
@@ -150,7 +162,7 @@ function getColor(datasetLabel, opacity, multipleDataset, chartType = 'default')
     // Define a color palette with colors corresponding to each dataset label
 
     // default Color for if the x axis isn't a storeID, without opacity
-    var defaultColor = 'rgba(75, 192, 192, '
+    var defaultColor = 'rgba(75, 192, 192, ';
 
     // if the chart is a line chart, option to chose the default color (will be set below)
     if (chartType === 'line' && multipleDataset == false) {
@@ -200,7 +212,14 @@ function getColor(datasetLabel, opacity, multipleDataset, chartType = 'default')
         "BBQ Chicken Pizza": "rgba(255, 159, 64, ",
         "Buffalo Chicken Pizza": "rgba(255, 99, 71, ",
         "Sicilian Pizza": "rgba(123, 40, 238, ",
-        "Oxtail Pizza": "rgba(153, 102, 255, "
+        "Oxtail Pizza": "rgba(153, 102, 255, ",
+        // for pizza size
+        "Smale": "rgba(rgba(75, 192, 192, ",
+        "Medium": "rgba(54, 130, 235, ",
+        "Large": "rgba(153, 102, 255, ",
+        "Extra Large": "rgba(123, 40, 238, "
+        
+
     };
 
     // Get the base color from the palette
@@ -223,60 +242,6 @@ function getColor(datasetLabel, opacity, multipleDataset, chartType = 'default')
 }
 
 
-// Create simple bar chart out of 2 column json data
-function createBarChart(data, chartID) {
-
-    var canvas = document.getElementById(chartID);
-    // Get the context of the canvas element
-    var ctx = canvas.getContext('2d');
-
-    // Get the chart instance associated with the canvas
-    var chartInstance = Chart.getChart(ctx);
-
-    // Check if the chart instance exists
-    if (chartInstance) {
-        // Destroy the chart instance
-        chartInstance.destroy();
-    }
-
-    if ("data" in data[0]) {
-        console.log('Several dataset in data');
-    } else {
-        console.log("only 1 data set found");
-    }
-
-    var keys = Object.keys(data[0]);
-    var xLabel = keys[0];
-    var yLabel = keys[1];
-
-    // Process data to extract labels and values based on passed field names
-    const labels = data.map(item => item[xLabel]);
-    const values = data.map(item => item[yLabel]);
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Sales Data',
-                data: values,
-                backgroundColor: 'rgba(75, 192, 192, ',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-
-
 // Helper function to generate random colors
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
@@ -296,4 +261,81 @@ function darkenColor(rgbaColor, amount) {
     const g = Math.max(rgba[1] - amount, 0);
     const b = Math.max(rgba[2] - amount, 0);
     return `rgba(${r}, ${g}, ${b}, `;
+}
+
+
+
+// flatten a nested json file into a simple table
+function flattenData(data) {
+    let flattenedData = [];
+
+    data.forEach(item => {
+        // Identify the keys for parent data and nested data
+        const keys = Object.keys(item);
+        const nestedKey = keys.find(key => Array.isArray(item[key]));
+        const parentKeys = keys.filter(key => key !== nestedKey);
+
+        if (nestedKey) {
+            const parentValues = parentKeys.reduce((obj, key) => {
+                obj[key] = item[key];
+                return obj;
+            }, {});
+
+            item[nestedKey].forEach(childItem => {
+                let flattenedItem = { ...parentValues, ...childItem };
+                flattenedData.push(flattenedItem);
+            });
+        } else {
+            flattenedData.push(item);
+        }
+    });
+
+    return flattenedData;
+}
+
+
+// Group a flat json file by one of the column 
+function groupBy(jsonData, groupByKeyIndex) {
+    // Ensure the index is within the range of the keys
+    if (groupByKeyIndex < 0 || groupByKeyIndex >= Object.keys(jsonData[0]).length) {
+        throw new Error('Invalid groupByKeyIndex');
+    }
+
+    // Initialize an empty array to store grouped data
+    let groupedArray = [];
+
+    // Initialize an empty object to temporarily store grouped data
+    let tempGroupedData = {};
+
+    // Iterate through each object in the JSON data
+    jsonData.forEach(item => {
+        // Get the keys and values of the object
+        let keys = Object.keys(item);
+        let values = Object.values(item);
+
+        // Extract the key to group by and the remaining keys
+        let groupByKey = keys[groupByKeyIndex];
+        let remainingKeys = keys.filter((key, index) => index !== groupByKeyIndex);
+        let remainingValues = values.filter((value, index) => index !== groupByKeyIndex);
+
+        // If the groupByKey value is not yet in tempGroupedData, initialize it as an empty array
+        if (!tempGroupedData[item[groupByKey]]) {
+            tempGroupedData[item[groupByKey]] = [];
+        }
+
+        // Push an object with the remaining keys and values into the tempGroupedData array
+        let groupedObject = {};
+        remainingKeys.forEach((key, index) => {
+            groupedObject[key] = remainingValues[index];
+        });
+        tempGroupedData[item[groupByKey]].push(groupedObject);
+    });
+
+    // Convert tempGroupedData object into an array of objects
+    for (let key in tempGroupedData) {
+        let groupByKey = Object.keys(tempGroupedData)[0]; // Fetch the groupByKey dynamically
+        groupedArray.push({ [groupByKey]: key, data: tempGroupedData[key] });
+    }
+
+    return groupedArray;
 }

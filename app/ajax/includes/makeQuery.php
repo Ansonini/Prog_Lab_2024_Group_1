@@ -19,8 +19,8 @@ if ($result) {
 
             $columns = array_values($row); // Get the row values as an array
             $storeID = $columns[0];        // First column is storeID
-            $x = (int)$columns[1]; // Combining second and third columns to form x
-            $y = (int)$columns[2];         // Fourth column is y
+            $x = $columns[1]; // Combining second and third columns to form x
+            $y = $columns[2];         // Fourth column is y
 
             if (!isset($data[$storeID])) {
                 $data[$storeID] = [

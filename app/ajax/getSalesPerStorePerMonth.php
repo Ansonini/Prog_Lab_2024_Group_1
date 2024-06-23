@@ -5,12 +5,6 @@ include '/var/www/html/ajax/includes/checkInput.php';
 // Start Connection
 include '/var/www/html/ajax/includes/connectDB.php';
 
-// Check connection
-if ($conn->connect_error) {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error]);
-    exit;
-}
-
 
 // set the selected field depending on the view
 // Prepare and execute SQL query

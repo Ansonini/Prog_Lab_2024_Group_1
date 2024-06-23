@@ -1,54 +1,63 @@
 <?php
 header('Content-Type: application/json');
 
-
-// include the DB connect file. ../ because its outside of this folder
+// Start Connection
 include '/var/www/html/ajax/includes/connectDB.php';
+
+// Verify input
 include '/var/www/html/ajax/includes/checkInput.php';
 
-$sql = "";
 
+$sql = "SELECT p.pizzaName,";
+
+// seperate per pizza size or not
+if ($perSize == "true") {
+    $sql .= " pizzaSize,";
+};
+
+// select units sold or revenu
 if ($mode === 'revenue') {
-    $sql .= "SELECT sub.pizzaName, sum(sub.revenuePerPizza) as revenue
+    $sql .= " sum(sub.unitsSold*p.price) as revenue
     FROM (";
 };
 
-$sql .= "SELECT p.pizzaName,
-            COUNT(oi.SKU) as unitsSold ";
-            
-if ($mode === 'revenue') {
-    $sql .= ", p.pizzaSize, p.Price,
-            p.Price * COUNT(oi.SKU) as revenuePerPizza";
-}
+if ($mode === 'units') {
+    $sql .= " sum(sub.unitsSold) as unitsSold
+    FROM (";
+};
 
-$sql .= " FROM products p 
-        JOIN orderItems oi ON oi.SKU = p.SKU 
-        JOIN orders o ON o.orderID = oi.orderID "; 
+$sql .= "SELECT oi.sku,
+            COUNT(oi.SKU) as unitsSold 
+        FROM orderItems oi "; 
 
+// filter depending on view
 switch ($view) {
     case 'completeView':
         break;
     case 'yearView':
-        $sql .= " WHERE YEAR(o.orderDate) = $year";
+        $sql .= " JOIN orders o ON o.orderID = oi.orderID 
+                    WHERE YEAR(o.orderDate) = $year";
         break;
     case 'monthView':
-        $sql .= " WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month";
+        $sql .= " JOIN orders o ON o.orderID = oi.orderID 
+                    WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month";
         break;
     case 'weekView':
-        $sql .= " WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week";
+        $sql .= " JOIN orders o ON o.orderID = oi.orderID 
+                    WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week";
         break;
 }
 
-$sql .= " GROUP BY p.pizzaName";
+// join with product table to fetch the name after counting -> faster as less joins to make
+$sql .= " GROUP BY oi.sku";
+$sql .= " ) as sub JOIN products p on p.sku = sub.sku
+            GROUP BY p.pizzaName";
 
-if ($mode === 'revenue') {
-    $sql .= ", p.pizzaSize, p.Price";
+// seperate per pizza size or not
+if ($perSize == "true") {
+    $sql .= ", p.pizzaSize";
+    $multipleDataset = true;
 };
-
-if ($mode === 'revenue') {
-    $sql .= ") as sub GROUP BY pizzaName";
-}; 
-
 
 
 //make query and return result

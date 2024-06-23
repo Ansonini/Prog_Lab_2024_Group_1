@@ -27,6 +27,21 @@ if (isset($_POST['view'])) {
         exit;
     }
 
+    if (isset($_POST['perSize'])) {
+
+        // Sanitize input to make sure the input is good
+        if ($_POST['perSize'] == true || $_POST['perSize'] == false) {
+            $perSize = $_POST['perSize'];
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid perSize, needs to be true or false']);
+            exit;
+        }
+    } else {
+        $perSize = false;
+    }
+
+
+
 
 
     // if we ever do floating timeframe

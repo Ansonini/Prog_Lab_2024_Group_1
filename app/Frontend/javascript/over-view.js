@@ -566,10 +566,10 @@ function mapStores(stores) {
     map.on('load', function() {
         document.getElementById('loading-map').style.display = 'none';
     });
-    stores.forEach(store => {
-        var marker = L.marker([store.latitude, store.longitude]).addTo(map);
-        marker.bindTooltip(`Store ID: ${store.storeID}<br>X: ${store.distance}`, {permanent: false});
-    });
+    // stores.forEach(store => {
+    //     var marker = L.marker([store.latitude, store.longitude]).addTo(map);
+    //     marker.bindTooltip(`Store ID: ${store.storeID}<br>X: ${store.distance}`, {permanent: false});
+    // });
     // Show the map container
     document.getElementById('mappyMap').style.display = 'block';
 }

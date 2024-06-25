@@ -35,7 +35,7 @@ function displayJsonTable(data, tableContainerId) {
 
 
 // Create a line or bar chart out of any json file 
-function createChart(data, chartID, chartType, reverseGrouping = false) {
+function createChart(data, chartID, chartType, grouping = "defaultGrouping") {
     var canvas = document.getElementById(chartID);
     var ctx = canvas.getContext('2d');
 
@@ -49,8 +49,9 @@ function createChart(data, chartID, chartType, reverseGrouping = false) {
     var labels, datasets;
     if ("data" in data[0]) {
 
-        if (reverseGrouping) {
+        if (grouping == 'reversedGrouping') {
             var flatenedData = flattenData(data);
+            console.log(grouping);
             data = groupBy(flatenedData, 1);
         }
 

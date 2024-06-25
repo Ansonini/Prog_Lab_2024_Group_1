@@ -187,9 +187,22 @@
     <div id="bigGraph1" class="container">
 
         <div class="chart-container">
-            <h3>Monthly Pizza Sales Data Per Store over the 3 years</h3>
-            <div class=loadingDiv style="display: none;" id="bigGraph1Loading">Data is loading...</div><br>
+            <div class="dropdown-group">
+                <label class="group-title">Graph Settings</label>
+                    
+                <select class="dropdown" id="chartType1">
+                    <option value="line">Line Chart</option>
+                    <option value="bar">Bar Chart</option>
+                </select>
+    
+                <select class="dropdown" id="grouping1">
+                    <option value=defaultGrouping>Default Grouping</option>
+                    <option value=reversedGrouping>Reversed Grouping</option>
+                </select>
+                <div class=loadingDiv style="display: none;" id="bigGraph1Loading">Data is loading...</div><br>
             <!-- Loading indicator -->
+            </div>
+            
             <canvas id="bigGraph1Canvas" width="400" height="100"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
@@ -200,18 +213,43 @@
 
         <div class="chart-container">
 
-            <h3>Pizza Sales Data for selected timeframe </h3>
-            <div class=loadingDiv style="display: none;" id="smallGraph1Canvas1Loading">Data is loading...</div>
+            <div class="dropdown-group">
+                <label class="group-title">Graph Settings</label>
+                    
+                <select class="dropdown" id="chartType2">
+                    <option value="line">Line Chart</option>
+                    <option value="bar">Bar Chart</option>
+                </select>
+    
+                <select class="dropdown" id="grouping2">
+                    <option value=defaultGrouping>Default Grouping</option>
+                    <option value=reversedGrouping>Reversed Grouping</option>
+                </select>
+                <div class=loadingDiv style="display: none;" id="smallGraph1Canvas1Loading">Data is loading...</div>
             <br><!-- Loading indicator -->
+            </div>
+            
             <canvas id="smallGraph1Canvas1" width="400" height="200"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
 
         <div class="chart-container">
 
-            <h3>Pizza Sales Data Per Store for selected timeframe </h3>
-            <div class=loadingDiv style="display: none;" id="smallGraph1Canvas2Loading">Data is loading...</div>
+            <div class="dropdown-group">
+                <label class="group-title">Graph Settings</label>
+                    
+                <select class="dropdown" id="chartType3">
+                    <option value="line">Line Chart</option>
+                    <option value="bar">Bar Chart</option>
+                </select>
+    
+                <select class="dropdown" id="grouping3">
+                    <option value=defaultGrouping>Default Grouping</option>
+                    <option value=reversedGrouping>Reversed Grouping</option>
+                </select>
+                <div class=loadingDiv style="display: none;" id="smallGraph1Canvas2Loading">Data is loading...</div>
             <br><!-- Loading indicator -->
+            </div>
             <canvas id="smallGraph1Canvas2" width="400" height="200"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
@@ -222,18 +260,42 @@
 
         <div class="chart-container">
 
-            <h3>Pizza Sales Data for selected timeframe </h3>
-            <div class=loadingDiv style="display: none;" id="loading">Data is loading...</div>
+            <div class="dropdown-group">
+                <label class="group-title">Graph Settings</label>
+                    
+                <select class="dropdown" id="chartType4">
+                    <option value="line">Line Chart</option>
+                    <option value="bar">Bar Chart</option>
+                </select>
+    
+                <select class="dropdown" id="grouping4">
+                    <option value=defaultGrouping>Default Grouping</option>
+                    <option value=reversedGrouping>Reversed Grouping</option>
+                </select>
+                <div class=loadingDiv style="display: none;" id="loading">Data is loading...</div>
             <br><!-- Loading indicator -->
+            </div>
             <canvas id="salesChart" width="400" height="200"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>
 
         <div class="chart-container">
 
-            <h3>Pizza Sales Data Per Store for selected timeframe </h3>
-            <div class=loadingDiv style="display: none;" id="loading2">Data is loading...</div>
+            <div class="dropdown-group">
+                <label class="group-title">Graph Settings</label>
+                    
+                <select class="dropdown" id="chartType5">
+                    <option value="line">Line Chart</option>
+                    <option value="bar">Bar Chart</option>
+                </select>
+    
+                <select class="dropdown" id="grouping5">
+                    <option value=defaultGrouping>Default Grouping</option>
+                    <option value=reversedGrouping>Reversed Grouping</option>
+                </select>
+                <div class=loadingDiv style="display: none;" id="loading2">Data is loading...</div>
             <br><!-- Loading indicator -->
+            </div>
             <canvas id="salesChartPerStore" width="400" height="200"></canvas>
             <!-- The chart will be generated here by JavaScript -->
         </div>

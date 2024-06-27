@@ -41,7 +41,18 @@ if (isset($_POST['view'])) {
     }
 
 
+    if (isset($_POST['rankingSize'])) {
 
+        // Sanitize input to make sure the input is good
+        if (is_numeric($_POST['rankingSize']) && (int)$_POST['rankingSize'] == $_POST['rankingSize']) {
+            $rankingSize = (int)$_POST['rankingSize'];
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid rankingSize, needs to be an integer']);
+            exit;
+        }
+    } else {
+        $rankingSize = 10;
+    }
 
 
     // if we ever do floating timeframe

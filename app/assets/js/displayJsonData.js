@@ -35,7 +35,7 @@ function displayJsonTable(data, tableContainerId) {
 
 
 // Create a line or bar chart out of any json file 
-function createChart(data, chartID, chartType, grouping = "defaultGrouping") {
+function createChart(data, chartID, chartType, grouping = "defaultGrouping", isBumpChart = false) {
     var canvas = document.getElementById(chartID);
     var ctx = canvas.getContext('2d');
 
@@ -134,6 +134,7 @@ function createChart(data, chartID, chartType, grouping = "defaultGrouping") {
                 },
                 y: {
                     beginAtZero: true,
+                    reverse: isBumpChart,
                     title: {
                         display: true,
                         text: yLabel

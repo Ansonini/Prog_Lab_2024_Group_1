@@ -233,21 +233,22 @@ $(document).ready(function () {
         $('#loading2').show(); // Show loading indicator for second table 
             // AJAX request for the second data
         $.ajax({
-            url: '/ajax/getStoreCoordinates.php',
+            url: '/ajax/getBumpChartPizza.php',
             type: 'POST',
             data: {
                 view: view,
                 mode: mode,
                 year: year,
                 month: month,
-                week: week
+                week: week,
+                rankingSize: 15
             },
             success: function (response) {
                 if (response.success) {
                     // Call the function from showTable.js
                     displayJsonTable(response.data, "tablePerStore");
 
-                    createChart(response.data, 'salesChartPerStore', chartType, grouping);
+                    createChart(response.data, 'salesChartPerStore', chartType, grouping, true);
                 } else {
                     $('#salesPerStore').html('<p>' + response.message + '</p>');
                 }

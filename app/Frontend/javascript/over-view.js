@@ -827,7 +827,6 @@ function navigateToStore(storeId) {
 }
 
 
-
 // test Function used to test out changes on graphs
 function testfunc(data) {
     var keys = Object.keys(data[0]);

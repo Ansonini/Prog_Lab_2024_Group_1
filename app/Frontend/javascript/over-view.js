@@ -211,6 +211,7 @@ function lineChartSales(data) {
         },
         xAxis: {
             type: 'category',
+            boundaryGap: false,
             data: storeNames,
             name: xAxisLabel,
             nameLocation: 'middle',

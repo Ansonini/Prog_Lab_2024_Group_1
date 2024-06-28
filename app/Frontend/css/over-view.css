@@ -1,161 +1,82 @@
-
-/*
-    Old Over-view page css
- */
-header {
-    background-color: #008C45;
-    padding: 20px 40px;
-    text-align: center;
-}
-header-text {
-    font-size: 48px;
-    color: #FFFFFF;
-    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-    text-align: center;
-}
-.menu {
-    background-color: #008C45;
-    padding: 10px 20px;
-    text-align: right;
-}
-/* The Grid setup */
-.website{
+.website {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-    grid-gap: 10px;
+    grid-template-rows: auto auto 1fr;
+    gap: 20px;
+    padding: 10px;
+    height: 100vh;
+}
+
+.header {
+    grid-column: 1 / -1;
+    background-color: #008C45;
+    padding: 20px;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.graphs {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.linechart, .barchart-percent {
+    border: 1px solid grey;
     padding: 10px;
 }
 
-/* Chart-Stuff */
-.chart-container {
-    border: 1px solid black;
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-}
-
-#line-chart-sales {
-    border: 1px solid grey;
-    flex: 0 1 auto;
-    margin: 20px;
-    width: 1000px;
-    height: 400px;
-}
-/*#loading-line-chart{*/
-/*    position: absolute;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*    background: rgba(255, 255, 255, 0.8);*/
-/*    display: flex;*/
-/*    justify-content: center;*/
-/*    align-items: center;*/
-/*    z-index: 999;*/
-/*}*/
-#stores-sold-barchart {
-    flex: 0 1 auto;
-    margin: 20px;
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-#loading-stores-sold{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-}
-.barchart-percent {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    position: relative;
-    width: 1000px;
-    height: 530px;
-    border: 1px solid grey;
-}
-.toggle-percent {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.toggle-percent label {
-    font-size: 14px;
-}
-#heatmap {
-    border: 1px solid grey;
-    flex: 0 1 auto;
-    margin: 20px;
-    width: 100%;
-    height: 100%;
-}
-#pie-chart {
-    border: 1px solid grey;
-    margin: 20px;
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-#checkboxes {
-    position: absolute;
-    bottom: 30px;
-    left: 30px;
-    z-index: 10;
-    font-size: 12px;
-}
-
-/* Map-Stuff */
-.map {
-    position: relative;
-    width: 800px;
-    height: 500px;
-    margin: 20px auto;
-}
-
-#loading-map {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-}
-
-#mappyMap {
-    border: 1px solid grey;
-    width: 100%;
-    height: 100%;
-}
-
-/* Setting-button-Stuff */
 .setting-btn-container {
+    grid-column: 1 / -1;
     background-color: #008C45;
     border: 1px solid green;
     color: white;
-    padding: 10px 24px;
-    cursor: pointer;
-    float: left;
+    padding: 10px;
 }
-/* Store-select-dropdown-Stuff */
+
+.fractured-overview {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.pie-charts {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid grey;
+}
+
+.map {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid grey;
+    position: relative;
+}
+
+#mappyMap {
+    width: 100%;
+    height: 100%;
+}
+
+/* Additional styling */
+header-text {
+    font-size: 48px;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.menu {
+    text-align: right;
+}
+
 .dropdown {
     position: relative;
     display: inline-block;
 }
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -166,6 +87,7 @@ header-text {
     max-height: 200px;
     overflow-y: auto;
 }
+
 .dropdown-content input {
     box-sizing: border-box;
     width: 100%;
@@ -174,18 +96,32 @@ header-text {
     border: none;
     border-bottom: 1px solid #ddd;
 }
+
 .dropdown-content a {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
+
 .dropdown-content a:hover {
     background-color: #f1f1f1;
 }
+
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
 .dropdown:hover .dropbtn {
     background-color: #3e8e41;
+}
+
+.toggle-percent {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-percent label {
+    font-size: 14px;
 }

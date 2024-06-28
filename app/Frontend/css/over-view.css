@@ -18,6 +18,16 @@ header-text {
     padding: 10px 20px;
     text-align: right;
 }
+/* The Grid setup */
+.website{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-gap: 10px;
+    padding: 10px;
+}
+
+
 /* Chart-Stuff */
 .chart-container {
     border: 1px solid black;
@@ -33,12 +43,36 @@ header-text {
     width: 1000px;
     height: 400px;
 }
+/*#loading-line-chart{*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    background: rgba(255, 255, 255, 0.8);*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    z-index: 999;*/
+/*}*/
 #stores-sold-barchart {
     flex: 0 1 auto;
     margin: 20px;
     width: 100%;
     height: 100%;
     position: relative;
+}
+#loading-stores-sold{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
 }
 .barchart-percent {
     margin-top: 20px;

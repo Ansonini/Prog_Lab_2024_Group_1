@@ -5,7 +5,7 @@
     <title>Main Statistics</title>
     <!--The CSS stylesheets-->
     <link rel="stylesheet" href="css/over-view.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <!--script libraryies-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
@@ -18,122 +18,125 @@
 <!--<body>-->
 <!-- loading the javascript files functions -->
 <body onload="pieChartStores()">
-<header>
-    <header-text>Stores Information</header-text>
-    <div class="menu">
-        <div class="dropdown">
-            <button class="dropdown">Select Store</button>
-            <div class="dropdown-content">
-                <input type="text" id="dropdownSearch" placeholder="Search Store ID..." onkeyup="filterDropdown()">
-                <a href="javascript:void(0);" onclick="navigateToStore(1);">Store 1</a>
-                <a href="javascript:void(0);" onclick="navigateToStore(2);">Store 2</a>
-                <a href="javascript:void(0);" onclick="navigateToStore(3);">Store 3</a>
+<div class="website">
+    <header>
+        <header-text>Stores Information</header-text>
+        <div class="menu">
+            <div class="dropdown">
+                <button class="dropdown">Select Store</button>
+                <div class="dropdown-content">
+                    <input type="text" id="dropdownSearch" placeholder="Search Store ID..." onkeyup="filterDropdown()">
+                    <a href="javascript:void(0);" onclick="navigateToStore(1);">Store 1</a>
+                    <a href="javascript:void(0);" onclick="navigateToStore(2);">Store 2</a>
+                    <a href="javascript:void(0);" onclick="navigateToStore(3);">Store 3</a>
+                </div>
             </div>
         </div>
-    </div>
-</header>
-<div class="sold-Overview">
-    <sub-header-text>Pizzas Sold</sub-header-text>
-    <div class="chart-container">
-        <div class="linechart">
-            <div id="loading-line-chart" style="display: none;">Loading...</div>
-            <div id="line-chart-sales" style="width: 1000px; height: 500px;"></div>
-        </div>
-        <div class="barchart-percent">
-            <div id="loading-stores-sold" style="display: none;">Loading...</div>
-            <div id="stores-sold-barchart" style="width: 1000px; height: 500px;"></div>
-            <div class="toggle-percent">
-                <label for="stores-sold-toggle">Select Value Displayed</label>
-                <select id="stores-sold-toggle">
-                    <option value="numbers">Numeric Value</option>
-                    <option value="percent">Percentage</option>
+    </header>
+    <div class="sold-Overview">
+        <sub-header-text>Pizzas Sold</sub-header-text>
+        <div class="chart-container">
+            <div class="linechart">
+                <div id="loading-line-chart" style="display: none;">Loading...</div>
+                <div id="line-chart-sales" style="width: 1000px; height: 500px;"></div>
+            </div>
+            <div class="barchart-percent">
+                <div id="loading-stores-sold" style="display: none;">Loading...</div>
+                <div id="stores-sold-barchart" style="width: 1000px; height: 500px;"></div>
+                <div class="toggle-percent">
+                    <label for="stores-sold-toggle">Select Value Displayed</label>
+                    <select id="stores-sold-toggle">
+                        <option value="numbers">Numeric Value</option>
+                        <option value="percent">Percentage</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="setting-btn-container">
+                <!-- Button row to change the graphs -->
+                <setting-button-header>Settings</setting-button-header>
+                <button id="updateButton">Update</button>
+                <!-- choose the pizza sizes-->
+                <label for="pizza-size">Select Pizza Size</label>
+                <select id="pizza-size">
+                    <option value="all">All Sizes</option>
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                    <option value="large">Large</option>
                 </select>
+                <!-- choose the time frame -->
+                <label for="sold-time">Choose Timeframe</label>
+                <select id="sold-time">
+                    <option value="weekView">Week</option>
+                    <option value="monthView">Month</option>
+                    <option value="yearView">Year</option>
+                </select>
+                <!-- choose what Data will be visualized by the Graphs -->
+                <label for="data-display">Select Data to Display</label>
+                <select id="data-display">
+                    <option value="units">Units Sold</option>
+                    <option value="revenue">Revenue</option>
+                </select>
+
+                <!-- if time is week, show the week selection dropdown -->
+                <label for="weekDropdown" id="weekDropdownTitle">Select the Week:</label>
+                <select id="weekDropdown">
+                    <!-- Generate week options from the first week (1) of the year until the last week of the year (52) -->
+                    <!-- ignoring leap years for simplicity even though year 2020 is a leap year-->
+                    <script>
+                        for (let i = 1; i <= 52; i++) {
+                            document.write('<option value="' + i + '">' + "Week " + i + '</option>');
+                        }
+                    </script>
+                </select>
+                <!-- if time is month, show the month selection dropdown -->
+                <label for="monthDropdown" id="monthDropdownTitle">Select the Month:</label>
+                <select id="monthDropdown">
+                    <option value="1">Jan</option>
+                    <option value="2">Feb</option>
+                    <option value="3">Mar</option>
+                    <option value="4">Apr</option>
+                    <option value="5">May</option>
+                    <option value="6">Jun</option>
+                    <option value="7">Jul</option>
+                    <option value="8">Aug</option>
+                    <option value="9">Sep</option>
+                    <option value="10">Oct</option>
+                    <option value="11">Nov</option>
+                    <option value="12">Dec</option>
+                </select>
+
+                <!-- if time is year, show the year selection dropdown -->
+                <label for="yearDropdown">Select the Year:</label>
+                <select id="yearDropdown">
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                </select>
+            </div> <!-- End of setting-btn-container -->
+        </div> <!-- End of chart-container -->
+    </div> <!-- End of sold-Overview -->
+    <div class="fractured-overview">
+        <div class="chart-container">
+            <div class="heatmap-box">
+                <div id="loading-heatmap" style="display: none;">Loading...</div>
+                <div id="heatmap" style="width: 1000px; height: 500px;"></div>
             </div>
-        </div>
-
-        <div class="setting-btn-container">
-            <!-- Button row to change the graphs -->
-            <setting-button-header>Settings</setting-button-header>
-            <button id="updateButton">Update</button>
-            <!-- choose the pizza sizes-->
-            <label for="pizza-size">Select Pizza Size</label>
-            <select id="pizza-size">
-                <option value="all">All Sizes</option>
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-            </select>
-            <!-- choose the time frame -->
-            <label for="sold-time">Choose Timeframe</label>
-            <select id="sold-time">
-                <option value="weekView">Week</option>
-                <option value="monthView">Month</option>
-                <option value="yearView">Year</option>
-            </select>
-            <!-- choose what Data will be visualized by the Graphs -->
-            <label for="data-display">Select Data to Display</label>
-            <select id="data-display">
-                <option value="units">Units Sold</option>
-                <option value="revenue">Revenue</option>
-            </select>
-
-            <!-- if time is week, show the week selection dropdown -->
-            <label for="weekDropdown" id="weekDropdownTitle">Select the Week:</label>
-            <select id="weekDropdown">
-                <!-- Generate week options from the first week (1) of the year until the last week of the year (52) -->
-                <!-- ignoring leap years for simplicity even though year 2020 is a leap year-->
-                <script>
-                    for (let i = 1; i <= 52; i++) {
-                        document.write('<option value="' + i + '">' + "Week " + i + '</option>');
-                    }
-                </script>
-            </select>
-            <!-- if time is month, show the month selection dropdown -->
-            <label for="monthDropdown" id="monthDropdownTitle">Select the Month:</label>
-            <select id="monthDropdown">
-                <option value="1">Jan</option>
-                <option value="2">Feb</option>
-                <option value="3">Mar</option>
-                <option value="4">Apr</option>
-                <option value="5">May</option>
-                <option value="6">Jun</option>
-                <option value="7">Jul</option>
-                <option value="8">Aug</option>
-                <option value="9">Sep</option>
-                <option value="10">Oct</option>
-                <option value="11">Nov</option>
-                <option value="12">Dec</option>
-            </select>
-
-            <!-- if time is year, show the year selection dropdown -->
-            <label for="yearDropdown">Select the Year:</label>
-            <select id="yearDropdown">
-                <option value="2020">2020</option>
-                <option value="2021">2021</option>
-                <option value="2022">2022</option>
-            </select>
-        </div> <!-- End of setting-btn-container -->
-    </div> <!-- End of chart-container -->
-</div> <!-- End of sold-Overview -->
-<div class="fractured-overview">
-    <div class="chart-container">
-        <div class="heatmap-box">
-            <div id="loading-heatmap" style="display: none;">Loading...</div>
-            <div id="heatmap" style="width: 1000px; height: 500px;"></div>
-        </div>
-        <div class="pie-charts" style="position: relative;">
-            <div id="loading-pie-chart-pizza" style="display: none;">Loading...</div>
-            <div id="pie-chart" style="border: 1px solid grey; margin: 20px; width: 500px; height: 500px; position: relative;"></div>
-<!--            <div id="checkboxes">
-                <input type="checkbox" id="showAll" onclick="updatePieChart()" checked> Show All Sizes,
-                <input type="checkbox" id="showSmall" onclick="updatePieChart()"> Show Small Pizzas,
-                <input type="checkbox" id="showMedium" onclick="updatePieChart()"> Show Medium Pizzas,
-                <input type="checkbox" id="showLarge" onclick="updatePieChart()"> Show Large Pizzas
-               </div>-->
-        </div>
-        <div class="map">
-            <div id="loading-map">Loading...</div>
-            <div id="mappyMap"></div>
+            <div class="pie-charts" style="position: relative;">
+                <div id="loading-pie-chart-pizza" style="display: none;">Loading...</div>
+                <div id="pie-chart"
+                     style="border: 1px solid grey; margin: 20px; width: 500px; height: 500px; position: relative;"></div>
+                <!--            <div id="checkboxes">
+                                <input type="checkbox" id="showAll" onclick="updatePieChart()" checked> Show All Sizes,
+                                <input type="checkbox" id="showSmall" onclick="updatePieChart()"> Show Small Pizzas,
+                                <input type="checkbox" id="showMedium" onclick="updatePieChart()"> Show Medium Pizzas,
+                                <input type="checkbox" id="showLarge" onclick="updatePieChart()"> Show Large Pizzas
+                               </div>-->
+            </div>
+            <div class="map">
+                <div id="loading-map">Loading...</div>
+                <div id="mappyMap"></div>
+            </div>
         </div>
     </div>
 </div>

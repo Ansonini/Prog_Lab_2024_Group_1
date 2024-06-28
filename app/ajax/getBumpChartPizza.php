@@ -12,61 +12,59 @@ include '/var/www/html/ajax/includes/connectDB.php';
 include '/var/www/html/ajax/includes/checkInput.php';
 
 
-// Determine the time period and partition by clause
-$measuredValue = ($mode === 'revenue') ? ' revenue ' : ' unitsSold ';
-//
-$rankByCalc = ($mode === 'revenue') ? ' SUM(salesPerSKU*p.price) ' : ' SUM(salesPerSKU) ';
 
+$measuredValue = ($mode === 'revenue') ? ' SUM(salesPerSKU*p.price) ' : ' SUM(salesPerSKU) ';
+$pizzaGranularity = ($perSize == "true") ? ' CONCAT(p.pizzaName, \' - \', p.pizzaSize) as pizza' : ' pizzaName as pizza';
+
+// Determine the time period and partition by clause
+// Determine time period, partition by, group by, and ranking frame based on view
 switch ($view) {
     case 'completeView':
         $timePeriod = 'YEAR(o.orderDate) as sellingYear';
         $partitionBy = 'YEAR(o.orderDate)';
         $groupBy = 'sellingYear';
         $rankingFrame = 'yearlyRank';
+        $timeFilter = '';
         break;
     case 'yearView':
         $timePeriod = "DATE_FORMAT(o.orderDate, '%Y-%m') as sellingMonth";
         $partitionBy = "DATE_FORMAT(o.orderDate, '%Y-%m')";
         $groupBy = 'sellingMonth';
         $rankingFrame = 'monthlyRank';
+        $timeFilter = "WHERE YEAR(o.orderDate) = $year";
         break;
     case 'monthView':
+        $timePeriod = 'DATE(o.orderDate) as sellingDay';
+        $partitionBy = 'DATE(o.orderDate)';
+        $groupBy = 'sellingDay';
+        $rankingFrame = 'dailyRank';
+        $timeFilter = "WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month";
+        break;
     case 'weekView':
         $timePeriod = 'DATE(o.orderDate) as sellingDay';
         $partitionBy = 'DATE(o.orderDate)';
         $groupBy = 'sellingDay';
         $rankingFrame = 'dailyRank';
+        $timeFilter = "WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week";
         break;
 }
 
-// Set the WHERE clause and GROUP BY statement based on the view
-switch ($view) {
-    case 'completeView':
-        $timeFilter = '';
-        break;
-    case 'yearView':
-        $timeFilter = " WHERE YEAR(o.orderDate) = $year ";
-        break;
-    case 'monthView':
-        $timeFilter = " WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month ";
-        break;
-    case 'weekView':
-        $timeFilter = " WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week ";
-        break;
-}
 
-// Create query with subquery
-$sql = "SELECT pizzaName,
-                $groupBy,
-                $rankingFrame
-        FROM (SELECT p.pizzaName, 
-                    $groupBy,
-                    RANK() OVER (PARTITION BY $groupBy ORDER BY $rankByCalc  DESC) AS $rankingFrame
-                FROM (SELECT oi.sku, $timePeriod, COUNT(oi.sku) as salesPerSKU
-                        FROM orders o JOIN orderItems oi ON o.orderID = oi.orderID
-                        $timeFilter
-                        GROUP BY oi.sku, $groupBy) as subsub JOIN products p on p.sku = subsub.sku
-                GROUP BY p.pizzaName, $groupBy) as sub 
+
+// Construct the SQL query
+$sql = "SELECT pizza , $groupBy, $rankingFrame
+        FROM (
+            SELECT $pizzaGranularity , $groupBy, RANK() OVER (PARTITION BY $groupBy ORDER BY $measuredValue DESC) AS $rankingFrame
+            FROM (
+                SELECT oi.sku, $timePeriod, COUNT(oi.sku) as salesPerSKU
+                FROM orders o
+                JOIN orderItems oi ON o.orderID = oi.orderID
+                $timeFilter
+                GROUP BY oi.sku, $groupBy
+            ) as subsub
+            JOIN products p ON p.sku = subsub.sku
+            GROUP BY pizza , $groupBy
+        ) as sub
         WHERE $rankingFrame <= $rankingSize
         ORDER BY $groupBy, $rankingFrame";
 

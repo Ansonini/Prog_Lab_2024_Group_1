@@ -43,3 +43,11 @@ select {
     align-items: center;
     flex-direction: column;
 }
+.controls select {
+    padding: 5px;
+    font-size: 16px;
+}
+.soldPizzasPerStore {
+    background-color: green;
+    color: white;
+}

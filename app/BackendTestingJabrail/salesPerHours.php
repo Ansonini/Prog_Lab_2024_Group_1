@@ -1,12 +1,8 @@
 <?php
 // file for ajax request to get sales figures by hour
-include './includes/checkInput.php';
+include '/var/www/html/ajax/includes/checkInput.php';
 include '/var/www/html/ajax/includes/connectDB.php';
 
-if ($conn->connect_error) {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error]);
-    exit;
-}
 
 // Fetch filter values
 $view = $_POST['view'] ?? 'completeView';
@@ -30,7 +26,7 @@ foreach ($time_intervals as $label => $interval) {
     $end_time = $interval[1];
 
     $sql = "
-        SELECT '$label' AS interval, COUNT(oi.SKU) AS totalPizzas
+        SELECT \"$label\" AS interval, COUNT(oi.SKU) AS totalPizzas
         FROM orders o
         JOIN orderItems oi ON o.orderID = oi.orderID
         WHERE TIME(o.orderDate) BETWEEN '$start_time' AND '$end_time'
@@ -56,7 +52,7 @@ foreach ($time_intervals as $label => $interval) {
 
     $data[] = $sql;
 }
-
+echo $sql;
 // Combine all interval queries
 $sql = implode(" UNION ALL ", $data);
 

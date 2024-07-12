@@ -1,19 +1,17 @@
 <?php
+header('Content-Type: application/json');
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-header('Content-Type: application/json'); 
-
-include '/var/www/html/ajax/includes/checkInput.php';
-
-
+// Start Connection
 include '/var/www/html/ajax/includes/connectDB.php';
 
+$storeID = $_POST['storeID'];
 
-$sql = "SELECT storeID, zipcode, state_abbr, latitude, longitude, city, state, distance FROM stores";
+if ($storeID === 'All') {
+    $sql = "SELECT * from stores";
+} else {
+    $sql = "SELECT * from stores where storeID = \"$storeID\"";
+}
 
-
+//make query and return result
 include '/var/www/html/ajax/includes/makeQuery.php';
 ?>

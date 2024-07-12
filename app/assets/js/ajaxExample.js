@@ -45,7 +45,7 @@ $(document).ready(function () {
             $('#loading3').show(); 
             
             $.ajax({
-                url: '/ajax/getRevenuePerPizza.php',
+                url: '/BackendTestingJabrail/salesPerHours.php',
                 type: 'POST',
                 data: {
                     view: view,
@@ -175,7 +175,7 @@ $(document).ready(function () {
         if (ready) {
             $('#loadingDiv5').show();
             $.ajax({
-                url: '/BackendTestingJabrail/salesPerHours.php',
+                url: 'BackendTestingJabrail/salesPerHours.php',
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -209,7 +209,7 @@ $(document).ready(function () {
 
             $('#loadingDiv6').show(); 
             $.ajax({
-                url: '/BackendTestingJabrail/storeClientDistance.php',
+                url: 'BackendTestingJabrail/storeClientDistance.php',
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -310,7 +310,8 @@ $(document).ready(function () {
                 $('#loadingDiv4').hide(); 
                 console.log('AJAX Error:', status, error);
             }
-        });
+        })
+    }
         // Function to fetch store count within a given range
     function fetchStoreCountInRange() {
         var minLatitude = $('#minLatitude').val();
@@ -340,7 +341,7 @@ $(document).ready(function () {
             }
         });
     }
-    }
+    
 
     // Trigger fetchData when any dropdown value changes
     $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType').change(fetchData);

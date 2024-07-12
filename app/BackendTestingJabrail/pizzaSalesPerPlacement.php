@@ -15,7 +15,7 @@ $filterType = isset($_POST['filterType']) ? $_POST['filterType'] : 'zipcode';
 switch ($filterType) {
     case 'state':
         $sql = "
-            SELECT s.state, SUM(oi.quantity) AS totalPizzas
+            SELECT s.state, COUNT(oi.sku) AS totalPizzas
             FROM orders o
             JOIN orderItems oi ON o.orderID = oi.orderID
             JOIN stores s ON o.storeID = s.storeID
@@ -24,7 +24,7 @@ switch ($filterType) {
         break;
     case 'city':
         $sql = "
-            SELECT s.city, SUM(oi.quantity) AS totalPizzas
+            SELECT s.city, COUNT(oi.sku) AS totalPizzas
             FROM orders o
             JOIN orderItems oi ON o.orderID = oi.orderID
             JOIN stores s ON o.storeID = s.storeID
@@ -34,7 +34,7 @@ switch ($filterType) {
     case 'zipcode':
     default:
         $sql = "
-            SELECT s.zipcode, SUM(oi.quantity) AS totalPizzas
+            SELECT s.zipcode, COUNT(oi.sku) AS totalPizzas
             FROM orders o
             JOIN orderItems oi ON o.orderID = oi.orderID
             JOIN stores s ON o.storeID = s.storeID
@@ -45,4 +45,4 @@ switch ($filterType) {
 
 // Выполнение запроса и возврат результата
 include '/var/www/html/ajax/includes/makeQuery.php';
-?>
+

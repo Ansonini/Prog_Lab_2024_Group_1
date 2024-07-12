@@ -56,7 +56,7 @@ if ($mode === 'units') {
             JOIN products p on p.sku=sub.sku
             GROUP BY sub.storeID
             ORDER BY unitsSold desc";
-            }
+}
 
 //make query and return result
 include '/var/www/html/ajax/includes/makeQuery.php';

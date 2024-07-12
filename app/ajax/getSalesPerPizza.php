@@ -17,18 +17,14 @@ if ($perSize == "true") {
 
 // select units sold or revenu
 if ($mode === 'revenue') {
-    $sql .= " sum(sub.unitsSold*p.price) as revenue
-    FROM (";
+    $sql .= " sum(sub.unitsSold*p.price) as revenue ";
+} elseif ($mode === 'units') {
+    $sql .= " sum(sub.unitsSold) as unitsSold ";
 };
 
-if ($mode === 'units') {
-    $sql .= " sum(sub.unitsSold) as unitsSold
-    FROM (";
-};
-
-$sql .= "SELECT oi.sku,
-            COUNT(oi.SKU) as unitsSold 
-        FROM orderItems oi "; 
+$sql .= " FROM (
+            SELECT oi.sku, COUNT(oi.SKU) as unitsSold 
+            FROM orderItems oi ";
 
 // filter depending on view
 switch ($view) {
@@ -48,8 +44,9 @@ switch ($view) {
         break;
 }
 
-// join with product table to fetch the name after counting -> faster as less joins to make
 $sql .= " GROUP BY oi.sku";
+
+// join with product table to fetch the name after counting -> faster as less joins to make
 $sql .= " ) as sub JOIN products p on p.sku = sub.sku
             GROUP BY p.pizzaName";
 

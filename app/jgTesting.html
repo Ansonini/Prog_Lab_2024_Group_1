@@ -6,17 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard testing</title>
     <style>
+        :root {
+            --main-color: #5c9ddb; 
+        } 
+        html {
+            background-color: var(--main-color);
+            height: 100%;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between; /* Space out tabs and title */
+            align-items: center; /* Center vertically */
+            background-color: var(--main-color);
+            margin-left: 20px;
+            margin-right: 20px;
+            font-size: 18px;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ececec;
+            padding-right: 20px;
+        }
+        .body-container {
+            background-color: #fff; /* White background */
+            margin-left: 20px;
+            margin-right: 20px;
+            padding: 20px;
+            border-radius: 20px; /* Rounded corners */
+        }
         .container {
             display: flex;
             /* Use flexbox for layout */
         }
 
-        .table-changable-container {
+        .table-container {
             display: block;
             width: 100% !important;
             height: 100% !important;
             /* Table container takes up remaining space */
-            margin: 20px;
+            margin: 10px;
             /* Add some spacing between table and chart */
         }
 
@@ -25,15 +55,18 @@
             width: 100% !important;
             height: 100% !important;
             /* Chart container takes up remaining space */
-            margin: 20px;
+            margin: 10px;
+            background-color: #fff;
         }
 
         /* Style for table and chart */
         table {
             border-collapse: collapse;
             width: 100%;
+            background-color: #fff;
         }
 
+        /* style for table header and table data */
         th,
         td {
             border: 1px solid black;
@@ -41,20 +74,34 @@
             text-align: left;
         }
 
+        .graph-header {
+            display: flex;
+            justify-content: space-between; /* Space out tabs and title */
+            align-items: center; /* Center vertically */
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid black;
+            border-radius: 10px;
+
+            background-color: #b7dcfe;
+        }
+
         canvas {
             display: block;
             width: 100% !important;
             height: 100% !important;
-            border: 1px solid black;
+            padding: 10px;
         }
 
         .dropdown-container {
             display: flex;
-            /* Keep all dropdown groups on the same line */
+            justify-content: flex-end; /* Align dropdowns to the right */
+            align-items: center; /* Center vertically */
         }
 
         .dropdown-group {
             display: flex;
+            flex-wrap: wrap;
             /* Keep dropdowns in the same group on the same line */
             margin-right: 40px;
             /* Space between groups */
@@ -65,21 +112,29 @@
             /* Remove space after the last group */
         }
 
-        .searchDropdown {
+        .dropdown-with-label {
+            display: flex;
+            flex-direction: column;
             margin-right: 10px;
             /* Space between dropdowns in the same group */
         }
 
+        .dropdown {
+            margin-right: 5px;
+            /* Space between dropdowns in the same group */
+            font-size: 16px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
         /* Optional: Remove margin-right for the last dropdown in a group */
-        .searchDropdown:last-child {
+        .dropdown:last-child {
             margin-right: 0;
         }
 
         .group-title {
-            margin-right: 10px;
+            margin: 5px;
             /* Space between title and dropdowns */
-            font-weight: bold;
-            /* Optional: Make the title bold */
         }
 
         .inputs {
@@ -104,10 +159,32 @@
         .loadingDiv {
             display: inline-block;
             vertical-align: middle;
-            /* Adjust as needed */
-            margin: 10px;
-            /* Adjust as needed */
+            padding: 5px;
         }
+
+        .tab-container {
+            display: flex;
+            justify-content: flex-start;
+            background-color: var(--main-color);
+        }
+        .tab {
+            padding: 20px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: var(--main-color);
+            border-bottom: none;
+            transition: background-color 0.3s;
+            border-top-left-radius: 10px; /* Rounded corners for top-left */
+            border-top-right-radius: 10px; /* Rounded corners for top-right */
+
+        }
+        .tab.selected {
+            background-color: #fff;
+        }
+        .tab:hover {
+            background-color: #fff;
+        }
+        
     </style>
 
     <!-- scripts for ajax -->
@@ -125,192 +202,274 @@
 </head>
 
 <body>
-    <h1>Dashboard Testing</h1>
+    
+    <div class="header">
 
-    <!-- create the dropdown to select the options -->
-
-    <div class="dropdown-container">
-        <div class="dropdown-group">
-            <label class="group-title">View Settings</label>
-            <select class="dropdown" id="view">
-                <option value="completeView">Complete View</option>
-                <option value="yearView">Year View</option>
-                <option value="monthView">Month View</option>
-                <option value="weekView">Week View</option>
-            </select>
-
-            <select class="dropdown" id="mode">
-                <option value="units">Units</option>
-                <option value="revenue">Revenue</option>
-            </select>
-
-            <select class="dropdown" id="perSize">
-                <option value=true>pizza sales per size</option>
-                <option value=false>pizza sales as a whole</option>
-            </select>
+        <div class="tab-container">
+            <div class="tab" onclick="loadTab('assets/js/jgTesting1.js', this)">Main Page</div>
+            <div class="tab" onclick="loadTab('assets/js/jgTesting2.js', this)">Pizza Details</div>
+            <div class="tab" onclick="loadTab('assets/js/jgTesting3.js', this)">Store Details</div>
         </div>
 
+        <div class="dropdown-container">
 
-        <div class="dropdown-group">
-            <label id="timeframeSettingsLabel" class="group-title">Timeframe Settings</label>
+            <div class="dropdown-group">
 
-            <div id="fixedTimeInput">
-                <select class="dropdown" id="year">
-                    <option value="2020">2020</option>
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
-                </select>
+                <div class="dropdown-with-label" id="yearWithLabel">
+                    <label for="year">Year</label>
+                    <select class="dropdown" id="year">
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                    </select>
+                </div>
 
-                <select class="dropdown" id="month">
-                    <!-- Generate month options from 1 to 12 -->
-                    <script>
-                        for (let i = 1; i <= 12; i++) {
-                            document.write('<option value="' + i + '">' + i + '</option>');
-                        }
-                    </script>
-                </select>
+                <div class="dropdown-with-label" id="monthWithLabel">
+                    <label for="month">Month</label>
+                    <select class="dropdown" id="month">
+                        <!-- Generate month options from 1 to 12 -->
+                        <script>
+                            for (let i = 1; i <= 12; i++) {
+                                document.write('<option value="' + i + '">' + i + '</option>');
+                            }
+                        </script>
+                    </select>
+                </div>
 
-                <select class="dropdown" id="week">
-                    <!-- Generate week options from 1 to 52 -->
-                    <script>
-                        for (let i = 1; i <= 52; i++) {
-                            document.write('<option value="' + i + '">' + i + '</option>');
-                        }
-                    </script>
-                </select>
+                <div class="dropdown-with-label" id="weekWithLabel">
+                    <label for="week">Week</label>
+                    <select class="dropdown" id="week">
+                        <!-- Generate week options from 1 to 52 -->
+                        <script>
+                            for (let i = 1; i <= 52; i++) {
+                                document.write('<option value="' + i + '">' + i + '</option>');
+                            }
+                        </script>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="dropdown-group">
+
+                <div class="dropdown-with-label">
+                    <label for="view">Timeframe</label>
+                    <select class="dropdown" id="view">
+                        <option value="completeView">Complete View</option>
+                        <option value="yearView">Year View</option>
+                        <option value="monthView">Month View</option>
+                        <option value="weekView">Week View</option>
+                    </select>
+                </div>
+
+                <div class="dropdown-with-label">
+                    <label for="mode">Measuring</label>
+
+                    <select class="dropdown" id="mode">
+                        <option value="units">Units</option>
+                        <option value="revenue">Revenue</option>
+                    </select>
+                </div>
+
+            </div>
+
+
+            <div class="dropdown-group">
+
+                <div class="dropdown-with-label">
+                    <label for="storeSelection">Select Store</label>
+                    <select class="dropdown" id="storeSelection">
+                        <script>
+                            // Array of all valid storeID 
+                            const values = [
+                                "all", "S013343", "S048150", "S058118", "S062214", "S064089", "S068548", "S080157", "S122017", "S147185", "S216043",
+                                "S263879", "S276746", "S302800", "S351225", "S361257", "S370494", "S396799", "S449313", "S476770", "S486166", "S490972", 
+                                "S505400", "S588444", "S606312", "S669665","S688745", "S750231", "S799887", "S817950", "S872983", "S918734", "S948821"
+                            ];
+                    
+                            // Reference to the dropdown element
+                            const dropdown = document.getElementById('storeSelection');
+                    
+                            // Populate the dropdown with options
+                            values.forEach(value => {
+                                const option = document.createElement('option');
+                                option.value = value;
+                                option.textContent = value;
+                                dropdown.appendChild(option);
+                            });
+                        </script>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="body-container" id="bodyContainer">
 
-    <!-- create the container for the graph and table -->
-    <div id="bigGraph1" class="container">
 
-        <div class="chart-container">
-            <div class="dropdown-group">
-                <label class="group-title">Graph Settings</label>
-                    
-                <select class="dropdown" id="chartType1">
-                    <option value="line">Line Chart</option>
-                    <option value="bar">Bar Chart</option>
-                </select>
+        <!-- create the container for the graph and table -->
+        <div id="graph1" class="container">
+
+            <div class="chart-container">
+
+                <div class="graph-header">
+                    <label id="graphTitle1">Graph Title</label>
+                
+                    <div class="dropdown-group">
+
+                        <!-- Loading indicator -->
+                        <div class=loadingDiv style="display: none;" id="graphLoading1">Data is loading...</div>
     
-                <select class="dropdown" id="grouping1">
-                    <option value=defaultGrouping>Default Grouping</option>
-                    <option value=reversedGrouping>Reversed Grouping</option>
-                </select>
-                <div class=loadingDiv style="display: none;" id="bigGraph1Loading">Data is loading...</div><br>
-            <!-- Loading indicator -->
-            </div>
+                        <select class="dropdown" id="chartType1">
+                            <option value="line">Line Chart</option>
+                            <option value="bar">Bar Chart</option>
+                        </select>
             
-            <canvas id="bigGraph1Canvas" width="400" height="100"></canvas>
-            <!-- The chart will be generated here by JavaScript -->
+                        <select class="dropdown" id="grouping1">
+                            <option value=defaultGrouping>Default Grouping</option>
+                            <option value=reversedGrouping>Reversed Grouping</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <canvas id="graphCanvas1" width="400" height="100"></canvas>
+                <!-- The chart will be generated here by JavaScript -->
+            </div>
+
         </div>
 
-    </div>
+        <div id="graph2&3" class="container">
 
-    <div id="smallGraph1" class="container">
+            <div class="chart-container">
 
-        <div class="chart-container">
+                <div class="graph-header">
 
-            <div class="dropdown-group">
-                <label class="group-title">Graph Settings</label>
-                    
-                <select class="dropdown" id="chartType2">
-                    <option value="bar">Bar Chart</option>
-                    <option value="line">Line Chart</option>
-                </select>
-    
-                <select class="dropdown" id="grouping2">
-                    <option value=defaultGrouping>Default Grouping</option>
-                    <option value=reversedGrouping>Reversed Grouping</option>
-                </select>
-                <div class=loadingDiv style="display: none;" id="smallGraph1Canvas1Loading">Data is loading...</div>
-            <br><!-- Loading indicator -->
-            </div>
+                    <label id="graphTitle2">Graph Title</label>
+
+                    <div class="dropdown-group">
+
+                        <!-- Loading indicator -->
+                        <div class=loadingDiv style="display: none;" id="graphLoading2">Data is loading...</div>
+                            
+                        <select class="dropdown" id="chartType2">
+                            <option value="bar">Bar Chart</option>
+                            <option value="line">Line Chart</option>
+                        </select>
             
-            <canvas id="smallGraph1Canvas1" width="400" height="200"></canvas>
-            <!-- The chart will be generated here by JavaScript -->
-        </div>
+                        <select class="dropdown" id="grouping2">
+                            <option value=defaultGrouping>Default Grouping</option>
+                            <option value=reversedGrouping>Reversed Grouping</option>
+                        </select>
 
-        <div class="chart-container">
-
-            <div class="dropdown-group">
-                <label class="group-title">Graph Settings</label>
-                    
-                <select class="dropdown" id="chartType3">
-                    <option value="line">Line Chart</option>
-                    <option value="bar">Bar Chart</option>
-                </select>
-    
-                <select class="dropdown" id="grouping3">
-                    <option value=defaultGrouping>Default Grouping</option>
-                    <option value=reversedGrouping>Reversed Grouping</option>
-                </select>
-                <div class=loadingDiv style="display: none;" id="smallGraph1Canvas2Loading">Data is loading...</div>
-            <br><!-- Loading indicator -->
+                        <select class="dropdown" id="perSize">
+                            <option value=false>not separated per size</option>
+                            <option value=true>separated per size</option>
+                        </select>
+                        
+                    </div>
+                </div>
+                
+                <canvas id="graphCanvas2" width="400" height="200"></canvas>
+                <!-- The chart will be generated here by JavaScript -->
             </div>
-            <canvas id="smallGraph1Canvas2" width="400" height="200"></canvas>
-            <!-- The chart will be generated here by JavaScript -->
-        </div>
 
-    </div>
+            <div class="chart-container">
 
-    <div id="salesPerStore" class="container">
+                <div class="graph-header">
 
-        <div class="chart-container">
+                    <label id="graphTitle3">Graph Title</label>
 
-            <div class="dropdown-group">
-                <label class="group-title">Graph Settings</label>
-                    
-                <select class="dropdown" id="chartType4">
-                    <option value="bar">Bar Chart</option>
-                    <option value="line">Line Chart</option>
-                </select>
-    
-                <select class="dropdown" id="grouping4">
-                    <option value=defaultGrouping>Default Grouping</option>
-                    <option value=reversedGrouping>Reversed Grouping</option>
-                </select>
-                <div class=loadingDiv style="display: none;" id="loading">Data is loading...</div>
-            <br><!-- Loading indicator -->
+                    <div class="dropdown-group">
+
+                        <!-- Loading indicator -->
+                        <div class=loadingDiv style="display: none;" id="graphLoading3">Data is loading...</div>
+                            
+                        <select class="dropdown" id="chartType3">
+                            <option value="line">Line Chart</option>
+                            <option value="bar">Bar Chart</option>
+                        </select>
+            
+                        <select class="dropdown" id="grouping3">
+                            <option value=defaultGrouping>Default Grouping</option>
+                            <option value=reversedGrouping>Reversed Grouping</option>
+                        </select>
+                        
+                    </div>
+                </div>
+
+                <canvas id="graphCanvas3" width="400" height="200"></canvas>
+                <!-- The chart will be generated here by JavaScript -->
             </div>
-            <canvas id="salesChart" width="400" height="200"></canvas>
-            <!-- The chart will be generated here by JavaScript -->
+
         </div>
 
-        <div class="chart-container">
+        <div id="graph4&5" class="container">
 
-            <div class="dropdown-group">
-                <label class="group-title">Graph Settings</label>
-                    
-                <select class="dropdown" id="chartType5">
-                    <option value="line">Line Chart</option>
-                    <option value="bar">Bar Chart</option>
-                </select>
-    
-                <select class="dropdown" id="grouping5">
-                    <option value=defaultGrouping>Default Grouping</option>
-                    <option value=reversedGrouping>Reversed Grouping</option>
-                </select>
-                <div class=loadingDiv style="display: none;" id="loading2">Data is loading...</div>
-            <br><!-- Loading indicator -->
+            <div class="chart-container">
+                <div class="graph-header">
+
+                    <label id="graphTitle4">Graph Title</label>
+
+                    <div class="dropdown-group">
+
+                        <!-- Loading indicator -->
+                        <div class=loadingDiv style="display: none;" id="graphLoading4">Data is loading...</div>
+     
+                        <select class="dropdown" id="chartType4">
+                            <option value="bar">Bar Chart</option>
+                            <option value="line">Line Chart</option>
+                        </select>
+            
+                        <select class="dropdown" id="grouping4">
+                            <option value=defaultGrouping>Default Grouping</option>
+                            <option value=reversedGrouping>Reversed Grouping</option>
+                        </select>
+                        
+                    </div>
+                </div>
+
+                <canvas id="graphCanvas4" width="400" height="200"></canvas>
+                <!-- The chart will be generated here by JavaScript -->
             </div>
-            <canvas id="salesChartPerStore" width="400" height="200"></canvas>
-            <!-- The chart will be generated here by JavaScript -->
+
+            <div class="chart-container">
+                <div class="graph-header">
+
+                    <label id="graphTitle5">Graph Title</label>
+
+                    <div class="dropdown-group">
+
+                        <!-- Loading indicator -->
+                        <div class=loadingDiv style="display: none;" id="graphLoading5">Data is loading...</div>
+        
+                        <select class="dropdown" id="chartType5">
+                            <option value="line">Line Chart</option>
+                            <option value="bar">Bar Chart</option>
+                        </select>
+            
+                        <select class="dropdown" id="grouping5">
+                            <option value=defaultGrouping>Default Grouping</option>
+                            <option value=reversedGrouping>Reversed Grouping</option>
+                        </select>
+                        
+                    </div>
+                </div>
+                <canvas id="graphCanvas5" width="400" height="200"></canvas>
+                <!-- The chart will be generated here by JavaScript -->
+            </div>
+
         </div>
 
+        <div id="table4&5" class="container">
+            <div id="table4" class="table-container">
+                <!-- The table will be generated here by JavaScript -->
+            </div>
+            <div id="table5" class="table-container">
+                <!-- The table will be generated here by JavaScript -->
+            </div>
+        </div>
     </div>
-
-    <div id="salesPerTime" class="container">
-        <div id="tablePerTime" class="table-container">
-            <!-- The table will be generated here by JavaScript -->
-        </div>
-        <div id="tablePerStore" class="table-container">
-            <!-- The table will be generated here by JavaScript -->
-        </div>
-    </div>
-
 </body>
 
 </html>

@@ -204,8 +204,8 @@ th, td {
     grid-column: 1 / span 3;
     grid-row: 3;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    grid-template-columns:  1fr 1fr;
+    grid-gap: 0;
     padding: 20px;
 }
 .row2 .stacking-barchart {
@@ -222,22 +222,23 @@ th, td {
     position: relative;
     grid-column: 2;
     grid-row: 3;
-    width: 50%;
+    width: 500px;
     height: 500px;
     border: 1px solid grey;
     padding: 10px;
 }
 .row2 .map-container {
     position: relative;
-    grid-column: 3;
+    grid-column-start: 3;
     grid-row: 3;
-    width: 100%;
+    width: 900px;
     height: 500px;
     border: 1px solid grey;
     padding: 10px;
+    justify-items: stretch;
 }
 #map {
-    height: 600px;
+    height: 500px;
     width: 100%;
 }
 /**/
@@ -259,7 +260,7 @@ th, td {
     height: 500px;
     padding: 10px;
 }
-.row1 .bump-chart-store-canvas-canvas {
+.row3 .bump-chart-store-canvas {
     position: relative;
     grid-column: 2;
     grid-row: 4;

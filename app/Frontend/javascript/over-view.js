@@ -180,7 +180,7 @@ $(document).ready(function () {
                 type: 'POST',
                 success: function (response) {
                     if (response.success) {
-                        mapStores(response);
+                        mapStores(response.data);
                     } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
@@ -192,58 +192,58 @@ $(document).ready(function () {
                     $('#loading-map').hide();
                 }
             });
-            // Bump-Chart1
-            $('#loading-bump-chart-Pizza').show();
-            $.ajax({
-                url: '../ajax/getSalesPerStore.php',
-                type: 'POST',
-                data: {
-                    view: view,
-                    mode: mode,
-                    year: year,
-                    month: month,
-                    week: week
-                },
-                success: function (response) {
-                    if (response.success) {
-                        bumpChartPizzaRanking(response.data);
-                    } else {
-                        $('#chart-container').html('<p>' + response.message + '</p>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log('AJAX Error:', status, error);
-                },
-                complete: function () {
-                    $('#loading-bump-chart-Pizza').hide();
-                }
-            });
-            // Bump-Chart2
-            $('#loading-bump-chart-Store').show();
-            $.ajax({
-                url: '../ajax/getSalesPerStore.php',
-                type: 'POST',
-                data: {
-                    view: view,
-                    mode: mode,
-                    year: year,
-                    month: month,
-                    week: week
-                },
-                success: function (response) {
-                    if (response.success) {
-                        bumpChartStoreRanking(response.data, mode)
-                    } else {
-                        $('#chart-container').html('<p>' + response.message + '</p>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log('AJAX Error:', status, error);
-                },
-                complete: function () {
-                    $('#loading-bump-chart-Store').hide();
-                }
-            });
+            // // Bump-Chart1
+            // $('#loading-bump-chart-Pizza').show();
+            // $.ajax({
+            //     url: '../ajax/getSalesPerStore.php',
+            //     type: 'POST',
+            //     data: {
+            //         view: view,
+            //         mode: mode,
+            //         year: year,
+            //         month: month,
+            //         week: week
+            //     },
+            //     success: function (response) {
+            //         if (response.success) {
+            //             bumpChartPizzaRanking(response.data);
+            //         } else {
+            //             $('#chart-container').html('<p>' + response.message + '</p>');
+            //         }
+            //     },
+            //     error: function (xhr, status, error) {
+            //         console.log('AJAX Error:', status, error);
+            //     },
+            //     complete: function () {
+            //         $('#loading-bump-chart-Pizza').hide();
+            //     }
+            // });
+            // // Bump-Chart2
+            // $('#loading-bump-chart-Store').show();
+            // $.ajax({
+            //     url: '../ajax/getSalesPerStore.php',
+            //     type: 'POST',
+            //     data: {
+            //         view: view,
+            //         mode: mode,
+            //         year: year,
+            //         month: month,
+            //         week: week
+            //     },
+            //     success: function (response) {
+            //         if (response.success) {
+            //             bumpChartStoreRanking(response.data, mode)
+            //         } else {
+            //             $('#chart-container').html('<p>' + response.message + '</p>');
+            //         }
+            //     },
+            //     error: function (xhr, status, error) {
+            //         console.log('AJAX Error:', status, error);
+            //     },
+            //     complete: function () {
+            //         $('#loading-bump-chart-Store').hide();
+            //     }
+            // });
         }
     }
 
@@ -540,11 +540,11 @@ function storesPercentBarChart(data) {
 
 // A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
 function stackingBarChart(data) {
+
     var chartDom = document.getElementById('stacking-barchart-pizza');
     var myChart = echarts.init(chartDom);
-    var option;
 
-// There should not be negative values in rawData
+    // Sample data, replace with `data` from AJAX call
     const rawData = [
         [100, 302, 301, 334, 390, 330, 320],
         [320, 132, 101, 134, 90, 230, 210],
@@ -552,57 +552,51 @@ function stackingBarChart(data) {
         [150, 212, 201, 154, 190, 330, 410],
         [820, 832, 901, 934, 1290, 1330, 1320]
     ];
-    const totalData = [];
-    for (let i = 0; i < rawData[0].length; ++i) {
-        let sum = 0;
-        for (let j = 0; j < rawData.length; ++j) {
-            sum += rawData[j][i];
-        }
-        totalData.push(sum);
-    }
-    const grid = {
-        left: 100,
-        right: 100,
-        top: 50,
-        bottom: 50
-    };
-    const series = [
-        'Direct',
-        'Mail Ad',
-        'Affiliate Ad',
-        'Video Ad',
-        'Search Engine'
-    ].map((name, sid) => {
-        return {
-            name,
-            type: 'bar',
-            stack: 'total',
-            barWidth: '60%',
-            label: {
-                show: true,
-                formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
-            },
-            data: rawData[sid].map((d, did) =>
-                totalData[did] <= 0 ? 0 : d / totalData[did]
-            )
-        };
-    });
-    option = {
-        legend: {
-            selectedMode: false
+
+    const totalData = rawData[0].map((_, colIndex) => rawData.reduce((sum, row) => sum + row[colIndex], 0));
+
+    const series = rawData.map((data, index) => ({
+        name: `Series ${index + 1}`,
+        type: 'bar',
+        stack: 'total',
+        barWidth: '60%',
+        label: {
+            show: true,
+            formatter: (params) => `${(params.value / totalData[params.dataIndex] * 100).toFixed(2)}%`
         },
-        grid,
-        yAxis: {
-            type: 'value'
+        data: data.map((value, i) => (totalData[i] === 0 ? 0 : value / totalData[i]))
+    }));
+
+    const option = {
+        title: {
+            text: 'Stacking Bar Chart'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {},
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
         },
         xAxis: {
             type: 'category',
             data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         },
-        series
+        yAxis: {
+            type: 'value'
+        },
+        series: series
     };
 
-    option && myChart.setOption(option);
+    myChart.setOption(option);
+
+
 }
 
 // shows a piechart based the most sold Pizza times (based on size of the pizza, can also show all pizzas)
@@ -654,250 +648,114 @@ function pieChartStores() {
 
 // a map function that shows all stores on a map with their store ID and distance from the main store
 function mapStores(data) {
-    var map = L.map('map').setView([51.505, -0.09], 13);
+    var map = L.map('map').setView([40, -120], 4.5);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    map.on('load', function () {
-        document.getElementById('loading-map').style.display = 'none';
+    var stores = [
+        { lat: 41.328852, lng: -116.12251, name: 'Tuscarora', StoreID: 'S490972'},
+        { lat: 37.593883, lng: -121.88281, name: 'Sunol', StoreID: 'S476770' }
+    ];
+
+    stores.forEach(store => {
+        L.marker([store.lat, store.lng]).addTo(map)
+            .bindPopup(store.name)
+            .openPopup();
     });
-    document.getElementById('map').style.display = 'block';
 }
 
 // shows a bump chart of the Top 10 pizza ranked based on the sales
-function bumpChartPizzaRanking(data) {
-    var chartDom = document.getElementById('bump-chart-Pizza');
-    var myChart = echarts.init(chartDom);
-    var option;
+function bumpChartPizzaRanking() {
+    var myChart =  document.getElementById('bump-chart-Pizza');
 
-    const names = [
-        'Orange',
-        'Tomato',
-        'Apple',
-        'Sakana',
-        'Banana',
-        'Iwashi',
-        'Snappy Fish',
-        'Lemon',
-        'Pasta'
-    ];
-    const years = ['2001', '2002', '2003', '2004', '2005', '2006'];
-    const shuffle = (array) => {
-        let currentIndex = array.length;
-        let randomIndex = 0;
-        while (currentIndex > 0) {
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-            [array[currentIndex], array[randomIndex]] = [
-                array[randomIndex],
-                array[currentIndex]
-            ];
-        }
-        return array;
+
+    // Example data structure, replace with actual `data`
+    const names = ['Margherita', 'Pepperoni', 'Meat Lovers', 'BBQ Chicken Pizza'];
+    const years = ['2020', '2021', '2022', '2023'];
+    const rankingData = {
+        'Margherita': [1, 2, 3, 1],
+        'Pepperoni': [2, 1, 2, 3],
+        'Meat Lovers': [3, 3, 1, 2],
+        'BBQ Chicken Pizza': [4, 4, 4, 4]
     };
-    const generateRankingData = () => {
-        const map = new Map();
-        const defaultRanking = Array.from({length: names.length}, (_, i) => i + 1);
-        for (const _ of years) {
-            const shuffleArray = shuffle(defaultRanking);
-            names.forEach((name, i) => {
-                map.set(name, (map.get(name) || []).concat(shuffleArray[i]));
-            });
-        }
-        return map;
-    };
-    const generateSeriesList = () => {
-        const seriesList = [];
-        const rankingMap = generateRankingData();
-        rankingMap.forEach((data, name) => {
-            const series = {
-                name,
-                symbolSize: 20,
-                type: 'line',
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                endLabel: {
-                    show: true,
-                    formatter: '{a}',
-                    distance: 20
-                },
-                lineStyle: {
-                    width: 4
-                },
-                data
-            };
-            seriesList.push(series);
-        });
-        return seriesList;
-    };
-    option = {
+
+    const series = Object.keys(rankingData).map(name => ({
+        name,
+        type: 'line',
+        smooth: true,
+        data: rankingData[name],
+        lineStyle: { width: 4 }
+    }));
+
+    const option = {
         title: {
-            text: 'Bump Chart (Ranking)'
+            text: 'Pizza Ranking Bump Chart'
         },
         tooltip: {
             trigger: 'item'
         },
-        grid: {
-            left: 30,
-            right: 110,
-            bottom: 30,
-            containLabel: true
-        },
-        toolbox: {
-            feature: {
-                saveAsImage: {}
-            }
-        },
         xAxis: {
             type: 'category',
-            splitLine: {
-                show: true
-            },
-            axisLabel: {
-                margin: 30,
-                fontSize: 16
-            },
-            boundaryGap: false,
             data: years
         },
         yAxis: {
             type: 'value',
-            axisLabel: {
-                margin: 30,
-                fontSize: 16,
-                formatter: '#{value}'
-            },
             inverse: true,
-            interval: 1,
             min: 1,
             max: names.length
         },
-        series: generateSeriesList()
+        series: series
     };
 
-    option && myChart.setOption(option);
-
+    myChart.setOption(option);
 }
 
 // shows a bump chart of the Top 10 stores ranked based on the sales/toggle between units and revenue
-function bumpChartStoreRanking(data, mode) {
-    var chartDom = document.getElementById('main');
+function bumpChartStoreRanking(data) {
+    var chartDom = document.getElementById('bump-chart-Store');
     var myChart = echarts.init(chartDom);
-    var option;
 
-    const names = [
-        'Orange',
-        'Tomato',
-        'Apple',
-        'Sakana',
-        'Banana',
-        'Iwashi',
-        'Snappy Fish',
-        'Lemon',
-        'Pasta'
-    ];
-    const years = ['2001', '2002', '2003', '2004', '2005', '2006'];
-    const shuffle = (array) => {
-        let currentIndex = array.length;
-        let randomIndex = 0;
-        while (currentIndex > 0) {
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-            [array[currentIndex], array[randomIndex]] = [
-                array[randomIndex],
-                array[currentIndex]
-            ];
-        }
-        return array;
+    // Example data structure, replace with actual `data`
+    const names = ['S505400', 'S361257', 'S216043', 'S080157'];
+    const years = ['2020', '2021', '2022', '2023'];
+    const rankingData = {
+        'S505400': [1, 2, 3, 1],
+        'S361257': [2, 1, 2, 3],
+        'S216043': [3, 3, 1, 2],
+        'S080157': [4, 4, 4, 4]
     };
-    const generateRankingData = () => {
-        const map = new Map();
-        const defaultRanking = Array.from({length: names.length}, (_, i) => i + 1);
-        for (const _ of years) {
-            const shuffleArray = shuffle(defaultRanking);
-            names.forEach((name, i) => {
-                map.set(name, (map.get(name) || []).concat(shuffleArray[i]));
-            });
-        }
-        return map;
-    };
-    const generateSeriesList = () => {
-        const seriesList = [];
-        const rankingMap = generateRankingData();
-        rankingMap.forEach((data, name) => {
-            const series = {
-                name,
-                symbolSize: 20,
-                type: 'line',
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                endLabel: {
-                    show: true,
-                    formatter: '{a}',
-                    distance: 20
-                },
-                lineStyle: {
-                    width: 4
-                },
-                data
-            };
-            seriesList.push(series);
-        });
-        return seriesList;
-    };
-    option = {
+
+    const series = Object.keys(rankingData).map(name => ({
+        name,
+        type: 'line',
+        smooth: true,
+        data: rankingData[name],
+        lineStyle: { width: 4 }
+    }));
+
+    const option = {
         title: {
-            text: 'Bump Chart (Ranking)'
+            text: 'Store Ranking Bump Chart'
         },
         tooltip: {
             trigger: 'item'
         },
-        grid: {
-            left: 30,
-            right: 110,
-            bottom: 30,
-            containLabel: true
-        },
-        toolbox: {
-            feature: {
-                saveAsImage: {}
-            }
-        },
         xAxis: {
             type: 'category',
-            splitLine: {
-                show: true
-            },
-            axisLabel: {
-                margin: 30,
-                fontSize: 16
-            },
-            boundaryGap: false,
             data: years
         },
         yAxis: {
             type: 'value',
-            axisLabel: {
-                margin: 30,
-                fontSize: 16,
-                formatter: '#{value}'
-            },
             inverse: true,
-            interval: 1,
             min: 1,
             max: names.length
         },
-        series: generateSeriesList()
+        series: series
     };
 
-    option && myChart.setOption(option);
-
+    myChart.setOption(option);
 }
 
 // to filter the dropdown list of stores
@@ -926,11 +784,11 @@ function navigateToStore(storeId) {
 function openSideBar() {
     document.getElementById("sidebar").style.width = "40%";
 }
-
+// function to close the sidebar
 function closeSideBar() {
     document.getElementById("sidebar").style.width = "0";
 }
-
+// Saving the Text in the Note Section as a .txt file
 function saveText() {
     const noteText = document.getElementById('noteField').value;
 
@@ -951,7 +809,7 @@ function saveText() {
 
     document.body.removeChild(link);
 }
-
+// Saving all the graphs as images
 function saveGraphs() {
     const charts = document.querySelectorAll('.chart-container');
     charts.forEach((chart, index) => {

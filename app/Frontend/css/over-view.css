@@ -14,7 +14,21 @@
     text-align: center;
     color: #FFFFFF;
 }
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -50%;
+    width: 50%;
+    height: 100%;
+    background-color: #f4f4f4;
+    padding: 20px;
+    transition: left 0.3s ease;
+    z-index: 10;
+}
 
+.sidebar.visible {
+    left: 0;
+}
 .graphs {
     grid-column: 1 / -1;
     display: grid;
@@ -49,7 +63,7 @@
     border: 1px solid grey;
 }
 
-.map {
+.map-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -57,7 +71,7 @@
     position: relative;
 }
 
-#mappyMap {
+#map {
     width: 100%;
     height: 100%;
 }
@@ -68,11 +82,11 @@ header-text {
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
-.menu {
+.storeSearch {
     text-align: right;
 }
 
-.dropdown {
+.searchDropdown {
     position: relative;
     display: inline-block;
 }
@@ -108,11 +122,11 @@ header-text {
     background-color: #f1f1f1;
 }
 
-.dropdown:hover .dropdown-content {
+.searchDropdown:hover .dropdown-content {
     display: block;
 }
 
-.dropdown:hover .dropbtn {
+.searchDropdown:hover .dropbtn {
     background-color: #3e8e41;
 }
 

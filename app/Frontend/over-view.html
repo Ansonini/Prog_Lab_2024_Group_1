@@ -15,9 +15,11 @@
     <script src="javascript/over-view.js"></script>
 </head>
 <body onload="pieChartStores()">
+
 <div class="website">
     <header class="header">
         <header-text>Stores Information</header-text>
+        <button id="sidebarOpen">More Info</button>
         <div class="menu">
             <div class="dropdown">
                 <button class="dropdown">Select Store</button>
@@ -109,5 +111,11 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById('sidebarOpen').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('visible');
+    });
+</script>
 </body>
 </html>

@@ -35,6 +35,7 @@ $(document).ready(function () {
         }
 
         if (ready) {
+            // Line-Chart
             $('#loading-line-chart').show();
             $.ajax({
                 url: '../ajax/getSalesPerTimeframe.php',
@@ -60,7 +61,7 @@ $(document).ready(function () {
                     $('#loading-line-chart').hide();
                 }
             });
-
+            // Store-Bar-Chart
             $('#loading-stores-sold').show();
             $.ajax({
                 url: '../ajax/getSalesPerStore.php',
@@ -76,7 +77,7 @@ $(document).ready(function () {
                     if (response.success) {
                         if (toggle_percent === 'percent') {
                             storesPercentBarChart(response.data);
-                        }else {
+                        } else {
                             storesValueBarChart(response.data);
                         }
                     } else {
@@ -90,6 +91,7 @@ $(document).ready(function () {
                     $('#loading-stores-sold').hide();
                 }
             });
+            // Store-Bar-Chart2
             $('#loading-bar-no-percent').show();
             $.ajax({
                 url: '../ajax/getSalesPerStore.php',
@@ -105,7 +107,7 @@ $(document).ready(function () {
                     if (response.success) {
                         if (toggle_percent === 'percent') {
                             storesPercentBarChart(response.data);
-                        }else {
+                        } else {
                             storesValueBarChart(response.data);
                         }
                     } else {
@@ -119,14 +121,22 @@ $(document).ready(function () {
                     $('#loading-bar-no-percent').hide();
                 }
             });
-            $('#loading-map').show();
+            // Stacking-Bar-Chart
+            $('#loading-stacking-barchart').show();
             $.ajax({
-                url: '../ajax/getStoreInfo.php',
+                url: '../ajax/getSalesPerStore.php',
                 type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
                 success: function (response) {
                     if (response.success) {
-                        mapStores(response);
-                    }else {
+                        stackingBarChart(response.data);
+                    } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
                 },
@@ -134,11 +144,109 @@ $(document).ready(function () {
                     console.log('AJAX Error:', status, error);
                 },
                 complete: function () {
-                    $('#loading-bar-no-percent').hide();
+                    $('#loading-stacking-barchart').hide();
+                }
+            });
+            // Pie-Chart
+            $('#loading-pie-chart-pizza').show();
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
+                success: function (response) {
+                    if (response.success) {
+                        pieChartStores(response.data);
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-pie-chart-pizza').hide();
+                }
+            });
+            // Map
+            $('#loading-map').show();
+            $.ajax({
+                url: '../ajax/getStoreInfo.php',
+                type: 'POST',
+                success: function (response) {
+                    if (response.success) {
+                        mapStores(response);
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-map').hide();
+                }
+            });
+            // Bump-Chart1
+            $('#loading-bump-chart-Pizza').show();
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
+                success: function (response) {
+                    if (response.success) {
+                        bumpChartPizzaRanking(response.data);
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-bump-chart-Pizza').hide();
+                }
+            });
+            // Bump-Chart2
+            $('#loading-bump-chart-Store').show();
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
+                success: function (response) {
+                    if (response.success) {
+                        bumpChartStoreRanking(response.data, mode)
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-bump-chart-Store').hide();
                 }
             });
         }
     }
+
     fetchData();
     $('#updateButton').click(fetchData);
 
@@ -181,16 +289,16 @@ function lineChartSales(data) {
     if (existingChart) {
         echarts.dispose(existingChart);
     }
-    if(document.getElementById('data-display').value === 'units') {
+    if (document.getElementById('data-display').value === 'units') {
         var yAxisLabel = 'Units Sold in Thousands';
     } else {
         var yAxisLabel = 'Revenue in Thousands';
     }
-    if(document.getElementById('sold-time').value === 'weekView') {
+    if (document.getElementById('sold-time').value === 'weekView') {
         var xAxisLabel = 'Week Days';
     } else if (document.getElementById('sold-time').value === 'monthView') {
         var xAxisLabel = 'Month in Days';
-    }else  {
+    } else {
         var xAxisLabel = 'Year in Months';
     }
     var option = {
@@ -242,6 +350,7 @@ function lineChartSales(data) {
     overAllSold.resize({width: 1000, height: 400})
 
 }
+
 // Showing the total Sales/Revenue for each store in the selected time frame
 function storesValueBarChart(data) {
     var keys = Object.keys(data[0]);
@@ -266,7 +375,7 @@ function storesValueBarChart(data) {
     var sortedStoreData = storeDataWithStoreID.map(item => item.value);
     var sortedStoreID = storeDataWithStoreID.map(item => item.category);
 
-    if(document.getElementById('data-display').value === 'units') {
+    if (document.getElementById('data-display').value === 'units') {
         var yAxisLabel = 'Units Sold in Thousands';
     } else {
         var yAxisLabel = 'Revenue in Thousands';
@@ -325,6 +434,7 @@ function storesValueBarChart(data) {
     option && sortedBarchartStores.setOption(option);
     sortedBarchartStores.resize({width: 1000, height: 500})
 }
+
 // Showing the percentage of total Sales/Revenue for each store in comparison to the total sales in the selected time frame
 function storesPercentBarChart(data) {
     var keys = Object.keys(data[0]);
@@ -427,88 +537,74 @@ function storesPercentBarChart(data) {
     sortedBarchartStores.setOption(option);
     sortedBarchartStores.resize({width: 1000, height: 500});
 }
-// showing a heatmap of the sales per day and time period
-function heatmap(data) {
-    var chartDom = document.getElementById('main');
+
+// A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
+function stackingBarChart(data) {
+    var chartDom = document.getElementById('stacking-barchart-pizza');
     var myChart = echarts.init(chartDom);
     var option;
 
-// prettier-ignore
-    const hours = [
-        '12a', '1a', '2a', '3a', '4a', '5a', '6a',
-        '7a', '8a', '9a', '10a', '11a',
-        '12p', '1p', '2p', '3p', '4p', '5p',
-        '6p', '7p', '8p', '9p', '10p', '11p'
+// There should not be negative values in rawData
+    const rawData = [
+        [100, 302, 301, 334, 390, 330, 320],
+        [320, 132, 101, 134, 90, 230, 210],
+        [220, 182, 191, 234, 290, 330, 310],
+        [150, 212, 201, 154, 190, 330, 410],
+        [820, 832, 901, 934, 1290, 1330, 1320]
     ];
-// prettier-ignore
-    const days = [
-        'Saturday', 'Friday', 'Thursday',
-        'Wednesday', 'Tuesday', 'Monday', 'Sunday'
-    ];
-// prettier-ignore
-    data = [[0, 0, 5], [0, 1, 1], [0, 2, 0],
-        [0, 3, 0], [0, 4, 0], [0, 5, 0],
-        [0, 6, 0], [0, 7, 0], [0, 8, 0],
-        [0, 9, 0], [0, 10, 0], [0, 11, 2],
-        [0, 12, 4], [0, 13, 1], [0, 14, 1],
-        [0, 15, 3], [0, 16, 4], [0, 17, 6],
-        [0, 18, 4], [0, 19, 4], [0, 20, 3],
-        [0, 21, 3], [0, 22, 2], [0, 23, 5], [1, 0, 7], [1, 1, 0], [1, 2, 0], [1, 3, 0], [1, 4, 0], [1, 5, 0], [1, 6, 0], [1, 7, 0], [1, 8, 0], [1, 9, 0], [1, 10, 5], [1, 11, 2], [1, 12, 2], [1, 13, 6], [1, 14, 9], [1, 15, 11], [1, 16, 6], [1, 17, 7], [1, 18, 8], [1, 19, 12], [1, 20, 5], [1, 21, 5], [1, 22, 7], [1, 23, 2], [2, 0, 1], [2, 1, 1], [2, 2, 0], [2, 3, 0], [2, 4, 0], [2, 5, 0], [2, 6, 0], [2, 7, 0], [2, 8, 0], [2, 9, 0], [2, 10, 3], [2, 11, 2], [2, 12, 1], [2, 13, 9], [2, 14, 8], [2, 15, 10], [2, 16, 6], [2, 17, 5], [2, 18, 5], [2, 19, 5], [2, 20, 7], [2, 21, 4], [2, 22, 2], [2, 23, 4], [3, 0, 7], [3, 1, 3], [3, 2, 0], [3, 3, 0], [3, 4, 0], [3, 5, 0], [3, 6, 0], [3, 7, 0], [3, 8, 1], [3, 9, 0], [3, 10, 5], [3, 11, 4], [3, 12, 7], [3, 13, 14], [3, 14, 13], [3, 15, 12], [3, 16, 9], [3, 17, 5], [3, 18, 5], [3, 19, 10], [3, 20, 6], [3, 21, 4], [3, 22, 4], [3, 23, 1], [4, 0, 1], [4, 1, 3], [4, 2, 0], [4, 3, 0], [4, 4, 0], [4, 5, 1], [4, 6, 0], [4, 7, 0], [4, 8, 0], [4, 9, 2], [4, 10, 4], [4, 11, 4], [4, 12, 2], [4, 13, 4], [4, 14, 4], [4, 15, 14], [4, 16, 12], [4, 17, 1], [4, 18, 8], [4, 19, 5], [4, 20, 3], [4, 21, 7], [4, 22, 3], [4, 23, 0], [5, 0, 2], [5, 1, 1], [5, 2, 0], [5, 3, 3], [5, 4, 0], [5, 5, 0], [5, 6, 0], [5, 7, 0], [5, 8, 2], [5, 9, 0], [5, 10, 4], [5, 11, 1], [5, 12, 5], [5, 13, 10], [5, 14, 5], [5, 15, 7], [5, 16, 11], [5, 17, 6], [5, 18, 0], [5, 19, 5], [5, 20, 3], [5, 21, 4], [5, 22, 2], [5, 23, 0], [6, 0, 1], [6, 1, 0], [6, 2, 0], [6, 3, 0], [6, 4, 0], [6, 5, 0], [6, 6, 0], [6, 7, 0], [6, 8, 0], [6, 9, 0], [6, 10, 1], [6, 11, 0], [6, 12, 2], [6, 13, 1], [6, 14, 3], [6, 15, 4], [6, 16, 0], [6, 17, 0], [6, 18, 0], [6, 19, 0], [6, 20, 1], [6, 21, 2], [6, 22, 2], [6, 23, 6]]
-
-        .map(function (item) {
-            return [item[1], item[0], item[2] || '-'];
-        });
+    const totalData = [];
+    for (let i = 0; i < rawData[0].length; ++i) {
+        let sum = 0;
+        for (let j = 0; j < rawData.length; ++j) {
+            sum += rawData[j][i];
+        }
+        totalData.push(sum);
+    }
+    const grid = {
+        left: 100,
+        right: 100,
+        top: 50,
+        bottom: 50
+    };
+    const series = [
+        'Direct',
+        'Mail Ad',
+        'Affiliate Ad',
+        'Video Ad',
+        'Search Engine'
+    ].map((name, sid) => {
+        return {
+            name,
+            type: 'bar',
+            stack: 'total',
+            barWidth: '60%',
+            label: {
+                show: true,
+                formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
+            },
+            data: rawData[sid].map((d, did) =>
+                totalData[did] <= 0 ? 0 : d / totalData[did]
+            )
+        };
+    });
     option = {
-        tooltip: {
-            position: 'top'
+        legend: {
+            selectedMode: false
         },
-        grid: {
-            height: '50%',
-            top: '10%'
+        grid,
+        yAxis: {
+            type: 'value'
         },
         xAxis: {
             type: 'category',
-            data: hours,
-            splitArea: {
-                show: true
-            }
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         },
-        yAxis: {
-            type: 'category',
-            data: days,
-            splitArea: {
-                show: true
-            }
-        },
-        visualMap: {
-            min: 0,
-            max: 10,
-            calculable: true,
-            orient: 'horizontal',
-            left: 'center',
-            bottom: '15%'
-        },
-        series: [
-            {
-                name: 'Punch Card',
-                type: 'heatmap',
-                data: data,
-                label: {
-                    show: true
-                },
-                emphasis: {
-                    itemStyle: {
-                        shadowBlur: 10,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
-            }
-        ]
+        series
     };
 
     option && myChart.setOption(option);
-
 }
+
 // shows a piechart based the most sold Pizza times (based on size of the pizza, can also show all pizzas)
 function pieChartStores() {
     const pieChart = echarts.init(document.getElementById('pie-chart'));
@@ -541,11 +637,11 @@ function pieChartStores() {
                     show: false
                 },
                 data: [
-                    { value: 1048, name: 'Others', size: 'Large' },
-                    { value: 735, name: 'Pepperoni', size: 'Medium' },
-                    { value: 580, name: 'Margarita', size: 'Small' },
-                    { value: 484, name: 'Hawaii', size: 'Medium' },
-                    { value: 300, name: 'Chicken BBQ', size: 'Large' }
+                    {value: 1048, name: 'Others', size: 'Large'},
+                    {value: 735, name: 'Pepperoni', size: 'Medium'},
+                    {value: 580, name: 'Margarita', size: 'Small'},
+                    {value: 484, name: 'Hawaii', size: 'Medium'},
+                    {value: 300, name: 'Chicken BBQ', size: 'Large'}
                 ],
                 color: ['#808080', '#98FF98', '#efc164', '#d287eb', '#87CEEB']
             }
@@ -553,30 +649,26 @@ function pieChartStores() {
     };
 
     pieChart.setOption(option);
-    pieChart.resize({ width: 500, height: 500 });
+    pieChart.resize({width: 500, height: 500});
 }
+
 // a map function that shows all stores on a map with their store ID and distance from the main store
-function mapStores(stores) {
-    var map = L.map('mappyMap').setView([50.13053355, 8.69233311], 18);
+function mapStores(data) {
+    var map = L.map('map').setView([51.505, -0.09], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Hide the loading indicator once the map is fully loaded
-    map.on('load', function() {
+    map.on('load', function () {
         document.getElementById('loading-map').style.display = 'none';
     });
-    // stores.forEach(store => {
-    //     var marker = L.marker([store.latitude, store.longitude]).addTo(map);
-    //     marker.bindTooltip(`Store ID: ${store.storeID}<br>X: ${store.distance}`, {permanent: false});
-    // });
-    // Show the map container
-    document.getElementById('mappyMap').style.display = 'block';
+    document.getElementById('map').style.display = 'block';
 }
+
 // shows a bump chart of the Top 10 pizza ranked based on the sales
 function bumpChartPizzaRanking(data) {
-    var chartDom = document.getElementById('main');
+    var chartDom = document.getElementById('bump-chart-Pizza');
     var myChart = echarts.init(chartDom);
     var option;
 
@@ -607,7 +699,7 @@ function bumpChartPizzaRanking(data) {
     };
     const generateRankingData = () => {
         const map = new Map();
-        const defaultRanking = Array.from({ length: names.length }, (_, i) => i + 1);
+        const defaultRanking = Array.from({length: names.length}, (_, i) => i + 1);
         for (const _ of years) {
             const shuffleArray = shuffle(defaultRanking);
             names.forEach((name, i) => {
@@ -690,6 +782,7 @@ function bumpChartPizzaRanking(data) {
     option && myChart.setOption(option);
 
 }
+
 // shows a bump chart of the Top 10 stores ranked based on the sales/toggle between units and revenue
 function bumpChartStoreRanking(data, mode) {
     var chartDom = document.getElementById('main');
@@ -723,7 +816,7 @@ function bumpChartStoreRanking(data, mode) {
     };
     const generateRankingData = () => {
         const map = new Map();
-        const defaultRanking = Array.from({ length: names.length }, (_, i) => i + 1);
+        const defaultRanking = Array.from({length: names.length}, (_, i) => i + 1);
         for (const _ of years) {
             const shuffleArray = shuffle(defaultRanking);
             names.forEach((name, i) => {
@@ -806,6 +899,7 @@ function bumpChartStoreRanking(data, mode) {
     option && myChart.setOption(option);
 
 }
+
 // to filter the dropdown list of stores
 function filterDropdown() {
     var input, filter, div, a, i;
@@ -822,12 +916,56 @@ function filterDropdown() {
         }
     }
 }
+
 // to go to the store page of the store  that was selected
 function navigateToStore(storeId) {
     console.log("Navigating to store " + storeId);
 }
 
+// function to open and close the sidebar
+function openSideBar() {
+    document.getElementById("sidebar").style.width = "40%";
+}
 
+function closeSideBar() {
+    document.getElementById("sidebar").style.width = "0";
+}
+
+function saveText() {
+    const noteText = document.getElementById('noteField').value;
+
+    const date = new Date();
+    const formattedDate = date.toISOString().slice(0, 10);
+
+    const blob = new Blob([noteText], {type: 'text/plain'});
+
+    const link = document.createElement('a');
+
+    link.download = `note_${formattedDate}.txt`
+
+    link.href = window.URL.createObjectURL(blob);
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+}
+
+function saveGraphs() {
+    const charts = document.querySelectorAll('.chart-container');
+    charts.forEach((chart, index) => {
+        html2canvas(chart, {
+            backgroundColor: '#FFFFFF', // Set background color to white
+            onrendered: function(canvas) {
+                const link = document.createElement('a');
+                link.download = `chart_${index + 1}.jpeg`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        });
+    });
+}
 // test Function used to test out changes on graphs
 function testfunc(data) {
     var keys = Object.keys(data[0]);
@@ -862,7 +1000,7 @@ function testfunc(data) {
             axisPointer: {
                 type: 'shadow'
             },
-            formatter: function(params) {
+            formatter: function (params) {
                 var category = params[0].name;
                 var value = params[0].data;
                 return `Store: ${category}<br/>Value: ${value}`;
@@ -907,6 +1045,7 @@ function testfunc(data) {
     sortedBarchartStores.setOption(option);
     sortedBarchartStores.resize({width: 1000, height: 500});
 }
+
 function testfunction2(data) {
     var keys = Object.keys(data[0]);
     var storeID = keys[0];
@@ -930,7 +1069,7 @@ function testfunction2(data) {
     var sortedStoreData = storeDataWithStoreID.map(item => item.value);
     var sortedStoreID = storeDataWithStoreID.map(item => item.category);
 
-    if(document.getElementById('data-display').value === 'units') {
+    if (document.getElementById('data-display').value === 'units') {
         var yAxisLabel = 'Units Sold in Thousands';
     } else {
         var yAxisLabel = 'Revenue in Thousands';

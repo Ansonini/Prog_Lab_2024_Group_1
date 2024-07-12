@@ -1,5 +1,14 @@
 <?php
 // Perform 
+/* 
+Dieser Datei werde 
+ich anschließend löschen.
+Er ist für die bequeme
+ Erstellung von Tabellen erforderlich,
+kann jedoch entfernt werden, 
+sobald die Grafiken 
+erstellt sind.
+*/
 $result = $conn->query($sql);
 // Close connection
 $conn->close();

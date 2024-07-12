@@ -13,7 +13,6 @@ if ($conn->connect_error) {
 
 // Prepare and execute SQL query
 // set the selected field depending on the view
-$sql = "SELECT YEAR(o.orderDate) as sellingYear";
 
 switch ($view) {
     case 'completeView':
@@ -31,6 +30,18 @@ switch ($view) {
         break;
 }
 
+// seperate per pizza or not
+if ($perPizza == "true") {
+    $sql .= ", pizzaName";
+    $groupByPizza = ', pizzaName';
+    $multipleDataset = true;
+    $joinForPerPizza  = 'JOIN orderItems oi ON o.orderID = oi.orderID
+                         JOIN products p on p.sku = oi.sku ';
+} else {
+    $groupByPizza = '';
+    $joinForPerPizza  = '';
+}
+
 // set the mode 
 if ($mode === 'units') {
     $sql .= ", SUM(o.nItems) as unitsSold";
@@ -38,28 +49,28 @@ if ($mode === 'units') {
     $sql .= ", SUM(o.total) as revenue";
 }
 
-$sql .= " FROM orders o";
+$sql .= " FROM orders o $joinForPerPizza";
 
 // set the where and group statement depending on the view
 switch ($view) {
     case 'completeView':
-        $sql .= " GROUP BY sellingYear ORDER BY sellingYear";
+        $sql .= " GROUP BY sellingYear $groupByPizza ORDER BY sellingYear";
         break;
     case 'yearView':
         $sql .= " WHERE YEAR(o.orderDate) = $year
-                GROUP BY sellingMonth
+                GROUP BY sellingMonth $groupByPizza
                 ORDER BY sellingMonth";
         break;
     case 'monthView':
         $sql .= " WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month
-                GROUP BY sellingDay
+                GROUP BY sellingDay $groupByPizza
                 ORDER BY sellingDay";
         //         GROUP BY sellingWeek
         //         ORDER BY sellingWeek";
         break;
     case 'weekView':
         $sql .= " WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week
-                GROUP BY WEEKDAY(o.orderDate), sellingDay
+                GROUP BY WEEKDAY(o.orderDate), sellingDay $groupByPizza
                 ORDER BY WEEKDAY(o.orderDate)";
         break;
 }

@@ -18,7 +18,11 @@ if ($mode === 'units') {
     $sql .= "SUM(o.total) as revenue";
 }
 
-$sql .= " FROM orders o WHERE date(o.orderDate) ";
+$sql .= " FROM orders o ";
+
+if ($whichStore == true && $whichStore!= 'all') {
+    $sql .= "WHERE o.storeID = \"$whichStore\"";
+} 
 
 
 

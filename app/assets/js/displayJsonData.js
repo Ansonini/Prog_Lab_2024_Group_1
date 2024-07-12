@@ -5,31 +5,31 @@ function displayJsonTable(data, tableContainerId) {
         return;
     }
 
-     // Flatten the data
-     let flattenedData = flattenData(data);
+    // Flatten the data
+    let flattenedData = flattenData(data);
 
-     let tableHtml = '<table>';
-     tableHtml += '<tr>';
- 
-     // Generate table headers based on keys of the first row of flattened data
-     const headers = Object.keys(flattenedData[0]);
-     headers.forEach(key => {
-         tableHtml += '<th>' + key + '</th>';
-     });
-     tableHtml += '</tr>';
- 
-     // Generate table rows
-     flattenedData.forEach(row => {
-         tableHtml += '<tr>';
-         headers.forEach(key => {
-             tableHtml += '<td>' + row[key] + '</td>';
-         });
-         tableHtml += '</tr>';
-     });
- 
-     tableHtml += '</table>';
- 
-     document.getElementById(tableContainerId).innerHTML = tableHtml;
+    let tableHtml = '<table>';
+    tableHtml += '<tr>';
+
+    // Generate table headers based on keys of the first row of flattened data
+    const headers = Object.keys(flattenedData[0]);
+    headers.forEach(key => {
+        tableHtml += '<th>' + key + '</th>';
+    });
+    tableHtml += '</tr>';
+
+    // Generate table rows
+    flattenedData.forEach(row => {
+        tableHtml += '<tr>';
+        headers.forEach(key => {
+            tableHtml += '<td>' + row[key] + '</td>';
+        });
+        tableHtml += '</tr>';
+    });
+
+    tableHtml += '</table>';
+
+    document.getElementById(tableContainerId).innerHTML = tableHtml;
 
 }
 
@@ -216,11 +216,53 @@ function getColor(datasetLabel, opacity, multipleDataset, chartType = 'default')
         "Smale": "rgba(rgba(75, 192, 192, ",
         "Medium": "rgba(54, 130, 235, ",
         "Large": "rgba(153, 102, 255, ",
-        "Extra Large": "rgba(123, 40, 238, "
-        
+        "Extra Large": "rgba(123, 40, 238, ",
+        // for pizzaName - pizzaSize
+        "Margherita Pizza - Small": "rgba(255, 99, 132, ", // Original color
+        "Margherita Pizza - Medium": "rgba(255, 79, 112, ", // Darker shade
+        "Margherita Pizza - Large": "rgba(255, 59, 92, ", // Even darker
+        "Margherita Pizza - Extra Large": "rgba(255, 39, 72, ", // Darkest shade
 
+        "Pepperoni Pizza - Small": "rgba(54, 130, 235, ", // Original color
+        "Pepperoni Pizza - Medium": "rgba(44, 120, 225, ", // Darker shade
+        "Pepperoni Pizza - Large": "rgba(34, 110, 215, ", // Even darker
+        "Pepperoni Pizza - Extra Large": "rgba(24, 100, 205, ", // Darkest shade
+
+        "Hawaiian Pizza - Small": "rgba(255, 206, 86, ", // Original color
+        "Hawaiian Pizza - Medium": "rgba(235, 186, 76, ", // Darker shade
+        "Hawaiian Pizza - Large": "rgba(215, 166, 66, ", // Even darker
+        "Hawaiian Pizza - Extra Large": "rgba(195, 146, 56, ", // Darkest shade
+
+        "Meat Lover's Pizza - Small": "rgba(75, 192, 192, ", // Original color
+        "Meat Lover's Pizza - Medium": "rgba(65, 182, 182, ", // Darker shade
+        "Meat Lover's Pizza - Large": "rgba(55, 172, 172, ", // Even darker
+        "Meat Lover's Pizza - Extra Large": "rgba(45, 162, 162, ", // Darkest shade
+
+        "Veggie Pizza - Small": "rgba(34, 139, 34, ", // Original color
+        "Veggie Pizza - Medium": "rgba(24, 129, 24, ", // Darker shade
+        "Veggie Pizza - Large": "rgba(14, 119, 14, ", // Even darker
+        "Veggie Pizza - Extra Large": "rgba(4, 109, 4, ", // Darkest shade
+
+        "BBQ Chicken Pizza - Small": "rgba(255, 159, 64, ", // Original color
+        "BBQ Chicken Pizza - Medium": "rgba(235, 139, 54, ", // Darker shade
+        "BBQ Chicken Pizza - Large": "rgba(215, 119, 44, ", // Even darker
+        "BBQ Chicken Pizza - Extra Large": "rgba(195, 99, 34, ", // Darkest shade
+
+        "Buffalo Chicken Pizza - Small": "rgba(255, 99, 71, ", // Original color
+        "Buffalo Chicken Pizza - Medium": "rgba(235, 89, 61, ", // Darker shade
+        "Buffalo Chicken Pizza - Large": "rgba(215, 79, 51, ", // Even darker
+        "Buffalo Chicken Pizza - Extra Large": "rgba(195, 69, 41, ", // Darkest shade
+
+        "Sicilian Pizza - Small": "rgba(123, 40, 238, ", // Original color
+        "Sicilian Pizza - Medium": "rgba(113, 30, 228, ", // Darker shade
+        "Sicilian Pizza - Large": "rgba(103, 20, 218, ", // Even darker
+        "Sicilian Pizza - Extra Large": "rgba(93, 10, 208, ", // Darkest shade
+
+        "Oxtail Pizza - Small": "rgba(153, 102, 255, ", // Original color
+        "Oxtail Pizza - Medium": "rgba(133, 82, 235, ", // Darker shade
+        "Oxtail Pizza - Large": "rgba(113, 62, 215, ", // Even darker
+        "Oxtail Pizza - Extra Large": "rgba(93, 42, 195, " // Darkest shade
     };
-
     // Get the base color from the palette
     let baseColor = colorPalette[datasetLabel] || defaultColor; // Default color if label not found
 

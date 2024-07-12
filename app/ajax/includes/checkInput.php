@@ -40,7 +40,41 @@ if (isset($_POST['view'])) {
         $perSize = false;
     }
 
+    if (isset($_POST['perPizza'])) {
 
+        // Sanitize input to make sure the input is good
+        if ($_POST['perPizza'] == true || $_POST['perPizza'] == false) {
+            $perPizza = $_POST['perPizza'];
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid perPizza, needs to be true or false']);
+            exit;
+        }
+    } else {
+        $perPizza = false;
+    }
+
+    // list of all correct storeID
+    $validStoredID = [
+        "S013343", "S048150", "S058118", "S062214", "S064089", "S068548", "S080157", "S122017", "S147185", "S216043",
+        "S263879", "S276746", "S302800", "S351225", "S361257", "S370494", "S396799", "S449313", "S476770", "S486166",
+        "S490972", "S505400", "S588444", "S606312", "S669665", "S688745", "S750231", "S799887", "S817950", "S872983",
+        "S918734", "S948821", "all"
+    ];
+
+    if (isset($_POST['storeSelection'])) {
+
+        // Sanitize input to make sure the input is good
+        if (in_array($_POST['storeSelection'], $validStoredID)) {
+            $whichStore = $_POST['storeSelection'];
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid storeID']);
+            exit;
+        }
+    } else {
+        $whichStore = 'all';
+    }
+
+    // if it is set, check limit for bumpcharts, otherwise set it to 10 by default
     if (isset($_POST['rankingSize'])) {
 
         // Sanitize input to make sure the input is good

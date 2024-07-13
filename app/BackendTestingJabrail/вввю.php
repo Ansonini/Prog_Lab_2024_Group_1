@@ -332,3 +332,103 @@ $(document).ready(function () {
                if (mode && year && week) { ready = true; }
                break;
        }
+
+       function fetchRevenueData() {
+        var view = $('#view').val();
+        var year = $('#year').val();
+        var storeID = $('#storeDropdown').val();
+
+        updateTableHeader(view);
+
+        $.ajax({
+            url: '/BackendTestingJabrail/revenuePerStore.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { storeID: storeID, view: view, year: year },
+            success: function (response) {
+                if (response.success) {
+                    const tableBody = $('#additionalTable tbody');
+                    tableBody.empty();
+
+                    const data = response.data;
+                    data.forEach(function (item) {
+                        item.data.forEach(function (entry) {
+                            const row = $('<tr>');
+                            if (view === 'yearView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.period));
+                                row.append($('<td>').text(entry.revenue));
+                            } else if (view === 'monthView' || view === 'weekView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.year));
+                                row.append($('<td>').text(entry.period));
+                                row.append($('<td>').text(entry.revenue));
+                            } else if (view === 'dayView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.Morning));
+                                row.append($('<td>').text(entry.Lunch));
+                                row.append($('<td>').text(entry.Evening));
+                                row.append($('<td>').text(entry.Night));
+                            }
+                            tableBody.append(row);
+                        });
+                    });
+                } else {
+                    $('#additionalTable tbody').html('<tr><td colspan="4">' + response.message + '</td></tr>');
+                }
+            },
+            error: function () {
+                $('#additionalTable tbody').html('<tr><td colspan="4">Error fetching data</td></tr>');
+            }
+        });
+    }
+
+    function fetchPizzasSoldData() {
+        var view = $('#view').val();
+        var year = $('#year').val();
+        var storeID = $('#storeDropdown').val();
+
+        updateTableHeader(view);
+
+        $.ajax({
+            url: '/BackendTestingJabrail/pizzaSalesPerStore.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { storeID: storeID, view: view, year: year },
+            success: function (response) {
+                if (response.success) {
+                    const tableBody = $('#pizzaSoldTable tbody');
+                    tableBody.empty();
+
+                    const data = response.data;
+                    data.forEach(function (item) {
+                        item.data.forEach(function (entry) {
+                            const row = $('<tr>');
+                            if (view === 'yearView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.period));
+                                row.append($('<td>').text(entry.totalPizzas));
+                            } else if (view === 'monthView' || view === 'weekView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.year));
+                                row.append($('<td>').text(entry.period));
+                                row.append($('<td>').text(entry.totalPizzas));
+                            } else if (view === 'dayView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.Morning));
+                                row.append($('<td>').text(entry.Lunch));
+                                row.append($('<td>').text(entry.Evening));
+                                row.append($('<td>').text(entry.Night));
+                            }
+                            tableBody.append(row);
+                        });
+                    });
+                } else {
+                    $('#pizzaSoldTable tbody').html('<tr><td colspan="4">' + response.message + '</td></tr>');
+                }
+            },
+            error: function () {
+                $('#pizzaSoldTable tbody').html('<tr><td colspan="4">Error fetching data</td></tr>');
+            }
+        });
+    }

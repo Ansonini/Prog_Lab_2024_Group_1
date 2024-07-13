@@ -89,7 +89,7 @@
             </select>
         </div>
 
-        <div class="dropdown-group" id="timeframeSettings">
+        <div class="dropdown-group" id="timeframeSettings" style="display: none;">
             <label id="timeframeSettingsLabel" class="group-title">Timeframe Settings</label>
             <select class="dropdown" id="year">
                 <option value="2020">2020</option>
@@ -110,6 +110,63 @@
 
     <h3>Pizzas Sold per Store</h3>
     <table id="pizzaSoldTable">
+        <thead>
+            <!-- Thead будет динамически обновляться на основе view -->
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <h1>Revenue per Selected Period</h1>
+
+    <div class="dropdown-container">
+        <div class="dropdown-group">
+            <label class="group-title">Period View</label>
+            <select class="dropdown" id="periodView">
+                <option value="oneMonth">One Month</option>
+                <option value="threeMonths">Three Months</option>
+                <option value="sixMonths">Six Months</option>
+            </select>
+        </div>
+
+        <div class="dropdown-group" id="monthSettings" style="display: none;">
+            <label class="group-title">Select Month</label>
+            <select class="dropdown" id="month">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+        </div>
+
+        <div class="dropdown-group" id="threeMonthsSettings" style="display: none;">
+            <label class="group-title">Select Period</label>
+            <select class="dropdown" id="threeMonthsPeriod">
+                <option value="1">January - March</option>
+                <option value="2">April - June</option>
+                <option value="3">July - September</option>
+                <option value="4">October - December</option>
+            </select>
+        </div>
+
+        <div class="dropdown-group" id="sixMonthsSettings" style="display: none;">
+            <label class="group-title">Select Period</label>
+            <select class="dropdown" id="sixMonthsPeriod">
+                <option value="1">January - June</option>
+                <option value="2">July - December</option>
+            </select>
+        </div>
+    </div>
+
+    <h3>Revenue per Selected Period</h3>
+    <table id="periodRevenueTable">
         <thead>
             <!-- Thead будет динамически обновляться на основе view -->
         </thead>

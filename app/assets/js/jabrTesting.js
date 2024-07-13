@@ -279,7 +279,7 @@ $(document).ready(function () {
             var periodType = $('#periodView').val();
             var storeID = $('#storeDropdown').val();
             var periodValue = null;
-    
+        
             if (periodType === 'oneMonth') {
                 periodValue = $('#month').val();
             } else if (periodType === 'threeMonths') {
@@ -287,11 +287,11 @@ $(document).ready(function () {
             } else if (periodType === 'sixMonths') {
                 periodValue = $('#sixMonthsPeriod').val();
             }
-    
+        
             console.log('fetchPeriodPizzaSalesData:', { storeID, periodType, periodValue });
-    
+        
             updatePeriodPizzaSalesTableHeader();
-    
+        
             $.ajax({
                 url: '/BackendTestingJabrail/periodenPizzaSalesPerStore.php',
                 type: 'POST',
@@ -302,13 +302,14 @@ $(document).ready(function () {
                     if (response.success) {
                         const tableBody = $('#periodPizzaSalesTable tbody');
                         tableBody.empty();
-    
-                        const data = response.data;
+        
+                        const data = response.data[0].data; // Get the correct data array
                         data.forEach(function (item) {
+                            console.log('Processing item:', item); // Log each item to check its structure
                             const row = $('<tr>');
-                            row.append($('<td>').text(storeID));
-                            row.append($('<td>').text(item.year));
-                            row.append($('<td>').text(item.pizzaQuantity));
+                            row.append($('<td>').text(storeID)); // Add storeID to each row
+                            row.append($('<td>').text(item.year)); // Add year to each row
+                            row.append($('<td>').text(item.pizzaQuantity)); // Add pizzaQuantity to each row
                             tableBody.append(row);
                         });
                     } else {

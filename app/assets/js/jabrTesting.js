@@ -245,15 +245,20 @@ $(document).ready(function () {
                     const tableBody = $('#periodRevenueTable tbody');
                     tableBody.empty();
     
-                    const data = response.data[0].data; // Get the correct data array
-                    data.forEach(function (item) {
-                        console.log('Processing item:', item); // Log each item to check its structure
-                        const row = $('<tr>');
-                        row.append($('<td>').text(storeID)); // Add storeID to each row
-                        row.append($('<td>').text(item.year)); // Add year to each row
-                        row.append($('<td>').text(item.revenue)); // Add revenue to each row
-                        tableBody.append(row);
-                    });
+                    const data = response.data;
+                    if (data.length > 0) { // Ensure data array is not empty
+                        const revenueData = data[0].data; // Get the correct data array
+                        revenueData.forEach(function (item) {
+                            console.log('Processing item:', item); // Log each item to check its structure
+                            const row = $('<tr>');
+                            row.append($('<td>').text(storeID)); // Add storeID to each row
+                            row.append($('<td>').text(item.year)); // Add year to each row
+                            row.append($('<td>').text(item.revenue)); // Add revenue to each row
+                            tableBody.append(row);
+                        });
+                    } else {
+                        $('#periodRevenueTable tbody').html('<tr><td colspan="3">No view</td></tr>');
+                    }
                 } else {
                     $('#periodRevenueTable tbody').html('<tr><td colspan="3">' + response.message + '</td></tr>');
                 }
@@ -263,6 +268,7 @@ $(document).ready(function () {
             }
         });
     }
+
     
         function updatePeriodPizzaSalesTableHeader() {
             const periodPizzaSalesTableHeader = $('#periodPizzaSalesTable thead');
@@ -298,20 +304,25 @@ $(document).ready(function () {
                 dataType: 'json',
                 data: { storeID: storeID, periodType: periodType, periodValue: periodValue },
                 success: function (response) {
-                    console.log('Period pizza sales data response:', response);
+                    console.log('Period pizza sales data response:', response); // Log response for debugging
                     if (response.success) {
                         const tableBody = $('#periodPizzaSalesTable tbody');
                         tableBody.empty();
         
-                        const data = response.data[0].data; // Get the correct data array
-                        data.forEach(function (item) {
-                            console.log('Processing item:', item); // Log each item to check its structure
-                            const row = $('<tr>');
-                            row.append($('<td>').text(storeID)); // Add storeID to each row
-                            row.append($('<td>').text(item.year)); // Add year to each row
-                            row.append($('<td>').text(item.pizzaQuantity)); // Add pizzaQuantity to each row
-                            tableBody.append(row);
-                        });
+                        const data = response.data;
+                        if (data.length > 0) { // Ensure data array is not empty
+                            const pizzaSalesData = data[0].data; // Get the correct data array
+                            pizzaSalesData.forEach(function (item) {
+                                console.log('Processing item:', item); // Log each item to check its structure
+                                const row = $('<tr>');
+                                row.append($('<td>').text(storeID)); // Add storeID to each row
+                                row.append($('<td>').text(item.year)); // Add year to each row
+                                row.append($('<td>').text(item.pizzaQuantity)); // Add pizzaQuantity to each row
+                                tableBody.append(row);
+                            });
+                        } else {
+                            $('#periodPizzaSalesTable tbody').html('<tr><td colspan="3">No view</td></tr>');
+                        }
                     } else {
                         $('#periodPizzaSalesTable tbody').html('<tr><td colspan="3">' + response.message + '</td></tr>');
                     }
@@ -321,6 +332,7 @@ $(document).ready(function () {
                 }
             });
         }
+        
     
    
     

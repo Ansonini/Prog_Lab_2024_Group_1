@@ -250,7 +250,6 @@ th, td {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     padding: 20px;
-    padding: 20px;
 }
 .bump-chart-pizza-canvas {
     position: relative;

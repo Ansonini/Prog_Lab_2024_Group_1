@@ -6,9 +6,9 @@ header('Content-Type: application/json');
 // include the DB connect file. ../ because its outside of this folder
 include '/var/www/html/ajax/includes/connectDB.php';
 
-$storeID = $_POST['storeID'];
+$storeSelection = $_POST['storeSelection'];
 
-$sql = "SELECT * from stores where storeID = \"$storeID\"";
+$sql = "SELECT * from stores where storeID = \"$storeSelection\"";
 
 
 //make query and return result

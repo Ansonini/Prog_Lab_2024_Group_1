@@ -20,8 +20,8 @@ if ($mode === 'units') {
 
 $sql .= " FROM orders o ";
 
-if ($whichStore == true && $whichStore!= 'all') {
-    $sql .= "WHERE o.storeID = \"$whichStore\"";
+if ($storeSelection == true && $storeSelection!= 'all') {
+    $sql .= "WHERE o.storeID = \"$storeSelection\"";
 } 
 
 

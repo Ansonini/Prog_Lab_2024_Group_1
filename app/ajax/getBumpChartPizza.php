@@ -49,9 +49,9 @@ switch ($view) {
         break;
 }
 
-if($whichStore == true && $whichStore!= 'all'){
+if($storeSelection == true && $storeSelection!= 'all'){
     $storeFilter = ($timeFilter === '') ? ' WHERE ' : ' AND '; // add where or and depending if a where clause is already there
-    $storeFilter .= " o.storeID = \"$whichStore\"";
+    $storeFilter .= " o.storeID = \"$storeSelection\"";
 }
 
 

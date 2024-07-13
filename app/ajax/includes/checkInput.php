@@ -65,13 +65,13 @@ if (isset($_POST['view'])) {
 
         // Sanitize input to make sure the input is good
         if (in_array($_POST['storeSelection'], $validStoredID)) {
-            $whichStore = $_POST['storeSelection'];
+            $storeSelection = $_POST['storeSelection'];
         } else {
             echo json_encode(['success' => false, 'message' => 'Invalid storeID']);
             exit;
         }
     } else {
-        $whichStore = 'all';
+        $storeSelection = 'all';
     }
 
     // if it is set, check limit for bumpcharts, otherwise set it to 10 by default

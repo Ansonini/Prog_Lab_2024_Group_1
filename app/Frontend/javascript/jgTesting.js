@@ -19,6 +19,7 @@
 // document.getElementById('loadJs2').addEventListener('click', () => loadScript('assets/js/jgTesting2.js'));
 // document.getElementById('loadJs3').addEventListener('click', () => loadScript('assets/js/jgTesting3.js'));
 
+// declare the upcoming request so that they can be canceled and replaced
 var currentAjaxRequest1 = null;
 var currentAjaxRequest2 = null;
 var currentAjaxRequest3 = null;
@@ -46,7 +47,19 @@ function loadTab(jsFile, tabElement) {
     document.body.appendChild(script);
 }
 
+
+
 // Load the default tab (first tab) on page load
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.tab').click();
 });
+
+
+// function to open and close the sidebar
+function openSideBar() {
+    document.getElementById("sidebar").style.width = "40%";
+}
+
+function closeSideBar() {
+    document.getElementById("sidebar").style.width = "0";
+}

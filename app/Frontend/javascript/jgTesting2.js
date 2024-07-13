@@ -1,16 +1,27 @@
 $(document).ready(function () {
     const bodyContainer = document.getElementById('bodyContainer');
     bodyContainer.style.borderTopLeftRadius = '20px';
+    
+    document.getElementById('graph4&5').style.display = 'none';
+    document.getElementById('table4&5').style.display = 'none';
+
 
     var ajaxFile1 = 'getSalesPerPizzaOverTime';
-    var ajaxFile2 = 'getSalesPerTimeframe';
-    var ajaxFile3 = 'getSalesPerStorePerMonth';
-    var ajaxFile4 = 'getSalesPerPizza';
-    var ajaxFile5 = 'getSalesPerTimeframe';
+    document.getElementById('graphTitle1').textContent = 'Sales per pizza overtime';
+
+    var ajaxFile2 = 'getSalesPerPizza';
+    document.getElementById('graphTitle2').textContent = 'Total sales per pizza during chosen timeframe';
+
+    var ajaxFile3 = 'getBumpChartPizza';
+    document.getElementById('graphTitle3').textContent = 'Pizza ranking for the chosen timeframe';
+
+    var ajaxFile4 = '';
+    var ajaxFile5 = '';
 
 
     // Function to fetch and display data
     function fetchData() {
+
         var view = $('#view').val();
         var mode = $('#mode').val();
         var year = $('#year').val();
@@ -19,8 +30,8 @@ $(document).ready(function () {
 
     
         // empty the table of previous value each time a dropdown gets changed
-        $('#tablePerTime').empty();
-        $('#tablePerStore').empty();
+        $('#table4').empty();
+        $('#table5').empty();
 
         // check view, show/hide relevant dropdowns and check if the relevant dropdown are set 
         var ready = false
@@ -226,7 +237,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
-                    createChart(response.data, 'graphCanvas3', chartType, grouping);
+                    createChart(response.data, 'graphCanvas3', chartType, grouping, true);
                 } else {
                     $('#graphCanvas3').html('<p>' + response.message + '</p>');
                 }
@@ -281,7 +292,6 @@ $(document).ready(function () {
                 year: year,
                 month: month,
                 week: week,
-                perSize:perSize,
                 storeSelection: storeSelection
 
             },
@@ -290,7 +300,7 @@ $(document).ready(function () {
                     // Call the functions from to display the table and the chart
                     displayJsonTable(response.data, "table4");
 
-                    createChart(response.data, 'graphCanvas4', chartType, grouping);
+                    createChart(response.data, 'graphCanvas4', chartType, grouping, );
                 } else {
                     $('#graphCanvas4').html('<p>' + response.message + '</p>');
                 }
@@ -369,9 +379,9 @@ $(document).ready(function () {
     
 
     // Trigger fetchData when any dropdown value changes
-    $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType, #perSize, #storeSelection').change(fetchData);
+    $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType, #storeSelection').change(fetchData);
     $('#chartType1, #grouping1').change(fetchDataGraph1);
-    $('#chartType2, #grouping2').change(fetchDataGraph2);
+    $('#chartType2, #grouping2, #perSize').change(fetchDataGraph2);
     $('#chartType3, #grouping3').change(fetchDataGraph3);
     $('#chartType4, #grouping4').change(fetchDataGraph4);
     $('#chartType5, #grouping5').change(fetchDataGraph5);

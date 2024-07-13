@@ -4,10 +4,18 @@ $(document).ready(function () {
     bodyContainer.style.borderTopLeftRadius = '0px';
     
     document.getElementById('table4&5').style.display = 'none';
+    document.getElementById('graph4&5').style.display = 'none';
 
+    //choose file to load and set the tilte
     var ajaxFile1 = 'getSalesPerStorePerMonth';
+    document.getElementById('graphTitle1').textContent = 'Sales per store per month';
+
     var ajaxFile2 = 'getSalesPerTimeframe';
+    document.getElementById('graphTitle2').textContent = 'Sales per for the chosen time frame';
+
     var ajaxFile3 = 'getSalesPerStore';
+    document.getElementById('graphTitle3').textContent = 'Sales per store during the chosen time frame';
+
     var ajaxFile4 = '';
     var ajaxFile5 = '';
 

@@ -1,21 +1,16 @@
 $(document).ready(function () {
     const bodyContainer = document.getElementById('bodyContainer');
     bodyContainer.style.borderTopLeftRadius = '20px';
-    
-    document.getElementById('graph4&5').style.display = 'none';
-    document.getElementById('table4&5').style.display = 'none';
 
-
-    var ajaxFile1 = 'getSalesPerPizzaOverTime';
-    var ajaxFile2 = 'getSalesPerPizza';
-    var ajaxFile3 = 'getBumpChartPizza';
-    var ajaxFile4 = '';
-    var ajaxFile5 = '';
+    var ajaxFile1 = 'getCustomerCoordinatesPerStore';
+    var ajaxFile2 = 'getSalesPerTimeframe';
+    var ajaxFile3 = 'getSalesPerStorePerMonth';
+    var ajaxFile4 = 'getSalesPerPizza';
+    var ajaxFile5 = 'getSalesPerTimeframe';
 
 
     // Function to fetch and display data
     function fetchData() {
-
         var view = $('#view').val();
         var mode = $('#mode').val();
         var year = $('#year').val();
@@ -24,8 +19,8 @@ $(document).ready(function () {
 
     
         // empty the table of previous value each time a dropdown gets changed
-        $('#table4').empty();
-        $('#table5').empty();
+        $('#tablePerTime').empty();
+        $('#tablePerStore').empty();
 
         // check view, show/hide relevant dropdowns and check if the relevant dropdown are set 
         var ready = false

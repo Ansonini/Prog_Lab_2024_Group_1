@@ -48,6 +48,6 @@ switch ($periodType) {
 
 $multipleDataset = true;
 
-include '/var/www/html/ajax/includes/makeQuery.php';
+include '/var/www/html/ajax/includes/makeQueryExtra.php';
 ?>
 

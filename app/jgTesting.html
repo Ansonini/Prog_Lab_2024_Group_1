@@ -7,7 +7,8 @@
     <title>Dashboard testing</title>
     <style>
         :root {
-            --main-color: #5c9ddb; 
+            --main-color: #5c9ddb;
+            --main-content-side-margin: 30px;
         } 
         html {
             background-color: var(--main-color);
@@ -18,8 +19,8 @@
             justify-content: space-between; /* Space out tabs and title */
             align-items: center; /* Center vertically */
             background-color: var(--main-color);
-            margin-left: 20px;
-            margin-right: 20px;
+            margin-left: var(--main-content-side-margin);
+            margin-right: var(--main-content-side-margin);
             font-size: 18px;
         }
 
@@ -31,8 +32,8 @@
         }
         .body-container {
             background-color: #fff; /* White background */
-            margin-left: 20px;
-            margin-right: 20px;
+            margin-left: var(--main-content-side-margin);
+            margin-right: var(--main-content-side-margin);
             padding: 20px;
             border-radius: 20px; /* Rounded corners */
         }
@@ -184,6 +185,59 @@
         .tab:hover {
             background-color: #fff;
         }
+
+        /*Sidebar plus Sidebar Button*/
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            background-color: lightgrey;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidebar a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: darkgrey;
+        }
+
+        .sidebar .sidebarClose {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        .sidebarOpen {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-right: 1%;
+        }
+
+        .sidebarOpen:hover {
+            background-color: lightgrey;
+        }
+        /*Sidebar Content*/
+        .table-changable-container {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
         
     </style>
 
@@ -196,8 +250,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1" defer></script>
 
     <!-- own scripts -->
-    <script src="assets/js/displayJsonData.js" defer></script>
-    <script src="assets/js/jgTesting.js" defer></script>
+    <script src="/Frontend/javascript/displayJsonData.js" defer></script>
+    <script src="/Frontend/javascript/jgTesting.js" defer></script>
 
 </head>
 
@@ -206,9 +260,11 @@
     <div class="header">
 
         <div class="tab-container">
-            <div class="tab" onclick="loadTab('assets/js/jgTesting1.js', this)">Main Page</div>
-            <div class="tab" onclick="loadTab('assets/js/jgTesting2.js', this)">Pizza Details</div>
-            <div class="tab" onclick="loadTab('assets/js/jgTesting3.js', this)">Store Details</div>
+            <button class="sidebarOpen" onclick="openSideBar()">More Info</button>
+
+            <div class="tab" onclick="loadTab('/Frontend/javascript/jgTesting1.js', this)">Main Page</div>
+            <div class="tab" onclick="loadTab('/Frontend/javascript/jgTesting2.js', this)">Pizza Details</div>
+            <div class="tab" onclick="loadTab('/Frontend/javascript/jgTesting3.js', this)">Store Details</div>
         </div>
 
         <div class="dropdown-container">
@@ -304,6 +360,140 @@
         </div>
     </div>
 
+    <!--The Sidebar that is toggled by the button in the header-->
+    <div class="sidebar" id="sidebar">
+        <a href="javascript:void(0)" class="sidebarClose" onclick="closeSideBar()">X</a>
+
+        <div class="table-fix-container">
+            <h2>Store Data</h2>
+            <!--The no Choice Table with  Fix Variables input-->
+            <div class="loadingTable">Loading...</div>
+            <table id="storeLocationsTable">
+                <thead>
+                <tr>
+                    <th>Number of Stores</th>
+                    <th>Total Revenue in $</th>
+                    <th>Total Units Sold</th>
+                </tr>
+                <tr>
+                    <td>32</td>
+                    <td>1000</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <th>Number of Stores in State</th>
+                    <th>Total Revenue by State in $</th>
+                    <th>Total Units Sold by State</th>
+                </tr>
+                <tr>
+                    <td>CA: 32</td>
+                    <td>CA: 1000</td>
+                    <td>CA: 100</td>
+                </tr>
+                <tr>
+                    <td>NV: 32</td>
+                    <td>NV: 1000</td>
+                    <td>NV: 100</td>
+
+                </tr>
+                <tr>
+                    <td>UT: 32</td>
+                    <td>UT: 1000</td>
+                    <td>UT: 100</td>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="table-changable-container">
+            <h2>Store Data</h2>
+            <!--The Selector to Change the Values of choice Table-->
+            <div class="dropdown-container">
+                <div class="dropdown-group">
+                    <label class="group-title">View Settings</label>
+                    <select class="dropdown" id="view">
+                        <option value="completeView">Complete View</option>
+                        <option value="yearView">Year View</option>
+                        <option value="monthView">Month View</option>
+                        <option value="weekView">Week View</option>
+                    </select>
+
+                    <select class="dropdown" id="mode">
+                        <option value="units">Units</option>
+                        <option value="revenue">Revenue</option>
+                    </select>
+                </div>
+
+
+                <div class="dropdown-group">
+                    <label id="timeframeSettingsLabel" class="group-title">Timeframe Settings</label>
+
+                    <div id="fixedTimeInput">
+                        <select class="dropdown" id="year">
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                        </select>
+
+                        <select class="dropdown" id="month">
+                            <!-- Generate month options from 1 to 12 -->
+                            <script>
+                                for (let i = 1; i <= 12; i++) {
+                                    document.write('<option value="' + i + '">' + i + '</option>');
+                                }
+                            </script>
+                        </select>
+
+                        <select class="dropdown" id="week">
+                            <!-- Generate week options from 1 to 52 -->
+                            <script>
+                                for (let i = 1; i <= 52; i++) {
+                                    document.write('<option value="' + i + '">' + i + '</option>');
+                                }
+                            </script>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!--The Choice Table that is filled with data from a given Time period-->
+            <div class="loadingTable">Loading...</div>
+            <table id="table-choice-container">
+                <thead>
+                <tr>
+                    <th>Total Revenue in $</th>
+                    <th>Total Units Sold</th>
+                </tr>
+                <tr>
+                    <td>1000</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <th>Total Revenue by State in $</th>
+                    <th>Total Units Sold by State</th>
+                </tr>
+                <tr>
+                    <td>CA: 1000</td>
+                    <td>CA: 100</td>
+                </tr>
+                <tr>
+                    <td>NV: 1000</td>
+                    <td>NV: 100</td>
+
+                </tr>
+                <tr>
+                    <td>UT: 1000</td>
+                    <td>UT: 100</td>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Rows will be added here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="body-container" id="bodyContainer">
 
 
@@ -333,7 +523,7 @@
                     </div>
                 </div>
 
-                <canvas id="graphCanvas1" width="400" height="100"></canvas>
+                <canvas id="graphCanvas1" width="400" height="90"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>
 
@@ -370,7 +560,7 @@
                     </div>
                 </div>
                 
-                <canvas id="graphCanvas2" width="400" height="200"></canvas>
+                <canvas id="graphCanvas2" width="400" height="170"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>
 
@@ -398,7 +588,7 @@
                     </div>
                 </div>
 
-                <canvas id="graphCanvas3" width="400" height="200"></canvas>
+                <canvas id="graphCanvas3" width="400" height="170"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>
 
@@ -429,7 +619,7 @@
                     </div>
                 </div>
 
-                <canvas id="graphCanvas4" width="400" height="200"></canvas>
+                <canvas id="graphCanvas4" width="400" height="180"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>
 
@@ -455,7 +645,7 @@
                         
                     </div>
                 </div>
-                <canvas id="graphCanvas5" width="400" height="200"></canvas>
+                <canvas id="graphCanvas5" width="400" height="180"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>
 

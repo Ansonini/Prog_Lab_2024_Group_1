@@ -1,8 +1,5 @@
 $(document).ready(function () {
 
-    const bodyContainer = document.getElementById('bodyContainer');
-    bodyContainer.style.borderTopLeftRadius = '0px';
-    
     document.getElementById('table4&5').style.display = 'none';
     document.getElementById('graph4&5').style.display = 'none';
 

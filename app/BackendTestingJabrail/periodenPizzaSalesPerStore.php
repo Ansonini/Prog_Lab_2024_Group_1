@@ -17,25 +17,25 @@ $sql = "SELECT o.storeID";
 
 switch ($periodType) {
     case 'oneMonth':
-        $sql .= ", YEAR(o.orderDate) as year, MONTH(o.orderDate) as month, SUM(o.pizzaQuantity) as pizzaSales";
+        $sql .= ", YEAR(o.orderDate) as year, SUM(o.nItems) as pizzaQuantity";
         $sql .= " FROM orders o WHERE o.storeID = '$storeID' AND MONTH(o.orderDate) = $periodValue";
-        $sql .= " GROUP BY o.storeID, YEAR(o.orderDate), MONTH(o.orderDate)";
-        $sql .= " ORDER BY YEAR(o.orderDate), MONTH(o.orderDate)";
+        $sql .= " GROUP BY o.storeID, YEAR(o.orderDate)";
+        $sql .= " ORDER BY YEAR(o.orderDate)";
         break;
-    
+
     case 'threeMonths':
         $startMonth = ($periodValue - 1) * 3 + 1;
         $endMonth = $startMonth + 2;
-        $sql .= ", YEAR(o.orderDate) as year, SUM(o.pizzaQuantity) as pizzaSales";
+        $sql .= ", YEAR(o.orderDate) as year, SUM(o.nItems) as pizzaQuantity";
         $sql .= " FROM orders o WHERE o.storeID = '$storeID' AND MONTH(o.orderDate) BETWEEN $startMonth AND $endMonth";
         $sql .= " GROUP BY o.storeID, YEAR(o.orderDate)";
         $sql .= " ORDER BY YEAR(o.orderDate)";
         break;
-    
+
     case 'sixMonths':
         $startMonth = ($periodValue == 1) ? 1 : 7;
         $endMonth = ($periodValue == 1) ? 6 : 12;
-        $sql .= ", YEAR(o.orderDate) as year, SUM(o.pizzaQuantity) as pizzaSales";
+        $sql .= ", YEAR(o.orderDate) as year, SUM(o.nItems) as pizzaQuantity";
         $sql .= " FROM orders o WHERE o.storeID = '$storeID' AND MONTH(o.orderDate) BETWEEN $startMonth AND $endMonth";
         $sql .= " GROUP BY o.storeID, YEAR(o.orderDate)";
         $sql .= " ORDER BY YEAR(o.orderDate)";

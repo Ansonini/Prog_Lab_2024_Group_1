@@ -264,6 +264,66 @@ $(document).ready(function () {
         });
     }
     
+        function updatePeriodPizzaSalesTableHeader() {
+            const periodPizzaSalesTableHeader = $('#periodPizzaSalesTable thead');
+            periodPizzaSalesTableHeader.empty();
+            periodPizzaSalesTableHeader.append(`
+                <tr>
+                    <th>Store ID</th>
+                    <th>Year</th>
+                    <th>Pizza Sales</th>
+                </tr>
+            `);
+        }
+        function fetchPeriodPizzaSalesData() {
+            var periodType = $('#periodView').val();
+            var storeID = $('#storeDropdown').val();
+            var periodValue = null;
+    
+            if (periodType === 'oneMonth') {
+                periodValue = $('#month').val();
+            } else if (periodType === 'threeMonths') {
+                periodValue = $('#threeMonthsPeriod').val();
+            } else if (periodType === 'sixMonths') {
+                periodValue = $('#sixMonthsPeriod').val();
+            }
+    
+            console.log('fetchPeriodPizzaSalesData:', { storeID, periodType, periodValue });
+    
+            updatePeriodPizzaSalesTableHeader();
+    
+            $.ajax({
+                url: '/BackendTestingJabrail/periodenPizzaSalesPerStore.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { storeID: storeID, periodType: periodType, periodValue: periodValue },
+                success: function (response) {
+                    console.log('Period pizza sales data response:', response);
+                    if (response.success) {
+                        const tableBody = $('#periodPizzaSalesTable tbody');
+                        tableBody.empty();
+    
+                        const data = response.data;
+                        data.forEach(function (item) {
+                            const row = $('<tr>');
+                            row.append($('<td>').text(storeID));
+                            row.append($('<td>').text(item.year));
+                            row.append($('<td>').text(item.pizzaQuantity));
+                            tableBody.append(row);
+                        });
+                    } else {
+                        $('#periodPizzaSalesTable tbody').html('<tr><td colspan="3">' + response.message + '</td></tr>');
+                    }
+                },
+                error: function () {
+                    $('#periodPizzaSalesTable tbody').html('<tr><td colspan="3">Error fetching data</td></tr>');
+                }
+            });
+        }
+    
+   
+    
+    
     
     
     $('#periodView').change(function () {
@@ -283,6 +343,7 @@ $(document).ready(function () {
     
     $('#periodView, #month, #threeMonthsPeriod, #sixMonthsPeriod').change(function () {
         fetchPeriodRevenueData();
+        fetchPeriodPizzaSalesData();
     });
     
     function fetchData(url, tableId) {
@@ -333,4 +394,6 @@ $(document).ready(function () {
     fetchRevenueData();
     fetchPizzasSoldData();
     fetchPeriodRevenueData();
+    fetchPeriodPizzaSalesData();
+
 });

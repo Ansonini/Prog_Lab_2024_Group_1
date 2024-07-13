@@ -777,7 +777,8 @@ function filterDropdown() {
 
 // to go to the store page of the store  that was selected
 function navigateToStore(storeId) {
-    console.log("Navigating to store " + storeId);
+    var storeIDValue = document.getElementById("dropdownSearch")
+    storeIDValue.value = storeId;
 }
 
 // function to open and close the sidebar

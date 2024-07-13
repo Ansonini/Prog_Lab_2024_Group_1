@@ -124,24 +124,26 @@ $(document).ready(function () {
 
                     const data = response.data;
                     data.forEach(function (item) {
-                        const row = $('<tr>');
-                        if (view === 'yearView') {
-                            row.append($('<td>').text(item.storeID));
-                            row.append($('<td>').text(item.period));
-                            row.append($('<td>').text(item.revenue));
-                        } else if (view === 'monthView' || view === 'weekView') {
-                            row.append($('<td>').text(item.storeID));
-                            row.append($('<td>').text(item.year));
-                            row.append($('<td>').text(item.period));
-                            row.append($('<td>').text(item.revenue));
-                        } else if (view === 'dayView') {
-                            row.append($('<td>').text(item.storeID));
-                            row.append($('<td>').text(item.Morning));
-                            row.append($('<td>').text(item.Lunch));
-                            row.append($('<td>').text(item.Evening));
-                            row.append($('<td>').text(item.Night));
-                        }
-                        tableBody.append(row);
+                        item.data.forEach(function (entry) {
+                            const row = $('<tr>');
+                            if (view === 'yearView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.period));
+                                row.append($('<td>').text(entry.revenue));
+                            } else if (view === 'monthView' || view === 'weekView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.year));
+                                row.append($('<td>').text(entry.period));
+                                row.append($('<td>').text(entry.revenue));
+                            } else if (view === 'dayView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.Morning));
+                                row.append($('<td>').text(entry.Lunch));
+                                row.append($('<td>').text(entry.Evening));
+                                row.append($('<td>').text(entry.Night));
+                            }
+                            tableBody.append(row);
+                        });
                     });
                 } else {
                     $('#additionalTable tbody').html('<tr><td colspan="4">' + response.message + '</td></tr>');
@@ -172,24 +174,26 @@ $(document).ready(function () {
 
                     const data = response.data;
                     data.forEach(function (item) {
-                        const row = $('<tr>');
-                        if (view === 'yearView') {
-                            row.append($('<td>').text(item.storeID));
-                            row.append($('<td>').text(item.period));
-                            row.append($('<td>').text(item.totalPizzas));
-                        } else if (view === 'monthView' || view === 'weekView') {
-                            row.append($('<td>').text(item.storeID));
-                            row.append($('<td>').text(item.year));
-                            row.append($('<td>').text(item.period));
-                            row.append($('<td>').text(item.totalPizzas));
-                        } else if (view === 'dayView') {
-                            row.append($('<td>').text(item.storeID));
-                            row.append($('<td>').text(item.Morning));
-                            row.append($('<td>').text(item.Lunch));
-                            row.append($('<td>').text(item.Evening));
-                            row.append($('<td>').text(item.Night));
-                        }
-                        tableBody.append(row);
+                        item.data.forEach(function (entry) {
+                            const row = $('<tr>');
+                            if (view === 'yearView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.period));
+                                row.append($('<td>').text(entry.totalPizzas));
+                            } else if (view === 'monthView' || view === 'weekView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.year));
+                                row.append($('<td>').text(entry.period));
+                                row.append($('<td>').text(entry.totalPizzas));
+                            } else if (view === 'dayView') {
+                                row.append($('<td>').text(item.storeID));
+                                row.append($('<td>').text(entry.Morning));
+                                row.append($('<td>').text(entry.Lunch));
+                                row.append($('<td>').text(entry.Evening));
+                                row.append($('<td>').text(entry.Night));
+                            }
+                            tableBody.append(row);
+                        });
                     });
                 } else {
                     $('#pizzaSoldTable tbody').html('<tr><td colspan="4">' + response.message + '</td></tr>');
@@ -215,3 +219,4 @@ $(document).ready(function () {
     fetchRevenueData();
     fetchPizzasSoldData();
 });
+

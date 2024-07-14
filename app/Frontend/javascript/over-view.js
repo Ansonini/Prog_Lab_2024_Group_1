@@ -735,11 +735,18 @@ function mapStores(data) {
     var map = L.map('map').setView([40, -120], 4.5);
     const stores = [];
 
+    var keys = Object.keys(data[0]);
+    var storeID = keys[0];
+    var latitude =  'latitude';
+    var longitude = 'longitude';
+    var city = 'city';
+
     data.data.forEach(store => {
         stores.push({
-            lat: store.latitude,
-            lng: store.longitude,
-            name: store.storeID
+            lat: parseFloat(store[latitude]),
+            lng: parseFloat(store[longitude]),
+            name: store[storeID],
+            city: store[city]
         });
         });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -753,7 +760,7 @@ function mapStores(data) {
 
     stores.forEach(store => {
         L.marker([store.lat, store.lng]).addTo(map)
-            .bindPopup(store.name)
+            .bindPopup(`<b>${store.city}</b><br>Store ID: ${store.name}`)
             .openPopup();
     });
 }

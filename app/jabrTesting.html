@@ -107,7 +107,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1" defer></script>
     
     <script src="/Frontend/javascript/displayJsonData.js" defer></script>
-    <script src="/assets/js/jabrTesting.js" defer ></script>
+    <script src="/assets/js/AnneJabrTesting.js" defer ></script>
 </head>
 
 <body>
@@ -275,7 +275,13 @@
         </tbody>
     </table>
     <h3>Customer Orders Information</h3>
-    <button id="getCustomerOrdersInfo">Get Customer Orders Information</button>
+    <div>
+        <label for="customerDropdown">Select Customer:</label>
+        <select id="customerDropdown">
+            <option value="">Select a customer</option>
+            <!-- Options will be populated dynamically -->
+        </select>
+    </div>s 
     <table id="customerOrdersTable">
         <thead>
             <tr>

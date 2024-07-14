@@ -20,7 +20,12 @@ $sql = "
             SELECT p.SKU
             FROM orderItems oi
             JOIN products p ON oi.SKU = p.SKU
-            WHERE oi.orderID = o.orderID
+            WHERE oi.orderID IN (
+                SELECT o2.orderID
+                FROM orders o2
+                WHERE o2.customerID = c.customerID
+                  AND o2.storeID = o.storeID
+            )
             GROUP BY p.SKU
             ORDER BY COUNT(p.SKU) DESC
             LIMIT 1

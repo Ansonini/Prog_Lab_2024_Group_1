@@ -339,7 +339,7 @@ $(document).ready(function () {
             console.log('Fetching customers for store ID:', storeID); // Log store ID for debugging
         
             $.ajax({
-                url: '/BackendTestingJabrail/clientsPerStore.php',
+                url: '/BackendTestingJabrail/clientsDropPerStores.php',
                 type: 'POST',
                 dataType: 'json',
                 data: { storeID: storeID },

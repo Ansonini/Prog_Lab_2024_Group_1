@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 header('Content-Type: application/json');
 
 // Start Connection
@@ -6,12 +9,13 @@ include '/var/www/html/ajax/includes/connectDB.php';
 
 $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
 
-file_put_contents('/tmp/debug.log', "Received storeID: " . $storeID . PHP_EOL, FILE_APPEND);
-
 if (!$storeID) {
     echo json_encode(['success' => false, 'message' => 'Missing storeID']);
     exit;
 }
+
+// Debugging: Log storeID
+error_log("Store ID: " . $storeID);
 
 $sql = "SELECT DISTINCT o.customerID
         FROM orders o
@@ -20,5 +24,5 @@ $sql = "SELECT DISTINCT o.customerID
 
 $multipleDataset = true;
 
-include '/var/www/html/ajax/includes/makeQuery.php';
+include '/var/www/html/ajax/includes/makeQueryExtra.php';
 ?>

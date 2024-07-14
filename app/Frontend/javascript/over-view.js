@@ -649,15 +649,23 @@ function pieChartStores() {
 // a map function that shows all stores on a map with their store ID and distance from the main store
 function mapStores(data) {
     var map = L.map('map').setView([40, -120], 4.5);
+    const stores = [];
 
+    data.data.forEach(store => {
+        stores.push({
+            lat: store.latitude,
+            lng: store.longitude,
+            name: store.storeID
+        });
+        });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    var stores = [
-        { lat: 41.328852, lng: -116.12251, name: 'Tuscarora', StoreID: 'S490972'},
-        { lat: 37.593883, lng: -121.88281, name: 'Sunol', StoreID: 'S476770' }
-    ];
+    // var stores = [
+    //     { lat: 41.328852, lng: -116.12251, name: 'Tuscarora', StoreID: 'S490972'},
+    //     { lat: 37.593883, lng: -121.88281, name: 'Sunol', StoreID: 'S476770' }
+    // ];
 
     stores.forEach(store => {
         L.marker([store.lat, store.lng]).addTo(map)

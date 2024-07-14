@@ -6,6 +6,8 @@ include '/var/www/html/ajax/includes/connectDB.php';
 
 $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
 
+file_put_contents('/tmp/debug.log', "Received storeID: " . $storeID . PHP_EOL, FILE_APPEND);
+
 if (!$storeID) {
     echo json_encode(['success' => false, 'message' => 'Missing storeID']);
     exit;

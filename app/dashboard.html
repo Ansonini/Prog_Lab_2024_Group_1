@@ -238,8 +238,18 @@
             width: 100% !important;
             height: 100% !important;
         }
+        #map {
+            margin-top: 20px;
+            margin-right: 30px;
+            margin-left: 10px;
+            margin-bottom: 10px;
+            height: 500px;
+            width: 98%;
+        }
         
     </style>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
     <!-- scripts for ajax -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
@@ -249,9 +259,17 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@^2" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1" defer></script>
 
+    <!-- script for Echarts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" defer></script>
+
+    <!-- script for map -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
+
     <!-- own scripts -->
     <script src="/Frontend/javascript/displayJsonData.js" defer></script>
     <script src="/Frontend/javascript/dashboard.js" defer></script>
+
+
 
 </head>
 
@@ -501,17 +519,17 @@
 
 
         <!-- create the container for the graph and table -->
-        <div id="graph1" class="container">
+        <div id="bigGraph" class="container">
 
             <div class="chart-container">
 
                 <div class="graph-header">
-                    <label id="graphTitle1">Graph Title</label>
+                    <label id="bigGraphTitle" style="padding: 7px;">Graph Title</label>
                 
                     <div class="dropdown-group">
 
                         <!-- Loading indicator -->
-                        <div class=loadingDiv style="display: none;" id="graphLoading1">Data is loading...</div>
+                        <div class=loadingDiv style="display: none;" id="bigGraphraphLoading">Data is loading...</div>
     
                         <select class="dropdown" id="chartType1">
                             <option value="line">Line Chart</option>
@@ -526,33 +544,61 @@
                     </div>
                 </div>
 
-                <canvas id="graphCanvas1" width="400" height="90"></canvas>
+                <canvas id="bigGraphCanvas" width="400" height="85"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>
 
         </div>
 
-        <div id="graph2&3" class="container">
+        <div id="graph1&2" class="container">
 
             <div class="chart-container">
 
                 <div class="graph-header">
 
-                    <label id="graphTitle2">Graph Title</label>
+                    <label id="graphTitle1" style="padding: 7px;">Graph Title</label>
+
+                    <div class="dropdown-group">
+
+                        <!-- Loading indicator -->
+                        <div class=loadingDiv style="display: none;" id="graphLoading1">Data is loading...</div>
+                            
+                        <select class="dropdown" id="chartType2">
+                            <option value="line">Line Chart</option>
+                            <option value="bar">Bar Chart</option>
+                        </select>
+            
+                        <select class="dropdown" id="grouping2">
+                            <option value=defaultGrouping>Default Grouping</option>
+                            <option value=reversedGrouping>Reversed Grouping</option>
+                        </select>
+                        
+                    </div>
+                </div>
+                
+                <canvas id="graphCanvas1" width="400" height="170"></canvas>
+                <!-- The chart will be generated here by JavaScript -->
+            </div>
+
+            <div class="chart-container">
+
+                <div class="graph-header">
+
+                    <label id="graphTitle2" style="padding: 7px;">Graph Title</label>
 
                     <div class="dropdown-group">
 
                         <!-- Loading indicator -->
                         <div class=loadingDiv style="display: none;" id="graphLoading2">Data is loading...</div>
                             
-                        <select class="dropdown" id="chartType2">
+                        <select class="dropdown" id="chartType3">
                             <option value="bar">Bar Chart</option>
                             <option value="line">Line Chart</option>
                         </select>
             
-                        <select class="dropdown" id="grouping2">
-                            <option value=defaultGrouping>Default Grouping</option>
-                            <option value=reversedGrouping>Reversed Grouping</option>
+                        <select class="dropdown" id="grouping3">
+                            <option value=reversedGrouping>Group by Pizza</option>
+                            <option value=defaultGrouping>Group by Size</option>
                         </select>
 
                         <select class="dropdown" id="perSize">
@@ -562,52 +608,24 @@
                         
                     </div>
                 </div>
-                
+
                 <canvas id="graphCanvas2" width="400" height="170"></canvas>
-                <!-- The chart will be generated here by JavaScript -->
-            </div>
-
-            <div class="chart-container">
-
-                <div class="graph-header">
-
-                    <label id="graphTitle3">Graph Title</label>
-
-                    <div class="dropdown-group">
-
-                        <!-- Loading indicator -->
-                        <div class=loadingDiv style="display: none;" id="graphLoading3">Data is loading...</div>
-                            
-                        <select class="dropdown" id="chartType3">
-                            <option value="line">Line Chart</option>
-                            <option value="bar">Bar Chart</option>
-                        </select>
-            
-                        <select class="dropdown" id="grouping3">
-                            <option value=defaultGrouping>Default Grouping</option>
-                            <option value=reversedGrouping>Reversed Grouping</option>
-                        </select>
-                        
-                    </div>
-                </div>
-
-                <canvas id="graphCanvas3" width="400" height="170"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>
 
         </div>
 
-        <div id="graph4&5" class="container">
+        <div id="graph3And4" class="container">
 
             <div class="chart-container">
                 <div class="graph-header">
 
-                    <label id="graphTitle4">Graph Title</label>
+                    <label id="graphTitle3" style="padding: 7px;">Graph Title</label>
 
                     <div class="dropdown-group">
 
                         <!-- Loading indicator -->
-                        <div class=loadingDiv style="display: none;" id="graphLoading4">Data is loading...</div>
+                        <div class=loadingDiv style="display: none;" id="graphLoading3">Data is loading...</div>
      
                         <select class="dropdown" id="chartType4">
                             <option value="bar">Bar Chart</option>
@@ -622,19 +640,19 @@
                     </div>
                 </div>
 
-                <canvas id="graphCanvas4" width="400" height="180"></canvas>
+                <canvas id="graphCanvas3" width="400" height="180"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>
 
             <div class="chart-container">
                 <div class="graph-header">
 
-                    <label id="graphTitle5">Graph Title</label>
+                    <label id="graphTitle4" style="padding: 7px;">Graph Title</label>
 
                     <div class="dropdown-group">
 
                         <!-- Loading indicator -->
-                        <div class=loadingDiv style="display: none;" id="graphLoading5">Data is loading...</div>
+                        <div class=loadingDiv style="display: none;" id="graphLoading4">Data is loading...</div>
         
                         <select class="dropdown" id="chartType5">
                             <option value="line">Line Chart</option>
@@ -648,8 +666,12 @@
                         
                     </div>
                 </div>
-                <canvas id="graphCanvas5" width="400" height="180"></canvas>
+
+                <canvas id="graphCanvas4" width="400" height="180"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
+                <div id="map"></div>
+                <!-- map will be generated here -->
+
             </div>
 
         </div>

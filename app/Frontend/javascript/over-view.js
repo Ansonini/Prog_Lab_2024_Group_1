@@ -178,6 +178,13 @@ $(document).ready(function () {
             $.ajax({
                 url: '../ajax/getStoreInfo.php',
                 type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
                 success: function (response) {
                     if (response.success) {
                         mapStores(response.data);
@@ -190,6 +197,78 @@ $(document).ready(function () {
                 },
                 complete: function () {
                     $('#loading-map').hide();
+                }
+            });
+            // Sidebar State-Data-Unit-Fix
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                method: 'Post',
+                data: {
+                    view: completeView,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        stateUnitDataFix(response.data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                }
+            });
+            // Sidebar State-Data-Unit-Change
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                method: 'Post',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
+                success: function(response) {
+                    if (response.success) {
+                        stateUnitDataChange(response.data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                }
+            });
+            // Sidebar State-Data-Revenue-Fix
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                method: 'Post',
+                data: {
+                    view: completeView,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        stateRevenueDataFix(response.data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                }
+            });
+            // Sidebar State-Data-Revenue-Change
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                method: 'Post',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
+                success: function(response) {
+                    if (response.success) {
+                        stateRevenueDataChange(response.data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
                 }
             });
             // // Bump-Chart1
@@ -794,8 +873,192 @@ function openSideBar() {
     document.getElementById("sidebar").style.width = "40%";
 }
 // function to close the sidebar
-function closeSideBar() {
+function closeSideBar(data) {
     document.getElementById("sidebar").style.width = "0";
+}
+// function to show the Units Sold as fix data of the different states
+function stateUnitDataFix(data) {
+    const caStores = [
+        'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
+        'S068548', 'S449313', 'S276746', 'S606312', 'S062214',
+        'S361257', 'S918734', 'S048150', 'S370494', 'S216043',
+        'S396799', 'S122017'
+    ];
+    const nvStores = [
+        'S490972', 'S799887', 'S013343', 'S263879', 'S064089',
+        'S058118', 'S351225', 'S080157', 'S588444', 'S486166',
+        'S669665', 'S505400', 'S147185'
+    ];
+    const utStores = ['S302800'];
+    const azStores = ['S688745'];
+
+    var keys = Object.keys(data[0]);
+    var storeIDKey = keys[0];
+    var unitKey = keys[1];
+
+    let totalUnitsSold = 0;
+
+    let stateData = {
+        CA: {units: 0},
+        NV: {units: 0},
+        UT: {units: 0},
+        AZ: {units: 0}
+    };
+
+    data.forEach(store => {
+        let units = parseInt(store[unitKey]);
+        let storeID = store[storeIDKey];
+
+        totalUnitsSold += units;
+
+        if (caStores.includes(storeID)) stateData.CA.units += units;
+        else if (nvStores.includes(storeID)) stateData.NV.units += units;
+        else if (utStores.includes(storeID)) stateData.UT.units += units;
+        else if (azStores.includes(storeID)) stateData.AZ.units += units;
+    });
+    document.getElementById('totalUnitsFix').innerText = totalUnitsSold;
+    document.getElementById('unitsCA').innerText = stateData.CA.units;
+    document.getElementById('unitsNV').innerText = stateData.NV.units;
+    document.getElementById('unitsUT').innerText = stateData.UT.units;
+    document.getElementById('unitsAZ').innerText = stateData.AZ.units;
+}
+// function to show the Units Sold data of the states that you can change via time
+function stateUnitDataChange(data) {
+    const caStores = [
+        'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
+        'S068548', 'S449313', 'S276746', 'S606312', 'S062214',
+        'S361257', 'S918734', 'S048150', 'S370494', 'S216043',
+        'S396799', 'S122017'
+    ];
+    const nvStores = [
+        'S490972', 'S799887', 'S013343', 'S263879', 'S064089',
+        'S058118', 'S351225', 'S080157', 'S588444', 'S486166',
+        'S669665', 'S505400', 'S147185'
+    ];
+    const utStores = ['S302800'];
+    const azStores = ['S688745'];
+
+    var keys = Object.keys(data[0]);
+    var storeIDKey = keys[0];
+    var unitKey = keys[1];
+
+    let totalUnits = 0;
+
+    let stateData = {
+        CA: { units: 0 },
+        NV: { units: 0 },
+        UT: { units: 0 },
+        AZ: { units: 0 }
+    };
+
+    data.forEach(store => {
+        let units = parseInt(store[unitKey]);
+        let storeID = store[storeIDKey];
+
+        totalUnits += units;
+
+        if (caStores.includes(storeID)) stateData.CA.units += units;
+        else if (nvStores.includes(storeID)) stateData.NV.units += units;
+        else if (utStores.includes(storeID)) stateData.UT.units += units;
+        else if (azStores.includes(storeID)) stateData.AZ.units += units;
+    });
+    document.getElementById('totalUnitsChoice').innerText = totalUnits;
+    document.getElementById('revenueCA').innerText = stateData.CA.units;
+    document.getElementById('revenueNV').innerText = stateData.NV.units;
+    document.getElementById('revenueUT').innerText = stateData.UT.units;
+    document.getElementById('revenueAZ').innerText = stateData.AZ.units;
+}
+function stateRevenueDataFix(data) {
+    const caStores = [
+        'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
+        'S068548', 'S449313', 'S276746', 'S606312', 'S062214',
+        'S361257', 'S918734', 'S048150', 'S370494', 'S216043',
+        'S396799', 'S122017'
+    ];
+    const nvStores = [
+        'S490972', 'S799887', 'S013343', 'S263879', 'S064089',
+        'S058118', 'S351225', 'S080157', 'S588444', 'S486166',
+        'S669665', 'S505400', 'S147185'
+    ];
+    const utStores = ['S302800'];
+    const azStores = ['S688745'];
+
+    var keys = Object.keys(data[0]);
+    var storeIDKey = keys[0];
+    var revenueKey = keys[1];
+
+
+    let totalRevenue = 0;
+
+    let stateData = {
+        CA: {unitsSold: 0},
+        NV: {unitsSold: 0},
+        UT: {unitsSold: 0},
+        AZ: {unitsSold: 0}
+    };
+
+    data.forEach(store => {
+        let revenue = parseInt(store[revenueKey]);
+        let storeID = store[storeIDKey];
+
+        totalRevenue += revenue;
+
+        if (caStores.includes(storeID)) stateData.CA.revenue += revenue;
+        else if (nvStores.includes(store.storeID)) stateData.NV.revenue += revenue;
+        else if (utStores.includes(store.storeID)) stateData.UT.revenue += revenue;
+        else if (azStores.includes(store.storeID)) stateData.AZ.revenue += revenue;
+    });
+    document.getElementById('totalRevenueChoice').innerText = totalRevenue;
+    document.getElementById('revenueCA').innerText = stateData.CA.revenue;
+    document.getElementById('revenueNV').innerText = stateData.NV.revenue;
+    document.getElementById('revenueUT').innerText = stateData.UT.revenue;
+    document.getElementById('revenueAZ').innerText = stateData.AZ.revenue;
+}
+function stateRevenueDataChange(data) {
+    const caStores = [
+        'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
+        'S068548', 'S449313', 'S276746', 'S606312', 'S062214',
+        'S361257', 'S918734', 'S048150', 'S370494', 'S216043',
+        'S396799', 'S122017'
+    ];
+    const nvStores = [
+        'S490972', 'S799887', 'S013343', 'S263879', 'S064089',
+        'S058118', 'S351225', 'S080157', 'S588444', 'S486166',
+        'S669665', 'S505400', 'S147185'
+    ];
+    const utStores = ['S302800'];
+    const azStores = ['S688745'];
+
+    var keys = Object.keys(data[0]);
+    var storeIDKey = keys[0];
+    var revenueKey = keys[1];
+
+
+    let totalRevenue = 0;
+
+    let stateData = {
+        CA: {unitsSold: 0},
+        NV: {unitsSold: 0},
+        UT: {unitsSold: 0},
+        AZ: {unitsSold: 0}
+    };
+
+    data.forEach(store => {
+        let revenue = parseInt(store[revenueKey]);
+        let storeID = store[storeIDKey];
+
+        totalRevenue += revenue;
+
+        if (caStores.includes(storeID)) stateData.CA.revenue += revenue;
+        else if (nvStores.includes(store.storeID)) stateData.NV.revenue += revenue;
+        else if (utStores.includes(store.storeID)) stateData.UT.revenue += revenue;
+        else if (azStores.includes(store.storeID)) stateData.AZ.revenue += revenue;
+    });
+    document.getElementById('totalRevenueChoice').innerText = totalRevenue;
+    document.getElementById('revenueCA').innerText = stateData.CA.revenue;
+    document.getElementById('revenueNV').innerText = stateData.NV.revenue;
+    document.getElementById('revenueUT').innerText = stateData.UT.revenue;
+    document.getElementById('revenueAZ').innerText = stateData.AZ.revenue;
 }
 // Saving the Text in the Note Section as a .txt file
 function saveText() {

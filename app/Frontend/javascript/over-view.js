@@ -877,10 +877,12 @@ function navigateToStore(storeId) {
 function openSideBar() {
     document.getElementById("sidebar").style.width = "40%";
 }
+
 // function to close the sidebar
 function closeSideBar(data) {
     document.getElementById("sidebar").style.width = "0";
 }
+
 // function to show the Units Sold as fix data of the different states
 function stateUnitDataFix(data) {
     const caStores = [
@@ -927,6 +929,7 @@ function stateUnitDataFix(data) {
     document.getElementById('unitsUT').innerText = stateData.UT.units;
     document.getElementById('unitsAZ').innerText = stateData.AZ.units;
 }
+
 // function to show the Units Sold data of the states that you can change via time
 function stateUnitDataChange(data) {
     const caStores = [
@@ -973,6 +976,8 @@ function stateUnitDataChange(data) {
     document.getElementById('revenueUT').innerText = stateData.UT.units;
     document.getElementById('revenueAZ').innerText = stateData.AZ.units;
 }
+
+// function to show the Revenue data of the states as fix data
 function stateRevenueDataFix(data) {
     const caStores = [
         'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
@@ -1019,6 +1024,8 @@ function stateRevenueDataFix(data) {
     document.getElementById('revenueUT').innerText = stateData.UT.revenue;
     document.getElementById('revenueAZ').innerText = stateData.AZ.revenue;
 }
+
+// function to show the Revenue data of the states that you can change via time
 function stateRevenueDataChange(data) {
     const caStores = [
         'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
@@ -1065,6 +1072,7 @@ function stateRevenueDataChange(data) {
     document.getElementById('revenueUT').innerText = stateData.UT.revenue;
     document.getElementById('revenueAZ').innerText = stateData.AZ.revenue;
 }
+
 // Saving the Text in the Note Section as a .txt file
 function saveText() {
     const noteText = document.getElementById('noteField').value;
@@ -1086,6 +1094,7 @@ function saveText() {
 
     document.body.removeChild(link);
 }
+
 // Saving all the graphs as images
 function saveGraphs() {
     const charts = document.querySelectorAll('.chart-container');
@@ -1100,166 +1109,4 @@ function saveGraphs() {
             }
         });
     });
-}
-// test Function used to test out changes on graphs
-function testfunc(data) {
-    var keys = Object.keys(data[0]);
-    var storeID = keys[0];
-    var storeValue = keys[1];
-
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
-
-    var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
-    if (existingChart) {
-        echarts.dispose(existingChart);
-    }
-
-    var storeDataWithStoreID = data.map(item => ({
-        value: item[storeValue],
-        category: item[storeID]
-    }));
-
-    storeDataWithStoreID.sort((a, b) => b.value - a.value);
-
-    var sortedStoreData = storeDataWithStoreID.map(item => item.value);
-    var sortedStoreID = storeDataWithStoreID.map(item => item.category);
-
-    var yAxisLabel = document.getElementById('data-display').value === 'units' ? 'Units Sold' : 'Sales';
-
-    var option = {
-        title: {
-            text: 'Sales Data'
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            },
-            formatter: function (params) {
-                var category = params[0].name;
-                var value = params[0].data;
-                return `Store: ${category}<br/>Value: ${value}`;
-            }
-        },
-        xAxis: {
-            type: 'category',
-            data: sortedStoreID,
-            name: 'Store Names',
-            nameLocation: 'middle',
-            nameGap: 50,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}',
-                rotate: 45,
-                fontSize: 14
-            }
-        },
-        yAxis: {
-            type: 'value',
-            name: yAxisLabel,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}',
-                fontSize: 14
-            }
-        },
-        series: [{
-            name: 'Sales',
-            type: 'bar',
-            data: sortedStoreData,
-            itemStyle: {
-                color: 'rgba(75, 192, 192, 0.8)'
-            }
-        }]
-    };
-
-    sortedBarchartStores.setOption(option);
-    sortedBarchartStores.resize({width: 1000, height: 500});
-}
-
-function testfunction2(data) {
-    var keys = Object.keys(data[0]);
-    var storeID = keys[0];
-    var storeValue = keys[1];
-
-
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
-
-    var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
-    if (existingChart) {
-        echarts.dispose(existingChart);
-    }
-
-    var storeDataWithStoreID = data.map(item => ({
-        value: item[storeValue],
-        category: item[storeID]
-    }));
-
-    storeDataWithStoreID.sort((a, b) => b.value - a.value);
-
-    var sortedStoreData = storeDataWithStoreID.map(item => item.value);
-    var sortedStoreID = storeDataWithStoreID.map(item => item.category);
-
-    if (document.getElementById('data-display').value === 'units') {
-        var yAxisLabel = 'Units Sold in Thousands';
-    } else {
-        var yAxisLabel = 'Revenue in Thousands';
-    }
-    var option = {
-        title: {
-            text: 'Sales Data'
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {
-            left: '8%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            data: sortedStoreID,
-            name: 'Store Names',
-            nameLocation: 'middle',
-            nameGap: 50,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}',
-                rotate: 45
-            },
-        },
-        yAxis: {
-            type: 'value',
-            name: yAxisLabel,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}',
-                rotate: 45
-            }
-        },
-        series: [{
-            name: 'Sales',
-            type: 'bar',
-            data: sortedStoreData,
-            itemStyle: {
-                color: 'rgba(75, 192, 192, 0.8)'
-            }
-        }]
-    };
-
-    option && sortedBarchartStores.setOption(option);
-    sortedBarchartStores.resize({width: 1000, height: 500})
 }

@@ -207,6 +207,16 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="noteField">
+            <h3>Notes</h3>
+            <div class="save-button-container">
+                <button id="saveNote" onclick="saveText()">Save Note</button>
+                <button id="saveGraphs" onclick="saveGraphs()">Save Graphs</button>
+            </div>
+            <textarea id="noteField" placeholder="Enter notes here..."></textarea>
+
+        </div>
     </div>
     <!--The Settings row which you use to control what the graphs display-->
     <div class="settings">
@@ -304,12 +314,7 @@
         </div>
     </div>
     <div class="row4">
-        <div class="noteField">
-            <h3>Notes</h3>
-            <textarea id="noteField" placeholder="Enter notes here..."></textarea>
-            <button id="saveNote" onclick="saveText()">Save Note</button>
-            <button id="saveGraphs" onclick="saveGraphs()">Save Graphs</button>
-        </div>
+
     </div>
 </div>
 </body>

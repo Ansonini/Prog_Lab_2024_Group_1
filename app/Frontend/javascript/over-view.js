@@ -124,7 +124,7 @@ $(document).ready(function () {
             // Stacking-Bar-Chart
             $('#loading-stacking-barchart').show();
             $.ajax({
-                url: '../ajax/getSalesPerStore.php',
+                url: '../ajax/getSalesPerPizzaOverTime.php',
                 type: 'POST',
                 data: {
                     view: view,
@@ -150,14 +150,15 @@ $(document).ready(function () {
             // Pie-Chart
             $('#loading-pie-chart-pizza').show();
             $.ajax({
-                url: '../ajax/getSalesPerStore.php',
+                url: '../ajax/getSalesPerPizza.php',
                 type: 'POST',
                 data: {
                     view: view,
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week
+                    week: week,
+                    perSize: true,
                 },
                 success: function (response) {
                     if (response.success) {
@@ -183,7 +184,7 @@ $(document).ready(function () {
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week
+                    week: week,
                 },
                 success: function (response) {
                     if (response.success) {
@@ -271,58 +272,62 @@ $(document).ready(function () {
                     console.log('AJAX Error:', status, error);
                 }
             });
-            // // Bump-Chart1
-            // $('#loading-bump-chart-Pizza').show();
-            // $.ajax({
-            //     url: '../ajax/getSalesPerStore.php',
-            //     type: 'POST',
-            //     data: {
-            //         view: view,
-            //         mode: mode,
-            //         year: year,
-            //         month: month,
-            //         week: week
-            //     },
-            //     success: function (response) {
-            //         if (response.success) {
-            //             bumpChartPizzaRanking(response.data);
-            //         } else {
-            //             $('#chart-container').html('<p>' + response.message + '</p>');
-            //         }
-            //     },
-            //     error: function (xhr, status, error) {
-            //         console.log('AJAX Error:', status, error);
-            //     },
-            //     complete: function () {
-            //         $('#loading-bump-chart-Pizza').hide();
-            //     }
-            // });
-            // // Bump-Chart2
-            // $('#loading-bump-chart-Store').show();
-            // $.ajax({
-            //     url: '../ajax/getSalesPerStore.php',
-            //     type: 'POST',
-            //     data: {
-            //         view: view,
-            //         mode: mode,
-            //         year: year,
-            //         month: month,
-            //         week: week
-            //     },
-            //     success: function (response) {
-            //         if (response.success) {
-            //             bumpChartStoreRanking(response.data, mode)
-            //         } else {
-            //             $('#chart-container').html('<p>' + response.message + '</p>');
-            //         }
-            //     },
-            //     error: function (xhr, status, error) {
-            //         console.log('AJAX Error:', status, error);
-            //     },
-            //     complete: function () {
-            //         $('#loading-bump-chart-Store').hide();
-            //     }
-            // });
+            // Bump-Chart1
+            $('#loading-bump-chart-Pizza').show();
+            $.ajax({
+                url: '../ajax/getSalesPerPizzaOverTime.php',
+                type: 'POST',
+                data: {
+                    view: completeView,
+                    mode: units,
+                    year: year,
+                    month: month,
+                    week: week,
+                    perSize: false,
+                    storeSelection: all
+                },
+                success: function (response) {
+                    if (response.success) {
+                        bumpChartPizzaRanking(response.data);
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-bump-chart-Pizza').hide();
+                }
+            });
+            // Bump-Chart2
+            $('#loading-bump-chart-Store').show();
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                type: 'POST',
+                data: {
+                    view: completeView,
+                    mode: units,
+                    year: year,
+                    month: month,
+                    week: week,
+                    perSize: false,
+                    storeSelection: all
+                },
+                success: function (response) {
+                    if (response.success) {
+                        bumpChartStoreRanking(response.data, mode)
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-bump-chart-Store').hide();
+                }
+            });
         }
     }
 

@@ -1,0 +1,368 @@
+ <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Information</title>
+    <style>
+        * {
+            background-color: floralwhite;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: dodgerblue;
+            padding: 20px;
+        }
+
+        h1 {
+            background-color: dodgerblue;
+            color: white;
+        }
+
+        .header {
+            background-color: DodgerBlue;
+            color: black;
+            padding: 10px 20px;
+            text-align: center;
+            margin: 0;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .controls label {
+            margin-right: 10px;
+        }
+
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .chart-container canvas {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <!-- scripts for chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@^3" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@^2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1" defer></script>
+</head>
+
+<body>
+    <h1>Store Information</h1>
+    <div class="controls">
+        <label for="storeDropdown">Select Store:</label>
+        <select id="storeDropdown">
+            <!-- Store options will be added by JavaScript -->
+        </select>
+
+        <label for="view">Select View:</label>
+        <select id="view">
+            <option value="dayView">Daily</option>
+            <option value="weekView">Weekly</option>
+            <option value="monthView">Monthly</option>
+            <option value="yearView">Yearly</option>
+        </select>
+
+        <label for="year">Select Year:</label>
+        <select id="year">
+            <!-- Year options will be added by JavaScript -->
+        </select>
+    </div>
+
+    <div id="loading">Loading...</div>
+
+    <div class="chart-container">
+        <canvas id="storeChart"></canvas>
+        <canvas id="additionalChart"></canvas>
+        <canvas id="pizzaSoldChart"></canvas>
+        <canvas id="periodRevenueChart"></canvas>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            const storeIds = [
+                "S490972", "S476770", "S750231", "S688745", "S817950", "S948821",
+                "S872983", "S799887", "S013343", "S068548", "S449313", "S263879",
+                "S276746", "S606312", "S062214", "S064089", "S058118", "S361257",
+                "S918734", "S351225", "S048150", "S370494", "S080157", "S588444",
+                "S486166", "S669665", "S216043", "S396799", "S505400", "S147185",
+                "S122017", "S302800"
+            ];
+
+            const storeDropdown = $('#storeDropdown');
+            storeIds.forEach(store => {
+                storeDropdown.append(`<option value="${store}">${store}</option>`);
+            });
+
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= 2000; year--) {
+                $('#year').append(`<option value="${year}">${year}</option>`);
+            }
+
+            function fetchStoreInfo() {
+                $('#loading').show();
+                const storeID = $('#storeDropdown').val();
+
+                $.ajax({
+                    url: '/BackendTestingJabrail/storeLocationTransfer.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { storeID: storeID },
+                    success: function (response) {
+                        $('#loading').hide();
+                        if (response.success) {
+                            const data = response.data;
+                            const labels = data.map(store => store.storeID);
+                            const zipcodes = data.map(store => store.zipcode);
+                            const states = data.map(store => store.stateAbbr);
+
+                            const ctx = document.getElementById('storeChart').getContext('2d');
+                            new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                        label: 'Zipcode',
+                                        data: zipcodes,
+                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 1
+                                    }, {
+                                        label: 'State',
+                                        data: states,
+                                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                        borderColor: 'rgba(153, 102, 255, 1)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        $('#loading').hide();
+                        alert('Error fetching data');
+                    }
+                });
+            }
+
+            function fetchRevenueData() {
+                var view = $('#view').val();
+                var year = $('#year').val();
+                var storeID = $('#storeDropdown').val();
+
+                $.ajax({
+                    url: '/BackendTestingJabrail/revenuePerStore.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { storeID: storeID, view: view, year: year },
+                    success: function (response) {
+                        if (response.success) {
+                            const data = response.data;
+                            const labels = data.flatMap(item => item.data.map(entry => entry.period));
+                            const revenues = data.flatMap(item => item.data.map(entry => entry.revenue));
+
+                            const ctx = document.getElementById('additionalChart').getContext('2d');
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                        label: 'Revenue',
+                                        data: revenues,
+                                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                        borderColor: 'rgba(255, 99, 132, 1)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Error fetching data');
+                    }
+                });
+            }
+
+            function fetchPizzasSoldData() {
+                var view = $('#view').val();
+                var year = $('#year').val();
+                var storeID = $('#storeDropdown').val();
+
+                $.ajax({
+                    url: '/BackendTestingJabrail/pizzaSalesPerStore.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { storeID: storeID, view: view, year: year },
+                    success: function (response) {
+                        if (response.success) {
+                            const data = response.data;
+                            const labels = data.flatMap(item => item.data.map(entry => entry.period));
+                            const totalPizzas = data.flatMap(item => item.data.map(entry => entry.totalPizzas));
+
+                            const ctx = document.getElementById('pizzaSoldChart').getContext('2d');
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                        label: 'Total Pizzas',
+                                        data: totalPizzas,
+                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Error fetching data');
+                    }
+                });
+            }
+
+            function fetchPeriodRevenueData() {
+                var periodType = $('#periodView').val();
+                var storeID = $('#storeDropdown').val();
+                var periodValue = null;
+
+                if (periodType === 'oneMonth') {
+                    periodValue = $('#month').val();
+                } else if (periodType === 'threeMonths') {
+                    periodValue = $('#threeMonthsPeriod').val();
+                } else if (periodType === 'sixMonths') {
+                    periodValue = $('#sixMonthsPeriod').val();
+                }
+
+                $.ajax({
+                    url: '/BackendTestingJabrail/periodenRevenuePerYears.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { storeID: storeID, periodType: periodType, periodValue: periodValue },
+                    success: function (response) {
+                        if (response.success) {
+                            const data = response.data[0].data;
+                            const labels = data.map(item => item.year);
+                            const revenues = data.map(item => item.revenue);
+
+                            const ctx = document.getElementById('periodRevenueChart').getContext('2d');
+                            new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                        label: 'Revenue',
+                                        data: revenues,
+                                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                                        borderColor: 'rgba(255, 206, 86, 1)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Error fetching data');
+                    }
+                });
+            }
+
+            $('#storeDropdown').change(function () {
+                fetchStoreInfo();
+                fetchRevenueData();
+                fetchPizzasSoldData();
+                fetchPeriodRevenueData();
+            });
+
+            $('#view').change(function () {
+                fetchRevenueData();
+                fetchPizzasSoldData();
+            });
+
+            $('#year').change(function () {
+                fetchRevenueData();
+                fetchPizzasSoldData();
+            });
+
+            $('#periodView').change(function () {
+                var periodType = $(this).val();
+                $('#monthSettings').hide();
+                $('#threeMonthsSettings').hide();
+                $('#sixMonthsSettings').hide();
+
+                if (periodType === 'oneMonth') {
+                    $('#monthSettings').show();
+                } else if (periodType === 'threeMonths') {
+                    $('#threeMonthsSettings').show();
+                } else if (periodType === 'sixMonths') {
+                    $('#sixMonthsSettings').show();
+                }
+                fetchPeriodRevenueData();
+            });
+
+            $('#month, #threeMonthsPeriod, #sixMonthsPeriod').change(function () {
+                fetchPeriodRevenueData();
+            });
+
+            // Initial fetch
+            fetchStoreInfo();
+            fetchRevenueData();
+            fetchPizzasSoldData();
+            fetchPeriodRevenueData();
+        });
+    </script>
+</body>
+
+</html>

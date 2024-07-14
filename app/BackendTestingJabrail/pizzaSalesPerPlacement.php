@@ -41,6 +41,25 @@ switch ($filterType) {
             GROUP BY s.zipcode
         ";
         break;
+        case 'city':
+            $sql = "
+                SELECT s.city, COUNT(oi.sku) AS totalPizzas
+                FROM orders o
+                JOIN orderItems oi ON o.orderID = oi.orderID
+                JOIN stores s ON o.storeID = s.storeID
+                GROUP BY s.city
+            ";
+            break;
+        case 'zipcode':
+        default:
+            $sql = "
+                SELECT s.zipcode, COUNT(oi.sku) AS totalPizzas
+                FROM orders o
+                JOIN orderItems oi ON o.orderID = oi.orderID
+                JOIN stores s ON o.storeID = s.storeID
+                GROUP BY s.zipcode
+            ";
+            break;
 }
 
 // Выполнение запроса и возврат результата

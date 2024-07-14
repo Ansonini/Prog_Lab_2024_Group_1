@@ -275,7 +275,13 @@
         </tbody>
     </table>
     <h3>Customer Orders Information</h3>
-    <button id="getCustomerOrdersInfo">Get Customer Orders Information</button>
+    <div>
+        <label for="customerDropdown">Select Customer:</label>
+        <select id="customerDropdown">
+            <option value="">Select a customer</option>
+            <!-- Options will be populated dynamically -->
+        </select>
+    </div>
     <table id="customerOrdersTable">
         <thead>
             <tr>
@@ -283,6 +289,8 @@
                 <th>Order Count</th>
                 <th>Last Order Date</th>
                 <th>Most Ordered Product</th>
+                <th>totalSpent</th>
+                <th>distanceToStore</th>
             </tr>
         </thead>
         <tbody>

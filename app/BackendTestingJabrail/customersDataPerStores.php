@@ -5,9 +5,10 @@ header('Content-Type: application/json');
 include '/var/www/html/ajax/includes/connectDB.php';
 
 $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
+$customerID = isset($_POST['customerID']) ? $_POST['customerID'] : null;
 
-if (!$storeID) {
-    echo json_encode(['success' => false, 'message' => 'Missing storeID']);
+if (!$storeID || !$customerID) {
+    echo json_encode(['success' => false, 'message' => 'Missing storeID or customerID']);
     exit;
 }
 
@@ -29,13 +30,24 @@ $sql = "
             GROUP BY p.SKU
             ORDER BY COUNT(p.SKU) DESC
             LIMIT 1
-        ) AS mostOrderedProduct
+        ) AS mostOrderedProduct,
+        SUM(o.total) AS totalSpent,
+        ROUND(
+            111.111 * DEGREES(ACOS(LEAST(1.0, COS(RADIANS(c.latitude))
+            * COS(RADIANS(s.latitude))
+            * COS(RADIANS(c.longitude - s.longitude))
+            + SIN(RADIANS(c.latitude))
+            * SIN(RADIANS(s.latitude))))) 
+        , 2) AS distanceToStore
     FROM 
         customers c
     JOIN 
         orders o ON c.customerID = o.customerID
+    JOIN
+        stores s ON o.storeID = s.storeID
     WHERE 
         o.storeID = '$storeID'
+        AND c.customerID = '$customerID'
     GROUP BY 
         c.customerID
 ";

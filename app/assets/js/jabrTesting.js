@@ -43,6 +43,7 @@ $(document).ready(function () {
         fetchStoreInfo();
         fetchRevenueData();
         fetchPizzasSoldData();
+        fetchCustomers();
     });
 
     function updateTableHeader(view) {
@@ -333,19 +334,53 @@ $(document).ready(function () {
             });
         }
 
-        $('#getCustomerOrdersInfo').click(function () {
-            console.log('Button clicked');
-            fetchCustomerOrdersInfo();
-        });
+        function fetchCustomers() {
+            var storeID = $('#storeDropdown').val();
+            console.log('Fetching customers for store ID:', storeID); // Log store ID for debugging
+        
+            $.ajax({
+                url: '/BackendTestingJabrail/clientsDropPerStores.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { storeID: storeID },
+                success: function (response) {
+                    console.log('Customer list response:', response); // Log response for debugging
+                    if (response.success) {
+                        const customerDropdown = $('#customerDropdown');
+                        customerDropdown.empty();
+                        customerDropdown.append('<option value="">Select Customer</option>'); // Default option
+        
+                        const customers = response.data;
+                        customers.forEach(function (customer) {
+                            const option = $('<option>').val(customer.customerID).text(customer.customerID);
+                            customerDropdown.append(option);
+                        });
+                    } else {
+                        alert('Failed to fetch customers: ' + response.message);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching customers:', textStatus, errorThrown); // Log error for debugging
+                    alert('Error fetching customers');
+                }
+            });
+        }
+        
         
         function fetchCustomerOrdersInfo() {
             var storeID = $('#storeDropdown').val();
+            var customerID = $('#customerDropdown').val();
+        
+            if (!customerID) {
+                alert('Please select a customer');
+                return;
+            }
         
             $.ajax({
                 url: '/BackendTestingJabrail/customersDataPerStores.php',
                 type: 'POST',
                 dataType: 'json',
-                data: { storeID: storeID },
+                data: { storeID: storeID, customerID: customerID },
                 success: function (response) {
                     console.log('Customer orders info response:', response);
                     if (response.success) {
@@ -364,6 +399,8 @@ $(document).ready(function () {
                                         row.append($('<td>').text(entry.orderCount));
                                         row.append($('<td>').text(entry.lastOrderDate));
                                         row.append($('<td>').text(entry.mostOrderedProduct));
+                                        row.append($('<td>').text(entry.totalSpent));
+                                        row.append($('<td>').text(entry.distanceToStore));
                                         tableBody.append(row);
                                     });
                                 } else {
@@ -372,18 +409,20 @@ $(document).ready(function () {
                                     row.append($('<td>').text('N/A'));
                                     row.append($('<td>').text('N/A'));
                                     row.append($('<td>').text('N/A'));
+                                    row.append($('<td>').text('N/A'));
+                                    row.append($('<td>').text('N/A'));
                                     tableBody.append(row);
                                 }
                             });
                         } else {
-                            $('#customerOrdersTable tbody').html('<tr><td colspan="4">No data available</td></tr>');
+                            $('#customerOrdersTable tbody').html('<tr><td colspan="6">No data available</td></tr>');
                         }
                     } else {
-                        $('#customerOrdersTable tbody').html('<tr><td colspan="4">' + response.message + '</td></tr>');
+                        $('#customerOrdersTable tbody').html('<tr><td colspan="6">' + response.message + '</td></tr>');
                     }
                 },
                 error: function () {
-                    $('#customerOrdersTable tbody').html('<tr><td colspan="4">Error fetching data</td></tr>');
+                    $('#customerOrdersTable tbody').html('<tr><td colspan="6">Error fetching data</td></tr>');
                 }
             });
         }
@@ -453,6 +492,10 @@ $(document).ready(function () {
         fetchRevenueData();
         fetchPizzasSoldData();
     });
+    $('#customerDropdown').change(function () {
+        fetchCustomerOrdersInfo();
+    });
+    
 
     fetchStoreInfo();
     fetchRevenueData();

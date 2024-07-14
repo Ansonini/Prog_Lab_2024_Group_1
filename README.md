@@ -25,7 +25,9 @@ password: 0298753482ecbcc3be9d529b3df5d806b9da61cf727e51eb -->
 - Navigate to  the folder `Prog_Lab_2024_Group_1\build\mysql\sql_conf`
 - Right click file `mysql.cnf` and select properties
 - enable the Attribute `Read only` (german `Schreibgeschütz`) and click ok
-- the mysql container will be connected to the port 3307 of the host machine, make sure it isn't occupied (Default is 3306 so it's unlikely) 
+- the mysql container will be connected to the port 3307 of the host machine, make sure it isn't occupied (Default is 3306 so it's unlikely)
+- the php apache server will be connected to the localhost under the port 8080
+- You can change the connected ports by opening docker-compose.yml and change the number on the left under mysql > ports: "3307:3306" and php-apache > ports: "8080:80"
 
 #### Docker 
 - Navigate back to the `Prog_Lab_2024_Group_1` Folder 

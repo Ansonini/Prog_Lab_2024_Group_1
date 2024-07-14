@@ -57,6 +57,7 @@ function createChart(data, chartID, chartType, grouping = "defaultGrouping", isB
 
         var multipleDataset = true;
         // Multiple datasets present
+        var displayLegend = true;
 
         // get the label of the dataset and of the values inside of the datasets for the labels of the axis
         var datasetLabel = Object.keys(data[0])[0];
@@ -95,6 +96,7 @@ function createChart(data, chartID, chartType, grouping = "defaultGrouping", isB
     } else {
 
         var multipleDataset = false;
+        var displayLegend = false;
 
         // On dataset present
         // Get the label for the two axis
@@ -148,6 +150,9 @@ function createChart(data, chartID, chartType, grouping = "defaultGrouping", isB
                             return context.dataset.label + ': ' + context.parsed.y;
                         }
                     }
+                },
+                legend: {
+                    display: displayLegend  // Hide the legend
                 }
             }
         }

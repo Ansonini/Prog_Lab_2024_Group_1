@@ -40,7 +40,7 @@
 
 <script>
 
-function soldPizzasPerStore(){
+ /*function soldPizzasPerStore(){
             // Perform any function or operations here
             console.log("Button clicked!");
             // Redirect to the new page
@@ -142,6 +142,76 @@ function soldPizzasPerStore(){
 
     // Initial load
     updateCharts();
+    */
+
+
+
+
+
+
+
+    
+    const storeIds = [
+        "S490972", "S476770", "S750231", "S688745", "S817950", "S948821",
+        "S872983", "S799887", "S013343", "S068548", "S449313", "S263879",
+        "S276746", "S606312", "S062214", "S064089", "S058118", "S361257",
+        "S918734", "S351225", "S048150", "S370494", "S080157", "S588444",
+        "S486166", "S669665", "S216043", "S396799", "S505400", "S147185",
+        "S122017", "S302800"
+    ];
+$(document).ready(function () {
+        function fetchPizzasSoldData() {
+        var view = $('#view').val();
+        var year = $('#year').val();
+        var storeID = $('#storeDropdown').val();
+
+        updateTableHeader(view);
+
+        $.ajax({
+            url: '/BackendTestingJabrail/pizzaSalesPerStore.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { storeID: storeID, view: view, year: year },
+            success: function (response) {
+                if (response.success) {
+                    const data = response.data;
+                    const labels = data.flatMap(item => item.data.map(entry => entry.period));
+                    const totalPizzas = data.flatMap(item => item.data.map(entry => entry.totalPizzas));
+
+                    const ctx = document.getElementById('pizzaSoldChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Total Pizzas',
+                                data: totalPizzas,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert('Error fetching data');
+            }
+        });
+
+    }
+        fetchPizzasSoldData();
+    });
+
 </script>
 
 </body>

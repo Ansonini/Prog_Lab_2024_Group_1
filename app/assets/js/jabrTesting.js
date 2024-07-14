@@ -332,13 +332,64 @@ $(document).ready(function () {
                 }
             });
         }
+
+        $('#getCustomerOrdersInfo').click(function () {
+            console.log('Button clicked');
+            fetchCustomerOrdersInfo();
+        });
         
-    
-   
-    
-    
-    
-    
+        function fetchCustomerOrdersInfo() {
+            var storeID = $('#storeDropdown').val();
+        
+            $.ajax({
+                url: '/BackendTestingJabrail/customersDataPerStores.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { storeID: storeID },
+                success: function (response) {
+                    console.log('Customer orders info response:', response);
+                    if (response.success) {
+                        const tableBody = $('#customerOrdersTable tbody');
+                        tableBody.empty();
+        
+                        const data = response.data;
+                        if (data && data.length > 0) {
+                            data.forEach(function (item) {
+                                const customerID = item.customerID;
+                                if (item.data && item.data.length > 0) {
+                                    item.data.forEach(function (entry) {
+                                        console.log('Processing entry:', entry);
+                                        const row = $('<tr>');
+                                        row.append($('<td>').text(customerID));
+                                        row.append($('<td>').text(entry.orderCount));
+                                        row.append($('<td>').text(entry.lastOrderDate));
+                                        row.append($('<td>').text(entry.mostOrderedProduct));
+                                        tableBody.append(row);
+                                    });
+                                } else {
+                                    const row = $('<tr>');
+                                    row.append($('<td>').text(customerID));
+                                    row.append($('<td>').text('N/A'));
+                                    row.append($('<td>').text('N/A'));
+                                    row.append($('<td>').text('N/A'));
+                                    tableBody.append(row);
+                                }
+                            });
+                        } else {
+                            $('#customerOrdersTable tbody').html('<tr><td colspan="4">No data available</td></tr>');
+                        }
+                    } else {
+                        $('#customerOrdersTable tbody').html('<tr><td colspan="4">' + response.message + '</td></tr>');
+                    }
+                },
+                error: function () {
+                    $('#customerOrdersTable tbody').html('<tr><td colspan="4">Error fetching data</td></tr>');
+                }
+            });
+        }
+        
+        
+        
     $('#periodView').change(function () {
         var periodType = $(this).val();
         $('#monthSettings').hide();
@@ -408,5 +459,6 @@ $(document).ready(function () {
     fetchPizzasSoldData();
     fetchPeriodRevenueData();
     fetchPeriodPizzaSalesData();
+    
 
 });

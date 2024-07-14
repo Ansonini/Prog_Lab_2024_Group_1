@@ -52,6 +52,7 @@ switch ($view) {
         exit;
 }
 
+
 $multipleDataset = true;
 
 include '/var/www/html/ajax/includes/makeQueryExtra.php';

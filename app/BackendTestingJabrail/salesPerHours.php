@@ -52,6 +52,7 @@ foreach ($time_intervals as $label => $interval) {
 
     $data[] = $sql;
 }
+
 echo $sql;
 // Combine all interval queries
 $sql = implode(" UNION ALL ", $data);

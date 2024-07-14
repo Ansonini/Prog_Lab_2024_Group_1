@@ -205,6 +205,194 @@ $(document).ready(function () {
         });
     }
 
+    function updatePeriodTableHeader() {
+        const periodTableHeader = $('#periodRevenueTable thead');
+        periodTableHeader.empty();
+        periodTableHeader.append(`
+            <tr>
+                <th>Store ID</th>
+                <th>Year</th>
+                <th>Revenue</th>
+            </tr>
+        `);
+    }
+    
+    function fetchPeriodRevenueData() {
+        var periodType = $('#periodView').val();
+        var storeID = $('#storeDropdown').val();
+        var periodValue = null;
+    
+        if (periodType === 'oneMonth') {
+            periodValue = $('#month').val();
+        } else if (periodType === 'threeMonths') {
+            periodValue = $('#threeMonthsPeriod').val();
+        } else if (periodType === 'sixMonths') {
+            periodValue = $('#sixMonthsPeriod').val();
+        }
+    
+        console.log('fetchPeriodRevenueData:', { storeID, periodType, periodValue });
+    
+        updatePeriodTableHeader();
+    
+        $.ajax({
+            url: '/BackendTestingJabrail/periodenRevenuePerYears.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { storeID: storeID, periodType: periodType, periodValue: periodValue },
+            success: function (response) {
+                console.log('Period revenue data response:', response); // Log response for debugging
+                if (response.success) {
+                    const tableBody = $('#periodRevenueTable tbody');
+                    tableBody.empty();
+    
+                    const data = response.data;
+                    if (data.length > 0) { // Ensure data array is not empty
+                        const revenueData = data[0].data; // Get the correct data array
+                        revenueData.forEach(function (item) {
+                            console.log('Processing item:', item); // Log each item to check its structure
+                            const row = $('<tr>');
+                            row.append($('<td>').text(storeID)); // Add storeID to each row
+                            row.append($('<td>').text(item.year)); // Add year to each row
+                            row.append($('<td>').text(item.revenue)); // Add revenue to each row
+                            tableBody.append(row);
+                        });
+                    } else {
+                        $('#periodRevenueTable tbody').html('<tr><td colspan="3">No view</td></tr>');
+                    }
+                } else {
+                    $('#periodRevenueTable tbody').html('<tr><td colspan="3">' + response.message + '</td></tr>');
+                }
+            },
+            error: function () {
+                $('#periodRevenueTable tbody').html('<tr><td colspan="3">Error fetching data</td></tr>');
+            }
+        });
+    }
+
+    
+        function updatePeriodPizzaSalesTableHeader() {
+            const periodPizzaSalesTableHeader = $('#periodPizzaSalesTable thead');
+            periodPizzaSalesTableHeader.empty();
+            periodPizzaSalesTableHeader.append(`
+                <tr>
+                    <th>Store ID</th>
+                    <th>Year</th>
+                    <th>Pizza Sales</th>
+                </tr>
+            `);
+        }
+        function fetchPeriodPizzaSalesData() {
+            var periodType = $('#periodView').val();
+            var storeID = $('#storeDropdown').val();
+            var periodValue = null;
+        
+            if (periodType === 'oneMonth') {
+                periodValue = $('#month').val();
+            } else if (periodType === 'threeMonths') {
+                periodValue = $('#threeMonthsPeriod').val();
+            } else if (periodType === 'sixMonths') {
+                periodValue = $('#sixMonthsPeriod').val();
+            }
+        
+            console.log('fetchPeriodPizzaSalesData:', { storeID, periodType, periodValue });
+        
+            updatePeriodPizzaSalesTableHeader();
+        
+            $.ajax({
+                url: '/BackendTestingJabrail/periodenPizzaSalesPerStore.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { storeID: storeID, periodType: periodType, periodValue: periodValue },
+                success: function (response) {
+                    console.log('Period pizza sales data response:', response); // Log response for debugging
+                    if (response.success) {
+                        const tableBody = $('#periodPizzaSalesTable tbody');
+                        tableBody.empty();
+        
+                        const data = response.data;
+                        if (data.length > 0) { // Ensure data array is not empty
+                            const pizzaSalesData = data[0].data; // Get the correct data array
+                            pizzaSalesData.forEach(function (item) {
+                                console.log('Processing item:', item); // Log each item to check its structure
+                                const row = $('<tr>');
+                                row.append($('<td>').text(storeID)); // Add storeID to each row
+                                row.append($('<td>').text(item.year)); // Add year to each row
+                                row.append($('<td>').text(item.pizzaQuantity)); // Add pizzaQuantity to each row
+                                tableBody.append(row);
+                            });
+                        } else {
+                            $('#periodPizzaSalesTable tbody').html('<tr><td colspan="3">No view</td></tr>');
+                        }
+                    } else {
+                        $('#periodPizzaSalesTable tbody').html('<tr><td colspan="3">' + response.message + '</td></tr>');
+                    }
+                },
+                error: function () {
+                    $('#periodPizzaSalesTable tbody').html('<tr><td colspan="3">Error fetching data</td></tr>');
+                }
+            });
+        }
+        
+    
+   
+    
+    
+    
+    
+    $('#periodView').change(function () {
+        var periodType = $(this).val();
+        $('#monthSettings').hide();
+        $('#threeMonthsSettings').hide();
+        $('#sixMonthsSettings').hide();
+    
+        if (periodType === 'oneMonth') {
+            $('#monthSettings').show();
+        } else if (periodType === 'threeMonths') {
+            $('#threeMonthsSettings').show();
+        } else if (periodType === 'sixMonths') {
+            $('#sixMonthsSettings').show();
+        }
+    });
+    
+    $('#periodView, #month, #threeMonthsPeriod, #sixMonthsPeriod').change(function () {
+        fetchPeriodRevenueData();
+        fetchPeriodPizzaSalesData();
+    });
+    
+    function fetchData(url, tableId) {
+        var view = $('#view').val();
+        var year = $('#year').val();
+        var storeID = $('#storeDropdown').val();
+
+        switch (view) {
+            case "yearView":
+                $('#timeframeSettings').hide();
+                break;
+            case "monthView":
+            case "weekView":
+            case "dayView":
+                $('#timeframeSettings').show();
+                break;
+        }
+    }
+
+    // Включение вызова fetchData при изменении view
+    $('#view').change(function () {
+        fetchData();
+        fetchRevenueData();
+        fetchPizzasSoldData();
+    });
+
+    // Включение вызова fetchData при изменении года
+    $('#year').change(function () {
+        fetchRevenueData();
+        fetchPizzasSoldData();
+    });
+    
+
+
+   
+
     $('#view').change(function () {
         fetchRevenueData();
         fetchPizzasSoldData();
@@ -218,5 +406,7 @@ $(document).ready(function () {
     fetchStoreInfo();
     fetchRevenueData();
     fetchPizzasSoldData();
-});
+    fetchPeriodRevenueData();
+    fetchPeriodPizzaSalesData();
 
+});

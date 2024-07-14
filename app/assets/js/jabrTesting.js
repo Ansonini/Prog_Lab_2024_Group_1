@@ -353,14 +353,31 @@ $(document).ready(function () {
                         tableBody.empty();
         
                         const data = response.data;
-                        data.forEach(function (item) {
-                            const row = $('<tr>');
-                            row.append($('<td>').text(item.customerID));
-                            row.append($('<td>').text(item.orderCount));
-                            row.append($('<td>').text(item.lastOrderDate));
-                            row.append($('<td>').text(item.mostOrderedProduct));
-                            tableBody.append(row);
-                        });
+                        if (data && data.length > 0) {
+                            data.forEach(function (item) {
+                                const customerID = item.customerID;
+                                if (item.data && item.data.length > 0) {
+                                    item.data.forEach(function (entry) {
+                                        console.log('Processing entry:', entry);
+                                        const row = $('<tr>');
+                                        row.append($('<td>').text(customerID));
+                                        row.append($('<td>').text(entry.orderCount));
+                                        row.append($('<td>').text(entry.lastOrderDate));
+                                        row.append($('<td>').text(entry.mostOrderedProduct));
+                                        tableBody.append(row);
+                                    });
+                                } else {
+                                    const row = $('<tr>');
+                                    row.append($('<td>').text(customerID));
+                                    row.append($('<td>').text('N/A'));
+                                    row.append($('<td>').text('N/A'));
+                                    row.append($('<td>').text('N/A'));
+                                    tableBody.append(row);
+                                }
+                            });
+                        } else {
+                            $('#customerOrdersTable tbody').html('<tr><td colspan="4">No data available</td></tr>');
+                        }
                     } else {
                         $('#customerOrdersTable tbody').html('<tr><td colspan="4">' + response.message + '</td></tr>');
                     }
@@ -370,15 +387,9 @@ $(document).ready(function () {
                 }
             });
         }
-    
         
         
-    
-   
-    
-    
-    
-    
+        
     $('#periodView').change(function () {
         var periodType = $(this).val();
         $('#monthSettings').hide();

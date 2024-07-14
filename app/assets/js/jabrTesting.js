@@ -332,6 +332,46 @@ $(document).ready(function () {
                 }
             });
         }
+
+        $('#getCustomerOrdersInfo').click(function () {
+            console.log('Button clicked');
+            fetchCustomerOrdersInfo();
+        });
+        
+        function fetchCustomerOrdersInfo() {
+            var storeID = $('#storeDropdown').val();
+        
+            $.ajax({
+                url: '/BackendTestingJabrail/customersDataPerStores.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { storeID: storeID },
+                success: function (response) {
+                    console.log('Customer orders info response:', response);
+                    if (response.success) {
+                        const tableBody = $('#customerOrdersTable tbody');
+                        tableBody.empty();
+        
+                        const data = response.data;
+                        data.forEach(function (item) {
+                            const row = $('<tr>');
+                            row.append($('<td>').text(item.customerID));
+                            row.append($('<td>').text(item.orderCount));
+                            row.append($('<td>').text(item.lastOrderDate));
+                            row.append($('<td>').text(item.mostOrderedProduct));
+                            tableBody.append(row);
+                        });
+                    } else {
+                        $('#customerOrdersTable tbody').html('<tr><td colspan="4">' + response.message + '</td></tr>');
+                    }
+                },
+                error: function () {
+                    $('#customerOrdersTable tbody').html('<tr><td colspan="4">Error fetching data</td></tr>');
+                }
+            });
+        }
+    
+        
         
     
    
@@ -408,5 +448,6 @@ $(document).ready(function () {
     fetchPizzasSoldData();
     fetchPeriodRevenueData();
     fetchPeriodPizzaSalesData();
+    
 
 });

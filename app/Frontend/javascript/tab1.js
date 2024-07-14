@@ -1,20 +1,33 @@
 $(document).ready(function () {
+    
+    //diplay option graph
+    $('#bigGraph').hide();
+    $('#graph3And4').show();
+    $('#map').show();
+    $('#graphCanvas4').hide();
 
-    document.getElementById('table4&5').style.display = 'none';
-    document.getElementById('graph4&5').style.display = 'none';
+
+
+    $('#chartType1, #chartType2, #chartType3, #chartType4, #chartType5').hide();
+    $('#grouping1, #grouping2, #grouping3, #grouping4, #grouping5').hide();
+    $('#perSize').hide()
+    
+
 
     //choose file to load and set the tilte
-    var ajaxFile1 = 'getSalesPerStorePerMonth';
-    document.getElementById('graphTitle1').textContent = 'Sales per store per month';
+    var ajaxFile1 = '';
+    //document.getElementById('bigGraphTitle').textContent = 'Sales per store per month';
 
     var ajaxFile2 = 'getSalesPerTimeframe';
-    document.getElementById('graphTitle2').textContent = 'Sales per for the chosen time frame';
+    document.getElementById('graphTitle1').textContent = 'Sales during chosen time frame';
 
     var ajaxFile3 = 'getSalesPerStore';
-    document.getElementById('graphTitle3').textContent = 'Sales per store during the chosen time frame';
+    document.getElementById('graphTitle2').textContent = 'Sales per store during the chosen time frame';
 
     var ajaxFile4 = '';
-    var ajaxFile5 = '';
+
+    var ajaxFile5 = 'getCustomerCoordinatesPerStore';
+    document.getElementById('graphTitle4').textContent = 'Map of Store and Customers';
 
 
     // Function to fetch and display data
@@ -24,6 +37,7 @@ $(document).ready(function () {
         var year = $('#year').val();
         var month = $('#month').val();
         var week = $('#week').val();
+        var toggle_percent = $('#stores-sold-toggle').val();
 
     
         // empty the table of previous value each time a dropdown gets changed
@@ -57,7 +71,7 @@ $(document).ready(function () {
 
         // if all the relevant data is set, the function continues to make ajax request
         if (ready) {
-            fetchDataGraph1();
+            //fetchDataGraph1();
             fetchDataGraph2();
             fetchDataGraph3();
             fetchDataGraph4();
@@ -71,7 +85,7 @@ $(document).ready(function () {
             currentAjaxRequest1.abort();
         }
 
-        var canvas = document.getElementById('graphCanvas1');
+        var canvas = document.getElementById('bigGraphCanvas');
         var ctx = canvas.getContext('2d');
 
     // Get the chart instance associated with the canvas
@@ -92,7 +106,7 @@ $(document).ready(function () {
         var chartType = $('#chartType1').val();
         var storeSelection = $('#storeSelection').val();
 
-        $('#graphLoading1').show(); // Show loading indicator for first table
+        $('#bigGraphLoading').show(); // Show loading indicator for first table
         // ajax request for the first data
         currentAjaxRequest1 = $.ajax({
             url: '/ajax/'+ ajaxFile1 +'.php',
@@ -109,17 +123,16 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
-                    console.log(grouping);
-                    createChart(response.data, 'graphCanvas1', chartType, grouping);
+                    
                 } else {
-                    $('#graphCanvas1').html('<p>' + response.message + '</p>');
+                    $('#bigGraphCanvas').html('<p>' + response.message + '</p>');
                 }
             },
             error: function (xhr, status, error) {
                 console.log('AJAX Error:', status, error);
             },
             complete: function () {
-                $('#graphLoading1').hide(); // Hide loading indicator when request is complete
+                $('#bigGraphLoading').hide(); // Hide loading indicator when request is complete
             }
         });
 
@@ -134,7 +147,7 @@ $(document).ready(function () {
         }
 
         // Remove previous chart
-        var canvas = document.getElementById('graphCanvas2');
+        var canvas = document.getElementById('graphCanvas1');
         var ctx = canvas.getContext('2d');
 
     // Get the chart instance associated with the canvas
@@ -155,10 +168,71 @@ $(document).ready(function () {
         var chartType = $('#chartType2').val();
         var storeSelection = $('#storeSelection').val();
 
-        $('#graphLoading2').show(); // Show loading indicator for first table
+        $('#graphLoading1').show(); // Show loading indicator for first table
                 // ajax request for the first data
         currentAjaxRequest2 = $.ajax({
             url: '/ajax/'+ ajaxFile2 +'.php',
+            type: 'POST',
+            data: {
+                view: view,
+                mode: mode,
+                year: year,
+                month: month,
+                week: week,
+                perSize:perSize,
+                storeSelection: storeSelection
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Call the functions from to display the table and the chart
+                    createChart(response.data, 'graphCanvas1', chartType, grouping);
+                } else {
+                    $('#graphCanvas1').html('<p>' + response.message + '</p>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log('AJAX Error:', status, error);
+            },
+            complete: function () {
+                $('#graphLoading1').hide(); // Hide loading indicator when request is complete
+            }
+        });
+
+    }
+
+    function fetchDataGraph3() {
+
+        // Abort previous call if it isn't finished yet
+        if (currentAjaxRequest3) {
+            currentAjaxRequest3.abort();
+        }
+
+        // Remove previous chart
+        var canvas = document.getElementById('graphCanvas2');
+        var ctx = canvas.getContext('2d');
+
+    // Get the chart instance associated with the canvas
+        var chartInstance = Chart.getChart(ctx);
+
+        // Check if the chart instance exists and destroy it if it does
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        var view = $('#view').val();
+        var mode = $('#mode').val();
+        var year = $('#year').val();
+        var month = $('#month').val();
+        var week = $('#week').val();
+        var perSize = $('#perSize').val();
+        var grouping = $('#grouping3').val();
+        var chartType = $('#chartType3').val();
+        var storeSelection = $('#storeSelection').val();
+
+        $('#graphLoading2').show(); // Show loading indicator for first table
+                // ajax request for the first data
+        currentAjaxRequest3 = $.ajax({
+            url: '/ajax/'+ ajaxFile3 +'.php',
             type: 'POST',
             data: {
                 view: view,
@@ -184,67 +258,6 @@ $(document).ready(function () {
                 $('#graphLoading2').hide(); // Hide loading indicator when request is complete
             }
         });
-
-    }
-
-    function fetchDataGraph3() {
-
-        // Abort previous call if it isn't finished yet
-        if (currentAjaxRequest3) {
-            currentAjaxRequest3.abort();
-        }
-
-        // Remove previous chart
-        var canvas = document.getElementById('graphCanvas3');
-        var ctx = canvas.getContext('2d');
-
-    // Get the chart instance associated with the canvas
-        var chartInstance = Chart.getChart(ctx);
-
-        // Check if the chart instance exists and destroy it if it does
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
-
-        var view = $('#view').val();
-        var mode = $('#mode').val();
-        var year = $('#year').val();
-        var month = $('#month').val();
-        var week = $('#week').val();
-        var perSize = $('#perSize').val();
-        var grouping = $('#grouping3').val();
-        var chartType = $('#chartType3').val();
-        var storeSelection = $('#storeSelection').val();
-
-        $('#graphLoading3').show(); // Show loading indicator for first table
-                // ajax request for the first data
-        currentAjaxRequest3 = $.ajax({
-            url: '/ajax/'+ ajaxFile3 +'.php',
-            type: 'POST',
-            data: {
-                view: view,
-                mode: mode,
-                year: year,
-                month: month,
-                week: week,
-                perSize:perSize,
-                storeSelection: storeSelection
-            },
-            success: function (response) {
-                if (response.success) {
-                    // Call the functions from to display the table and the chart
-                    createChart(response.data, 'graphCanvas3', chartType, grouping);
-                } else {
-                    $('#graphCanvas3').html('<p>' + response.message + '</p>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log('AJAX Error:', status, error);
-            },
-            complete: function () {
-                $('#graphLoading3').hide(); // Hide loading indicator when request is complete
-            }
-        });
     }
 
     function fetchDataGraph4() {
@@ -255,7 +268,7 @@ $(document).ready(function () {
         }
 
         // Remove previous chart
-        var canvas = document.getElementById('graphCanvas4');
+        var canvas = document.getElementById('graphCanvas3');
         var ctx = canvas.getContext('2d');
 
     // Get the chart instance associated with the canvas
@@ -277,7 +290,7 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
 
-        $('#graphLoading4').show(); // Show loading indicator for second table 
+        $('#graphLoading3').show(); // Show loading indicator for second table 
             // ajax request for the first data
         currentAjaxRequest4 = $.ajax({
             url: '/ajax/'+ ajaxFile4 +'.php',
@@ -297,16 +310,16 @@ $(document).ready(function () {
                     // Call the functions from to display the table and the chart
                     displayJsonTable(response.data, "table4");
 
-                    createChart(response.data, 'graphCanvas4', chartType, grouping);
+                    createChart(response.data, 'graphCanvas3', chartType, grouping);
                 } else {
-                    $('#graphCanvas4').html('<p>' + response.message + '</p>');
+                    $('#graphCanvas3').html('<p>' + response.message + '</p>');
                 }
             },
             error: function (xhr, status, error) {
                 console.log('AJAX Error:', status, error);
             },
             complete: function () {
-                $('#graphLoading4').hide(); // Hide loading indicator when request is complete
+                $('#graphLoading3').hide(); // Hide loading indicator when request is complete
             }
         });
     }
@@ -319,7 +332,7 @@ $(document).ready(function () {
         }
 
         // Remove previous chart
-        var canvas = document.getElementById('graphCanvas5');
+        var canvas = document.getElementById('graphCanvas4');
         var ctx = canvas.getContext('2d');
 
         // Get the chart instance associated with the canvas
@@ -341,7 +354,7 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
 
-        $('#graphLoading5').show(); // Show loading indicator for second table 
+        $('#graphLoading4').show(); // Show loading indicator for second table 
             // AJAX request for the second data
         currentAjaxRequest5 = $.ajax({
             url: '/ajax/'+ ajaxFile5 +'.php',
@@ -357,27 +370,45 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     // Call the function from showTable.js
-                    displayJsonTable(response.data, "table5");
-
-                    createChart(response.data, 'graphCanvas5', chartType, grouping, true);
+                    mapStores(response.data);
                 } else {
-                    $('#graphCanvas5').html('<p>' + response.message + '</p>');
+                    $('#graphCanvas4').html('<p>' + response.message + '</p>');
                 }
             },
             error: function (xhr, status, error) {
                 console.log('AJAX Error:', status, error);
             },
             complete: function () {
-                $('#graphLoading5').hide(); // Hide loading indicator when request is complete
+                $('#graphLoading4').hide(); // Hide loading indicator when request is complete
             }
+        });
+    }
+
+    // a map function that shows all stores on a map with their store ID and distance from the main store
+    function mapStores(data) {
+        var map = L.map('map').setView([40, -120], 4.5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var stores = [
+            { lat: 41.328852, lng: -116.12251, name: 'Tuscarora', StoreID: 'S490972'},
+            { lat: 37.593883, lng: -121.88281, name: 'Sunol', StoreID: 'S476770' }
+        ];
+
+        stores.forEach(store => {
+            L.marker([store.lat, store.lng]).addTo(map)
+                .bindPopup(store.name)
+                .openPopup();
         });
     }
 
     
 
     // Trigger fetchData when any dropdown value changes
-    $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType, #perSize, #storeSelection').change(fetchData);
-    $('#chartType1, #grouping1').change(fetchDataGraph1);
+    $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType, #storeSelection').change(fetchData);
+    //$('#chartType1, #grouping1').change(fetchDataGraph1);
     $('#chartType2, #grouping2').change(fetchDataGraph2);
     $('#chartType3, #grouping3').change(fetchDataGraph3);
     $('#chartType4, #grouping4').change(fetchDataGraph4);

@@ -465,6 +465,52 @@
         </tbody>
     </table>
 
+    <h3>Chosed Customer to Store Distance</h3>
+    <div>
+        <label for="viewDropdown">Select View:</label>
+        <select id="viewDropdown">
+            <option value="allStoresDistance">All Stores Distance</option>
+            <option value="storesInArea">Stores in the Area</option>
+            <option value="storesPlacedOrder">Stores Placed Order</option>
+        </select>
+    </div>
+    
+    <div id="distanceInput" style="display: none;">
+        <label for="distance">Enter Distance (km):</label>
+        <input type="number" id="distance" name="distance">
+    </div>
+    
+    <table id="customerStoresTable">
+        <thead>
+            <tr>
+                <th>Store ID</th>
+                <th>Distance to Store (km)</th>
+                <th>Order Placed</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h3>Customer Spent </h3>
+   
+    <table id="customerSpentTable" border="1">
+        <thead>
+            <tr>
+                <th>customerID</th>
+                <th>Order Count</th>
+                <th>Total Items</th>
+                <th>Total Spent</th>
+                <th>Average Item Price</th>
+                <th>Average Order Value</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+
    
 
     <div id="map" style="height: 400px; width: 100%;"></div>

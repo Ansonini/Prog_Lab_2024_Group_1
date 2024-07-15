@@ -124,7 +124,7 @@ $(document).ready(function () {
             // Stacking-Bar-Chart
             $('#loading-stacking-barchart').show();
             $.ajax({
-                url: '../ajax/getSalesPerStore.php',
+                url: '../ajax/getSalesPerPizzaOverTime.php',
                 type: 'POST',
                 data: {
                     view: view,
@@ -150,14 +150,15 @@ $(document).ready(function () {
             // Pie-Chart
             $('#loading-pie-chart-pizza').show();
             $.ajax({
-                url: '../ajax/getSalesPerStore.php',
+                url: '../ajax/getSalesPerPizza.php',
                 type: 'POST',
                 data: {
                     view: view,
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week
+                    week: week,
+                    perSize: true,
                 },
                 success: function (response) {
                     if (response.success) {
@@ -178,6 +179,13 @@ $(document).ready(function () {
             $.ajax({
                 url: '../ajax/getStoreInfo.php',
                 type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week,
+                },
                 success: function (response) {
                     if (response.success) {
                         mapStores(response.data);
@@ -192,58 +200,134 @@ $(document).ready(function () {
                     $('#loading-map').hide();
                 }
             });
-            // // Bump-Chart1
-            // $('#loading-bump-chart-Pizza').show();
-            // $.ajax({
-            //     url: '../ajax/getSalesPerStore.php',
-            //     type: 'POST',
-            //     data: {
-            //         view: view,
-            //         mode: mode,
-            //         year: year,
-            //         month: month,
-            //         week: week
-            //     },
-            //     success: function (response) {
-            //         if (response.success) {
-            //             bumpChartPizzaRanking(response.data);
-            //         } else {
-            //             $('#chart-container').html('<p>' + response.message + '</p>');
-            //         }
-            //     },
-            //     error: function (xhr, status, error) {
-            //         console.log('AJAX Error:', status, error);
-            //     },
-            //     complete: function () {
-            //         $('#loading-bump-chart-Pizza').hide();
-            //     }
-            // });
-            // // Bump-Chart2
-            // $('#loading-bump-chart-Store').show();
-            // $.ajax({
-            //     url: '../ajax/getSalesPerStore.php',
-            //     type: 'POST',
-            //     data: {
-            //         view: view,
-            //         mode: mode,
-            //         year: year,
-            //         month: month,
-            //         week: week
-            //     },
-            //     success: function (response) {
-            //         if (response.success) {
-            //             bumpChartStoreRanking(response.data, mode)
-            //         } else {
-            //             $('#chart-container').html('<p>' + response.message + '</p>');
-            //         }
-            //     },
-            //     error: function (xhr, status, error) {
-            //         console.log('AJAX Error:', status, error);
-            //     },
-            //     complete: function () {
-            //         $('#loading-bump-chart-Store').hide();
-            //     }
-            // });
+            // Sidebar State-Data-Unit-Fix
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                method: 'Post',
+                data: {
+                    view: completeView,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        stateUnitDataFix(response.data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                }
+            });
+            // Sidebar State-Data-Unit-Change
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                method: 'Post',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
+                success: function(response) {
+                    if (response.success) {
+                        stateUnitDataChange(response.data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                }
+            });
+            // Sidebar State-Data-Revenue-Fix
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                method: 'Post',
+                data: {
+                    view: completeView,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        stateRevenueDataFix(response.data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                }
+            });
+            // Sidebar State-Data-Revenue-Change
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                method: 'Post',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
+                success: function(response) {
+                    if (response.success) {
+                        stateRevenueDataChange(response.data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                }
+            });
+            // Bump-Chart1
+            $('#loading-bump-chart-Pizza').show();
+            $.ajax({
+                url: '../ajax/getSalesPerPizzaOverTime.php',
+                type: 'POST',
+                data: {
+                    view: completeView,
+                    mode: units,
+                    year: year,
+                    month: month,
+                    week: week,
+                    perSize: false,
+                    storeSelection: all
+                },
+                success: function (response) {
+                    if (response.success) {
+                        bumpChartPizzaRanking(response.data);
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-bump-chart-Pizza').hide();
+                }
+            });
+            // Bump-Chart2
+            $('#loading-bump-chart-Store').show();
+            $.ajax({
+                url: '../ajax/getSalesPerStore.php',
+                type: 'POST',
+                data: {
+                    view: completeView,
+                    mode: units,
+                    year: year,
+                    month: month,
+                    week: week,
+                    perSize: false,
+                    storeSelection: all
+                },
+                success: function (response) {
+                    if (response.success) {
+                        bumpChartStoreRanking(response.data, mode)
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-bump-chart-Store').hide();
+                }
+            });
         }
     }
 
@@ -649,19 +733,34 @@ function pieChartStores() {
 // a map function that shows all stores on a map with their store ID and distance from the main store
 function mapStores(data) {
     var map = L.map('map').setView([40, -120], 4.5);
+    const stores = [];
 
+    var keys = Object.keys(data[0]);
+    var storeID = keys[0];
+    var latitude =  'latitude';
+    var longitude = 'longitude';
+    var city = 'city';
+
+    data.data.forEach(store => {
+        stores.push({
+            lat: parseFloat(store[latitude]),
+            lng: parseFloat(store[longitude]),
+            name: store[storeID],
+            city: store[city]
+        });
+        });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    var stores = [
-        { lat: 41.328852, lng: -116.12251, name: 'Tuscarora', StoreID: 'S490972'},
-        { lat: 37.593883, lng: -121.88281, name: 'Sunol', StoreID: 'S476770' }
-    ];
+    // var stores = [
+    //     { lat: 41.328852, lng: -116.12251, name: 'Tuscarora', StoreID: 'S490972'},
+    //     { lat: 37.593883, lng: -121.88281, name: 'Sunol', StoreID: 'S476770' }
+    // ];
 
     stores.forEach(store => {
         L.marker([store.lat, store.lng]).addTo(map)
-            .bindPopup(store.name)
+            .bindPopup(`<b>${store.city}</b><br>Store ID: ${store.name}`)
             .openPopup();
     });
 }
@@ -785,10 +884,202 @@ function navigateToStore(storeId) {
 function openSideBar() {
     document.getElementById("sidebar").style.width = "40%";
 }
+
 // function to close the sidebar
-function closeSideBar() {
+function closeSideBar(data) {
     document.getElementById("sidebar").style.width = "0";
 }
+
+// function to show the Units Sold as fix data of the different states
+function stateUnitDataFix(data) {
+    const caStores = [
+        'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
+        'S068548', 'S449313', 'S276746', 'S606312', 'S062214',
+        'S361257', 'S918734', 'S048150', 'S370494', 'S216043',
+        'S396799', 'S122017'
+    ];
+    const nvStores = [
+        'S490972', 'S799887', 'S013343', 'S263879', 'S064089',
+        'S058118', 'S351225', 'S080157', 'S588444', 'S486166',
+        'S669665', 'S505400', 'S147185'
+    ];
+    const utStores = ['S302800'];
+    const azStores = ['S688745'];
+
+    var keys = Object.keys(data[0]);
+    var storeIDKey = keys[0];
+    var unitKey = keys[1];
+
+    let totalUnitsSold = 0;
+
+    let stateData = {
+        CA: {units: 0},
+        NV: {units: 0},
+        UT: {units: 0},
+        AZ: {units: 0}
+    };
+
+    data.forEach(store => {
+        let units = parseInt(store[unitKey]);
+        let storeID = store[storeIDKey];
+
+        totalUnitsSold += units;
+
+        if (caStores.includes(storeID)) stateData.CA.units += units;
+        else if (nvStores.includes(storeID)) stateData.NV.units += units;
+        else if (utStores.includes(storeID)) stateData.UT.units += units;
+        else if (azStores.includes(storeID)) stateData.AZ.units += units;
+    });
+    document.getElementById('totalUnitsFix').innerText = totalUnitsSold;
+    document.getElementById('unitsCA').innerText = stateData.CA.units;
+    document.getElementById('unitsNV').innerText = stateData.NV.units;
+    document.getElementById('unitsUT').innerText = stateData.UT.units;
+    document.getElementById('unitsAZ').innerText = stateData.AZ.units;
+}
+
+// function to show the Units Sold data of the states that you can change via time
+function stateUnitDataChange(data) {
+    const caStores = [
+        'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
+        'S068548', 'S449313', 'S276746', 'S606312', 'S062214',
+        'S361257', 'S918734', 'S048150', 'S370494', 'S216043',
+        'S396799', 'S122017'
+    ];
+    const nvStores = [
+        'S490972', 'S799887', 'S013343', 'S263879', 'S064089',
+        'S058118', 'S351225', 'S080157', 'S588444', 'S486166',
+        'S669665', 'S505400', 'S147185'
+    ];
+    const utStores = ['S302800'];
+    const azStores = ['S688745'];
+
+    var keys = Object.keys(data[0]);
+    var storeIDKey = keys[0];
+    var unitKey = keys[1];
+
+    let totalUnits = 0;
+
+    let stateData = {
+        CA: { units: 0 },
+        NV: { units: 0 },
+        UT: { units: 0 },
+        AZ: { units: 0 }
+    };
+
+    data.forEach(store => {
+        let units = parseInt(store[unitKey]);
+        let storeID = store[storeIDKey];
+
+        totalUnits += units;
+
+        if (caStores.includes(storeID)) stateData.CA.units += units;
+        else if (nvStores.includes(storeID)) stateData.NV.units += units;
+        else if (utStores.includes(storeID)) stateData.UT.units += units;
+        else if (azStores.includes(storeID)) stateData.AZ.units += units;
+    });
+    document.getElementById('totalUnitsChoice').innerText = totalUnits;
+    document.getElementById('revenueCA').innerText = stateData.CA.units;
+    document.getElementById('revenueNV').innerText = stateData.NV.units;
+    document.getElementById('revenueUT').innerText = stateData.UT.units;
+    document.getElementById('revenueAZ').innerText = stateData.AZ.units;
+}
+
+// function to show the Revenue data of the states as fix data
+function stateRevenueDataFix(data) {
+    const caStores = [
+        'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
+        'S068548', 'S449313', 'S276746', 'S606312', 'S062214',
+        'S361257', 'S918734', 'S048150', 'S370494', 'S216043',
+        'S396799', 'S122017'
+    ];
+    const nvStores = [
+        'S490972', 'S799887', 'S013343', 'S263879', 'S064089',
+        'S058118', 'S351225', 'S080157', 'S588444', 'S486166',
+        'S669665', 'S505400', 'S147185'
+    ];
+    const utStores = ['S302800'];
+    const azStores = ['S688745'];
+
+    var keys = Object.keys(data[0]);
+    var storeIDKey = keys[0];
+    var revenueKey = keys[1];
+
+
+    let totalRevenue = 0;
+
+    let stateData = {
+        CA: {unitsSold: 0},
+        NV: {unitsSold: 0},
+        UT: {unitsSold: 0},
+        AZ: {unitsSold: 0}
+    };
+
+    data.forEach(store => {
+        let revenue = parseInt(store[revenueKey]);
+        let storeID = store[storeIDKey];
+
+        totalRevenue += revenue;
+
+        if (caStores.includes(storeID)) stateData.CA.revenue += revenue;
+        else if (nvStores.includes(store.storeID)) stateData.NV.revenue += revenue;
+        else if (utStores.includes(store.storeID)) stateData.UT.revenue += revenue;
+        else if (azStores.includes(store.storeID)) stateData.AZ.revenue += revenue;
+    });
+    document.getElementById('totalRevenueChoice').innerText = totalRevenue;
+    document.getElementById('revenueCA').innerText = stateData.CA.revenue;
+    document.getElementById('revenueNV').innerText = stateData.NV.revenue;
+    document.getElementById('revenueUT').innerText = stateData.UT.revenue;
+    document.getElementById('revenueAZ').innerText = stateData.AZ.revenue;
+}
+
+// function to show the Revenue data of the states that you can change via time
+function stateRevenueDataChange(data) {
+    const caStores = [
+        'S476770', 'S750231', 'S817950', 'S948821', 'S872983',
+        'S068548', 'S449313', 'S276746', 'S606312', 'S062214',
+        'S361257', 'S918734', 'S048150', 'S370494', 'S216043',
+        'S396799', 'S122017'
+    ];
+    const nvStores = [
+        'S490972', 'S799887', 'S013343', 'S263879', 'S064089',
+        'S058118', 'S351225', 'S080157', 'S588444', 'S486166',
+        'S669665', 'S505400', 'S147185'
+    ];
+    const utStores = ['S302800'];
+    const azStores = ['S688745'];
+
+    var keys = Object.keys(data[0]);
+    var storeIDKey = keys[0];
+    var revenueKey = keys[1];
+
+
+    let totalRevenue = 0;
+
+    let stateData = {
+        CA: {unitsSold: 0},
+        NV: {unitsSold: 0},
+        UT: {unitsSold: 0},
+        AZ: {unitsSold: 0}
+    };
+
+    data.forEach(store => {
+        let revenue = parseInt(store[revenueKey]);
+        let storeID = store[storeIDKey];
+
+        totalRevenue += revenue;
+
+        if (caStores.includes(storeID)) stateData.CA.revenue += revenue;
+        else if (nvStores.includes(store.storeID)) stateData.NV.revenue += revenue;
+        else if (utStores.includes(store.storeID)) stateData.UT.revenue += revenue;
+        else if (azStores.includes(store.storeID)) stateData.AZ.revenue += revenue;
+    });
+    document.getElementById('totalRevenueChoice').innerText = totalRevenue;
+    document.getElementById('revenueCA').innerText = stateData.CA.revenue;
+    document.getElementById('revenueNV').innerText = stateData.NV.revenue;
+    document.getElementById('revenueUT').innerText = stateData.UT.revenue;
+    document.getElementById('revenueAZ').innerText = stateData.AZ.revenue;
+}
+
 // Saving the Text in the Note Section as a .txt file
 function saveText() {
     const noteText = document.getElementById('noteField').value;
@@ -810,6 +1101,7 @@ function saveText() {
 
     document.body.removeChild(link);
 }
+
 // Saving all the graphs as images
 function saveGraphs() {
     const charts = document.querySelectorAll('.chart-container');
@@ -824,166 +1116,4 @@ function saveGraphs() {
             }
         });
     });
-}
-// test Function used to test out changes on graphs
-function testfunc(data) {
-    var keys = Object.keys(data[0]);
-    var storeID = keys[0];
-    var storeValue = keys[1];
-
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
-
-    var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
-    if (existingChart) {
-        echarts.dispose(existingChart);
-    }
-
-    var storeDataWithStoreID = data.map(item => ({
-        value: item[storeValue],
-        category: item[storeID]
-    }));
-
-    storeDataWithStoreID.sort((a, b) => b.value - a.value);
-
-    var sortedStoreData = storeDataWithStoreID.map(item => item.value);
-    var sortedStoreID = storeDataWithStoreID.map(item => item.category);
-
-    var yAxisLabel = document.getElementById('data-display').value === 'units' ? 'Units Sold' : 'Sales';
-
-    var option = {
-        title: {
-            text: 'Sales Data'
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            },
-            formatter: function (params) {
-                var category = params[0].name;
-                var value = params[0].data;
-                return `Store: ${category}<br/>Value: ${value}`;
-            }
-        },
-        xAxis: {
-            type: 'category',
-            data: sortedStoreID,
-            name: 'Store Names',
-            nameLocation: 'middle',
-            nameGap: 50,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}',
-                rotate: 45,
-                fontSize: 14
-            }
-        },
-        yAxis: {
-            type: 'value',
-            name: yAxisLabel,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}',
-                fontSize: 14
-            }
-        },
-        series: [{
-            name: 'Sales',
-            type: 'bar',
-            data: sortedStoreData,
-            itemStyle: {
-                color: 'rgba(75, 192, 192, 0.8)'
-            }
-        }]
-    };
-
-    sortedBarchartStores.setOption(option);
-    sortedBarchartStores.resize({width: 1000, height: 500});
-}
-
-function testfunction2(data) {
-    var keys = Object.keys(data[0]);
-    var storeID = keys[0];
-    var storeValue = keys[1];
-
-
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
-
-    var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
-    if (existingChart) {
-        echarts.dispose(existingChart);
-    }
-
-    var storeDataWithStoreID = data.map(item => ({
-        value: item[storeValue],
-        category: item[storeID]
-    }));
-
-    storeDataWithStoreID.sort((a, b) => b.value - a.value);
-
-    var sortedStoreData = storeDataWithStoreID.map(item => item.value);
-    var sortedStoreID = storeDataWithStoreID.map(item => item.category);
-
-    if (document.getElementById('data-display').value === 'units') {
-        var yAxisLabel = 'Units Sold in Thousands';
-    } else {
-        var yAxisLabel = 'Revenue in Thousands';
-    }
-    var option = {
-        title: {
-            text: 'Sales Data'
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {
-            left: '8%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            data: sortedStoreID,
-            name: 'Store Names',
-            nameLocation: 'middle',
-            nameGap: 50,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}',
-                rotate: 45
-            },
-        },
-        yAxis: {
-            type: 'value',
-            name: yAxisLabel,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}',
-                rotate: 45
-            }
-        },
-        series: [{
-            name: 'Sales',
-            type: 'bar',
-            data: sortedStoreData,
-            itemStyle: {
-                color: 'rgba(75, 192, 192, 0.8)'
-            }
-        }]
-    };
-
-    option && sortedBarchartStores.setOption(option);
-    sortedBarchartStores.resize({width: 1000, height: 500})
 }

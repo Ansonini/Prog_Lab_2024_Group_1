@@ -891,60 +891,40 @@ function bumpChartPizzaRanking(data) {
 
 // shows a bump chart of the Top 10 stores ranked based on the sales/toggle between units and revenue
 function bumpChartStoreRanking(data) {
-    var myChart = document.getElementById('bump-chart-Stores');
+    var myChart = document.getElementById('bump-chart-Store');
+    var option;
+    var storeIds = data.map(store => store.storeID);
+    var years = [...new Set(data.flatMap(store => store.data.map(d => d.sellingYear)))].sort();
 
-    // Extract store names and years from the data
-    const stores = data.map(item => item.storeName);
-    const years = Object.keys(data[0]).filter(key => key !== 'storeName');
-
-    // Generate ranking data
-    const generateRankingData = () => {
-        const map = new Map();
-        for (const year of years) {
-            const yearSales = stores.map(store => ({
-                store: store,
-                unitsSold: data.find(item => item.storeName === store)[year]
-            }));
-            yearSales.sort((a, b) => b.unitsSold - a.unitsSold);
-            yearSales.forEach((item, index) => {
-                const rank = index + 1;
-                map.set(item.store, (map.get(item.store) || []).concat(rank));
-            });
-        }
-        return map;
-    };
-
-    // Generate series list
-    const generateSeriesList = () => {
-        const seriesList = [];
-        const rankingMap = generateRankingData();
-        rankingMap.forEach((data, store) => {
-            const series = {
-                name: store,
-                symbolSize: 20,
-                type: 'line',
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                endLabel: {
-                    show: true,
-                    formatter: '{a}',
-                    distance: 20
-                },
-                lineStyle: {
-                    width: 4
-                },
-                data: data
-            };
-            seriesList.push(series);
+    const seriesList = data.map(store => {
+        const data = years.map(year => {
+            const yearData = store.data.find(d => d.sellingYear === year);
+            return yearData ? parseInt(yearData.yearlyRank) : null;
         });
-        return seriesList;
-    };
 
-    const option = {
+        return {
+            name: store.storeID,
+            symbolSize: 20,
+            type: 'line',
+            smooth: true,
+            emphasis: {
+                focus: 'series'
+            },
+            endLabel: {
+                show: true,
+                formatter: '{a}',
+                distance: 20
+            },
+            lineStyle: {
+                width: 4
+            },
+            data: data
+        };
+    });
+
+    option = {
         title: {
-            text: 'Store Ranking Bump Chart (by Units Sold)'
+            text: 'Store Ranking Bump Chart'
         },
         tooltip: {
             trigger: 'item'
@@ -982,10 +962,12 @@ function bumpChartStoreRanking(data) {
             inverse: true,
             interval: 1,
             min: 1,
-            max: stores.length
+            max: storeIds.length
         },
-        series: generateSeriesList()
+        series: seriesList
     };
+
+    option && myChart.setOption(option);
 }
 
 // to filter the dropdown list of stores

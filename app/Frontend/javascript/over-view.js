@@ -179,6 +179,13 @@ $(document).ready(function () {
             $.ajax({
                 url: '../ajax/getStoreInfo.php',
                 type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week
+                },
                 success: function (response) {
                     if (response.success) {
                         mapStores(response.data);
@@ -770,6 +777,12 @@ function mapStores(data) {
     var map = L.map('map').setView([40, -120], 4.5);
     const stores = [];
 
+    var keys = Object.keys(data[0]);
+    var storeID = keys[0];
+    var latitude = 'latitude';
+    var longitude = 'longitude';
+    var city = 'city';
+
     data.forEach(store => {
         stores.push({
             lat: parseFloat(store.latitude),
@@ -793,37 +806,55 @@ function mapStores(data) {
 // shows a bump chart of the Top 10 pizza ranked based on the sales
 function bumpChartPizzaRanking(data) {
     var myChart = document.getElementById('bump-chart-Pizza');
+
+    // Extract pizza names and years from the data
     const pizzas = data.map(item => item.pizzaName);
     const years = Object.keys(data[0]).filter(key => key !== 'pizzaName');
 
-    const rankingData = {};
-    pizzas.forEach(pizza => {
-        rankingData[pizza] = years.map(year => {
-            return {
-                year: year,
+    // Generate ranking data
+    const generateRankingData = () => {
+        const map = new Map();
+        for (const year of years) {
+            const yearSales = pizzas.map(pizza => ({
+                pizza: pizza,
                 sales: data.find(item => item.pizzaName === pizza)[year]
+            }));
+            yearSales.sort((a, b) => b.sales - a.sales);
+            yearSales.forEach((item, index) => {
+                const rank = index + 1;
+                map.set(item.pizza, (map.get(item.pizza) || []).concat(rank));
+            });
+        }
+        return map;
+    };
+
+    // Generate series list
+    const generateSeriesList = () => {
+        const seriesList = [];
+        const rankingMap = generateRankingData();
+        rankingMap.forEach((data, pizza) => {
+            const series = {
+                name: pizza,
+                symbolSize: 20,
+                type: 'line',
+                smooth: true,
+                emphasis: {
+                    focus: 'series'
+                },
+                endLabel: {
+                    show: true,
+                    formatter: '{a}',
+                    distance: 20
+                },
+                lineStyle: {
+                    width: 4
+                },
+                data: data
             };
+            seriesList.push(series);
         });
-    });
-
-    years.forEach(year => {
-        const yearSales = pizzas.map(pizza => ({
-            pizza: pizza,
-            sales: rankingData[pizza].find(item => item.year === year).sales
-        }));
-        yearSales.sort((a, b) => b.sales - a.sales);
-        yearSales.forEach((item, index) => {
-            rankingData[item.pizza].find(y => y.year === year).rank = index + 1;
-        });
-    });
-
-    const series = pizzas.map(pizza => ({
-        name: pizza,
-        type: 'line',
-        smooth: true,
-        data: rankingData[pizza].map(item => item.rank),
-        lineStyle: { width: 4 }
-    }));
+        return seriesList;
+    };
 
     const option = {
         title: {
@@ -832,94 +863,142 @@ function bumpChartPizzaRanking(data) {
         tooltip: {
             trigger: 'item'
         },
+        grid: {
+            left: 30,
+            right: 110,
+            bottom: 30,
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
         xAxis: {
             type: 'category',
+            splitLine: {
+                show: true
+            },
+            axisLabel: {
+                margin: 30,
+                fontSize: 16
+            },
+            boundaryGap: false,
             data: years
         },
         yAxis: {
             type: 'value',
+            axisLabel: {
+                margin: 30,
+                fontSize: 16,
+                formatter: '#{value}'
+            },
             inverse: true,
+            interval: 1,
             min: 1,
             max: pizzas.length
         },
-        series: series
+        series: generateSeriesList()
     };
-
-    myChart.setOption(option);
-    option && myChart.setOption(option);
 }
 
 // shows a bump chart of the Top 10 stores ranked based on the sales/toggle between units and revenue
 function bumpChartStoreRanking(data) {
     var myChart = document.getElementById('bump-chart-Stores');
+
+    // Extract store names and years from the data
     const stores = data.map(item => item.storeName);
     const years = Object.keys(data[0]).filter(key => key !== 'storeName');
 
-    const salesData = {};
-    stores.forEach(store => {
-        salesData[store] = years.map(year => {
-            return {
-                year: year,
+    // Generate ranking data
+    const generateRankingData = () => {
+        const map = new Map();
+        for (const year of years) {
+            const yearSales = stores.map(store => ({
+                store: store,
                 unitsSold: data.find(item => item.storeName === store)[year]
+            }));
+            yearSales.sort((a, b) => b.unitsSold - a.unitsSold);
+            yearSales.forEach((item, index) => {
+                const rank = index + 1;
+                map.set(item.store, (map.get(item.store) || []).concat(rank));
+            });
+        }
+        return map;
+    };
+
+    // Generate series list
+    const generateSeriesList = () => {
+        const seriesList = [];
+        const rankingMap = generateRankingData();
+        rankingMap.forEach((data, store) => {
+            const series = {
+                name: store,
+                symbolSize: 20,
+                type: 'line',
+                smooth: true,
+                emphasis: {
+                    focus: 'series'
+                },
+                endLabel: {
+                    show: true,
+                    formatter: '{a}',
+                    distance: 20
+                },
+                lineStyle: {
+                    width: 4
+                },
+                data: data
             };
+            seriesList.push(series);
         });
-    });
-
-    const rankingData = {};
-    years.forEach(year => {
-        const yearSales = stores.map(store => ({
-            store: store,
-            unitsSold: salesData[store].find(item => item.year === year).unitsSold
-        }));
-        yearSales.sort((a, b) => b.unitsSold - a.unitsSold);
-        yearSales.forEach((item, index) => {
-            if (!rankingData[item.store]) {
-                rankingData[item.store] = [];
-            }
-            rankingData[item.store].push(index + 1);
-        });
-    });
-
-    const series = stores.map(store => ({
-        name: store,
-        type: 'line',
-        smooth: true,
-        data: rankingData[store],
-        lineStyle: { width: 4 }
-    }));
+        return seriesList;
+    };
 
     const option = {
         title: {
             text: 'Store Ranking Bump Chart (by Units Sold)'
         },
         tooltip: {
-            trigger: 'item',
-            formatter: function(params) {
-                return `${params.seriesName}<br/>Year: ${years[params.dataIndex]}<br/>Rank: ${params.data}`;
-            }
+            trigger: 'item'
         },
-        legend: {
-            type: 'scroll',
-            orient: 'vertical',
-            right: 10,
-            top: 20,
-            bottom: 20,
+        grid: {
+            left: 30,
+            right: 110,
+            bottom: 30,
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
         },
         xAxis: {
             type: 'category',
+            splitLine: {
+                show: true
+            },
+            axisLabel: {
+                margin: 30,
+                fontSize: 16
+            },
+            boundaryGap: false,
             data: years
         },
         yAxis: {
             type: 'value',
+            axisLabel: {
+                margin: 30,
+                fontSize: 16,
+                formatter: '#{value}'
+            },
             inverse: true,
+            interval: 1,
             min: 1,
             max: stores.length
         },
-        series: series
+        series: generateSeriesList()
     };
-
-    myChart.setOption(option);
-    option && myChart.setOption(option);
 }
 
 // to filter the dropdown list of stores

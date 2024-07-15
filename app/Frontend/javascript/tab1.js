@@ -696,93 +696,75 @@ $(document).ready(function () {
     }
 
     // A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
-    function stackingBarChart(data) {
-        var chartDom = document.getElementById('stacking-barchart-pizza');
-        var myChart = echarts.init(chartDom);
+    function stackedBarChart(data) {
+        const barChart = echarts.init(document.getElementById('stacking-barchart-pizza'));
 
-        // Extract pizza names and selling days
-        const pizzaNames = data.map(item => item.pizzaName);
-        const sellingMonth = data[0].map(item => item.sellingMonth);
+        // Extract unique pizza sizes and names
+        const pizzaSizes = [...new Set(data.flatMap(pizza => pizza.data.map(item => item.pizzaSize)))];
+        const pizzaNames = data.map(pizza => pizza.pizzaName);
 
-        // Prepare raw data
-        const rawData = data.map(pizza =>
-            pizza.data.map(day => parseInt(day.unitsSold))
-        );
-
-        // Calculate total data
-        const totalData = [];
-        for (let i = 0; i < rawData[0].length; ++i) {
-            let sum = 0;
-            for (let j = 0; j < rawData.length; ++j) {
-                sum += rawData[j][i];
-            }
-            totalData.push(sum);
-        }
-
-        const grid = {
-            left: 100,
-            right: 100,
-            top: 50,
-            bottom: 50
+        // Color map for sizes
+        const colorMap = {
+            "Extra Large": '#4e79a7',
+            "Large": '#59a14f',
+            "Medium": '#edc949',
+            "Small": '#e15759'
         };
 
-        const series = pizzaNames.map((name, sid) => {
-            return {
-                name,
-                type: 'bar',
-                stack: 'total',
-                barWidth: '60%',
-                label: {
-                    show: true,
-                    formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
-                },
-                data: rawData[sid].map((d, did) =>
-                    totalData[did] <= 0 ? 0 : d / totalData[did]
-                )
-            };
-        });
+        const series = pizzaSizes.map(size => ({
+            name: size,
+            type: 'bar',
+            stack: 'total',
+            label: {
+                show: true,
+                position: 'inside',
+                formatter: '{c}'
+            },
+            emphasis: {
+                focus: 'series'
+            },
+            data: data.map(pizza => {
+                const sizeData = pizza.data.find(item => item.pizzaSize === size);
+                return sizeData ? parseInt(sizeData.unitsSold) : 0;
+            }),
+            itemStyle: {
+                color: colorMap[size] || '#808080'
+            }
+        }));
 
-        var option = {
+        const option = {
             title: {
-                text: 'Pizza Sales Stacked Bar Chart'
+                text: 'Pizza Sales by Size',
+                left: 'center'
             },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'shadow'
-                },
-                formatter: function(params) {
-                    let tooltip = params[0].axisValue + '<br/>';
-                    let total = 0;
-                    params.forEach(param => {
-                        const actualValue = rawData[param.seriesIndex][param.dataIndex];
-                        total += actualValue;
-                        tooltip += param.marker + param.seriesName + ': ' +
-                            actualValue + ' (' +
-                            (param.value * 100).toFixed(2) + '%)<br/>';
-                    });
-                    tooltip += 'Total: ' + total;
-                    return tooltip;
                 }
             },
             legend: {
-                data: pizzaNames,
-                selectedMode: false
+                data: pizzaSizes,
+                top: '5%'
             },
-            grid,
-            yAxis: {
-                type: 'value',
-                axisLabel: {
-                    formatter: '{value}%'
-                }
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
             },
             xAxis: {
                 type: 'category',
-                data: sellingMonth
+                data: pizzaNames
             },
-            series
+            yAxis: {
+                type: 'value'
+            },
+            series: series
         };
-        myChart.setOption(option);
+
+        barChart.setOption(option);
+        barChart.resize({width: 1000, height: 500});
     }
 
     function pieChartStores(data) {

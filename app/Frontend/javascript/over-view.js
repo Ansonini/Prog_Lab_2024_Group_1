@@ -1000,6 +1000,7 @@ function stateUnitDataFix(data) {
     document.getElementById('unitsNV').innerText = stateData.NV.units;
     document.getElementById('unitsUT').innerText = stateData.UT.units;
     document.getElementById('unitsAZ').innerText = stateData.AZ.units;
+
 }
 
 // function to show the Units Sold data of the states that you can change via time

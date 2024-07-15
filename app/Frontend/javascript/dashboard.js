@@ -63,3 +63,40 @@ function openSideBar() {
 function closeSideBar() {
     document.getElementById("sidebar").style.width = "0";
 }
+// Saving the Text in the Note Section as a .txt file
+function saveText() {
+    const noteText = document.getElementById('noteField').value;
+
+    const date = new Date();
+    const formattedDate = date.toISOString().slice(0, 10);
+
+    const blob = new Blob([noteText], {type: 'text/plain'});
+
+    const link = document.createElement('a');
+
+    link.download = `note_${formattedDate}.txt`
+
+    link.href = window.URL.createObjectURL(blob);
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+}
+
+// Saving all the graphs as images
+function saveGraphs() {
+    const charts = document.querySelectorAll('.chart-container');
+    charts.forEach((chart, index) => {
+        html2canvas(chart, {
+            backgroundColor: '#FFFFFF', // Set background color to white
+            onrendered: function(canvas) {
+                const link = document.createElement('a');
+                link.download = `chart_${index + 1}.jpeg`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        });
+    });
+}

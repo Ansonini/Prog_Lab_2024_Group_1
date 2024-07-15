@@ -131,11 +131,12 @@ $(document).ready(function () {
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week
+                    week: week,
+                    perSize: true
                 },
                 success: function (response) {
                     if (response.success) {
-                        stackingBarChart(response.data);
+                        stackedBarChart(response.data);
                     } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
@@ -623,93 +624,86 @@ function storesPercentBarChart(data) {
 }
 
 // A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
-function stackingBarChart(data) {
-    var chartDom = document.getElementById('stacking-barchart-pizza');
-    var myChart = echarts.init(chartDom);
+function stackedBarChart(data) {
+    const barChart = echarts.init(document.getElementById('stacking-barchart-pizza'));
 
-    // Extract pizza names and selling days
-    const pizzaNames = data.map(item => item.pizzaName);
-    const sellingMonth = data[0].map(item => item.sellingMonth);
+    // Process data
+    const processedData = data.map(pizza => ({
+        name: pizza.pizzaName,
+        value: pizza.data.reduce((sum, size) => sum + parseInt(size.unitsSold), 0)
+    }));
 
-    // Prepare raw data
-    const rawData = data.map(pizza =>
-        pizza.data.map(day => parseInt(day.unitsSold))
-    );
+    processedData.sort((a, b) => b.value - a.value);
 
-    // Calculate total data
-    const totalData = [];
-    for (let i = 0; i < rawData[0].length; ++i) {
-        let sum = 0;
-        for (let j = 0; j < rawData.length; ++j) {
-            sum += rawData[j][i];
-        }
-        totalData.push(sum);
-    }
-
-    const grid = {
-        left: 100,
-        right: 100,
-        top: 50,
-        bottom: 50
+    const colorMap = {
+        "Margherita Pizza": 'rgba(255, 99, 132)',
+        "Pepperoni Pizza": "rgba(54, 130, 235)",
+        "Hawaiian Pizza": "rgba(255, 206, 86)",
+        "Meat Lover's Pizza": "rgba(75, 192, 192)",
+        "Veggie Pizza": "rgba(34, 139, 34)",
+        "BBQ Chicken Pizza": "rgba(255, 159, 64)",
+        "Buffalo Chicken Pizza": "rgba(255, 99, 71)",
+        "Sicilian Pizza": "rgba(123, 40, 238)",
+        "Oxtail Pizza": "rgba(153, 102, 255)",
     };
 
-    const series = pizzaNames.map((name, sid) => {
-        return {
-            name,
-            type: 'bar',
-            stack: 'total',
-            barWidth: '60%',
-            label: {
-                show: true,
-                formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
-            },
-            data: rawData[sid].map((d, did) =>
-                totalData[did] <= 0 ? 0 : d / totalData[did]
-            )
-        };
-    });
+    // Prepare data for stacked bar chart
+    const pizzaNames = processedData.map(item => item.name);
+    const pizzaSizes = data[0].data.map(item => item.pizzaSize);
 
-    var option = {
+    const series = pizzaSizes.map(size => ({
+        name: size,
+        type: 'bar',
+        stack: 'total',
+        label: {
+            show: true,
+            formatter: '{c}'
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: data.map(pizza => {
+            const sizeData = pizza.data.find(item => item.pizzaSize === size);
+            return parseInt(sizeData ? sizeData.unitsSold : 0);
+        }),
+        itemStyle: {
+            color: (params) => colorMap[pizzaNames[params.dataIndex]] || '#808080'
+        }
+    }));
+
+    const option = {
         title: {
-            text: 'Pizza Sales Stacked Bar Chart'
+            text: 'Pizza Sales by Size',
+            left: 'center'
         },
         tooltip: {
             trigger: 'axis',
             axisPointer: {
                 type: 'shadow'
-            },
-            formatter: function(params) {
-                let tooltip = params[0].axisValue + '<br/>';
-                let total = 0;
-                params.forEach(param => {
-                    const actualValue = rawData[param.seriesIndex][param.dataIndex];
-                    total += actualValue;
-                    tooltip += param.marker + param.seriesName + ': ' +
-                        actualValue + ' (' +
-                        (param.value * 100).toFixed(2) + '%)<br/>';
-                });
-                tooltip += 'Total: ' + total;
-                return tooltip;
             }
         },
         legend: {
-            data: pizzaNames,
-            selectedMode: false
+            data: pizzaSizes,
+            top: '5%'
         },
-        grid,
-        yAxis: {
-            type: 'value',
-            axisLabel: {
-                formatter: '{value}%'
-            }
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
         },
         xAxis: {
             type: 'category',
-            data: sellingMonth
+            data: pizzaNames
         },
-        series
+        yAxis: {
+            type: 'value'
+        },
+        series: series
     };
-    myChart.setOption(option);
+
+    barChart.setOption(option);
+    barChart.resize({width: 1000, height: 500});
 }
 
 // shows a piechart based the most sold Pizza times (based on size of the pizza, can also show all pizzas)

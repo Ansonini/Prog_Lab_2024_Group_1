@@ -7,6 +7,13 @@ include '/var/www/html/ajax/includes/connectDB.php';
 // Verify input
 include '/var/www/html/ajax/includes/checkInput.php';
 
+if ($storeSelection == true && $storeSelection!= 'all') {
+    // set filter depending on if there is already one before
+    $storeFilter = ($view === 'completeView') ? ' JOIN orders o ON o.orderID = oi.orderID WHERE ' : ' AND ';
+    $storeFilter .= " o.storeID = \"$storeSelection\" ";
+} else {
+    $storeFilter = '';
+}
 
 $sql = "SELECT p.pizzaName,";
 
@@ -29,18 +36,23 @@ $sql .= " FROM (
 // filter depending on view
 switch ($view) {
     case 'completeView':
+        $sql .= "$storeFilter";
+
         break;
     case 'yearView':
         $sql .= " JOIN orders o ON o.orderID = oi.orderID 
-                    WHERE YEAR(o.orderDate) = $year";
+                    WHERE YEAR(o.orderDate) = $year
+                    $storeFilter ";
         break;
     case 'monthView':
         $sql .= " JOIN orders o ON o.orderID = oi.orderID 
-                    WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month";
+                    WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month
+                    $storeFilter ";
         break;
     case 'weekView':
         $sql .= " JOIN orders o ON o.orderID = oi.orderID 
-                    WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week";
+                    WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week
+                    $storeFilter ";
         break;
 }
 

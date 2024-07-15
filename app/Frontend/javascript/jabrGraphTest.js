@@ -82,42 +82,42 @@ $(document).ready(function () {
     }
     
     function fetchPizzasSoldData() {
-        var view = $('#view').val();
-        var year = $('#year').val();
-        var storeID = $('#storeSelection').val();
-        $('#graphLoading2').show();
-        $.ajax({
-            url: '/BackendTestingJabrail/pizzaSalesPerStorGraph.php',
-            type: 'POST',
-            dataType: 'json',
-            data: { storeID: storeID, view: view, year: year },
-            success: function (response) {
-                if (response.success && response.data && response.data.length > 0) {
-                    let xLabel, yLabel = 'totalPizzas';  // Убедитесь, что здесь используется 'totalPizzas'
-                    switch (view) {
-                        case 'yearView':
-                        case 'monthView':
-                        case 'weekView':
-                            xLabel = 'period';
-                            break;
-                        case 'dayView':
-                            xLabel = 'period';
-                            break;
-                    }
-                    createChart(response.data, 'graphCanvas2', $('#chartType3').val(), xLabel, yLabel);
-                } else {
-                    $('#graphCanvas2').html('<p>' + (response.message || 'No data available') + '</p>');
+    var view = $('#view').val();
+    var year = $('#year').val();
+    var storeID = $('#storeSelection').val();
+    $('#graphLoading2').show();
+    $.ajax({
+        url: '/BackendTestingJabrail/pizzaSalesPerStoreGraphs.php',
+        type: 'POST',
+        dataType: 'json',
+        data: { storeID: storeID, view: view, year: year },
+        success: function (response) {
+            if (response.success && response.data && response.data.length > 0) {
+                let xLabel, yLabel = 'totalPizzas';  // Убедитесь, что здесь используется 'totalPizzas'
+                switch (view) {
+                    case 'yearView':
+                    case 'monthView':
+                    case 'weekView':
+                        xLabel = 'period';
+                        break;
+                    case 'dayView':
+                        xLabel = 'period';
+                        break;
                 }
-            },
-            error: function (xhr, status, error) {
-                console.log('AJAX Error:', status, error);
-            },
-            complete: function () {
-                $('#graphLoading2').hide();
+                createChart(response.data, 'graphCanvas2', $('#chartType3').val(), xLabel, yLabel);
+            } else {
+                $('#graphCanvas2').html('<p>' + (response.message || 'No data available') + '</p>');
             }
-        });
-    }
-    
+        },
+        error: function (xhr, status, error) {
+            console.log('AJAX Error:', status, error);
+        },
+        complete: function () {
+            $('#graphLoading2').hide();
+        }
+    });
+}
+
     
     
     function fetchData(url, tableId) {

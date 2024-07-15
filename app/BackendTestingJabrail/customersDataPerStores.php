@@ -1,17 +1,14 @@
 <?php
 header('Content-Type: application/json');
 
-// Start Connection
+// Фунция чтобы получить информацию о клиентах по магазинам
 include '/var/www/html/ajax/includes/connectDB.php';
 
 $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
 $customerID = isset($_POST['customerID']) ? $_POST['customerID'] : null;
 
-if (!$storeID || !$customerID) {
-    echo json_encode(['success' => false, 'message' => 'Missing storeID or customerID']);
-    exit;
-}
 
+// запрос в базу данных ; используется round для рассчета дистанции по формелу из данных о положении
 $sql = "
     SELECT 
         c.customerID,
@@ -32,7 +29,7 @@ $sql = "
             LIMIT 1
         ) AS mostOrderedProduct,
         SUM(o.total) AS totalSpent,
-        ROUND(
+        ROUND( 
             111.111 * DEGREES(ACOS(LEAST(1.0, COS(RADIANS(c.latitude))
             * COS(RADIANS(s.latitude))
             * COS(RADIANS(c.longitude - s.longitude))

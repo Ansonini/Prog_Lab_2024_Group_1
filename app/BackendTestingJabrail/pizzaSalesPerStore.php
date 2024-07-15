@@ -8,13 +8,10 @@ $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
 $view = isset($_POST['view']) ? $_POST['view'] : null;
 $year = isset($_POST['year']) ? $_POST['year'] : null;
 
-if (!$storeID || !$view) {
-    echo json_encode(['success' => false, 'message' => 'Missing storeID or view']);
-    exit;
-}
+//  получение данных и отправка
 
 $sql = "SELECT o.storeID";
-
+// функции базу данных надо чутка доработать
 switch ($view) {
     case 'yearView':
         $sql .= ", YEAR(o.orderDate) as period, COUNT(oi.SKU) as totalPizzas";
@@ -47,7 +44,7 @@ switch ($view) {
                 GROUP BY o.storeID";
         break;
     default:
-        echo json_encode(['success' => false, 'message' => 'Invalid view parameter']);
+        echo json_encode(['success' => false, 'message' => 'No parameter']);
         exit;
 }
 

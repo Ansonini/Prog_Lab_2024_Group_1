@@ -1,16 +1,12 @@
 <?php
 header('Content-Type: application/json');
 
-// Start Connection
+// функция о получении данных о покупка выбранного клиента
 include '/var/www/html/ajax/includes/connectDB.php';
 
 $customerID = isset($_POST['customerID']) ? $_POST['customerID'] : null;
 
-if (!$customerID) {
-    echo json_encode(['success' => false, 'message' => 'Missing customerID']);
-    exit;
-}
-
+// запрос sql для получения данных ; подсчет для средних и абсолютных сумм
 $sql = "
     SELECT 
         o.customerID,

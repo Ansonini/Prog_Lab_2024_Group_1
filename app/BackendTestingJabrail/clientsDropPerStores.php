@@ -1,22 +1,16 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// функция для дроп дауна с клиентам
 header('Content-Type: application/json');
 
-// Start Connection
-include '/var/www/html/ajax/includes/connectDB.php';
 
+include '/var/www/html/ajax/includes/connectDB.php';
+// получение store Id
 $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
 
-if (!$storeID) {
-    echo json_encode(['success' => false, 'message' => 'Missing storeID']);
-    exit;
-}
 
-// Debugging: Log storeID
-error_log("Store ID: " . $storeID);
 
+
+// Sql запрос для получения данных о клиентах в этом магазе
 $sql = "SELECT DISTINCT o.customerID
         FROM orders o
         WHERE o.storeID = '$storeID'

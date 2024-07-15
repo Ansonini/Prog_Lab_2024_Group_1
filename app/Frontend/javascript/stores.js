@@ -7,7 +7,7 @@ $(document).ready(function () {
     var marker;
 
     function initializeMap() {
-        map = L.map('map').setView([0, 0], 2); // Initialize the map with a default view
+        map = L.map('map').setView([0, 0], 2);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -20,38 +20,38 @@ $(document).ready(function () {
         }
 
         marker = L.marker([latitude, longitude]).addTo(map);
-        map.setView([latitude, longitude], 13); // Update map view to the new location
+        map.setView([latitude, longitude], 13); 
     }
 
     $('#storeDropdown').change(function () {
-        fetchStoreInfo();
-        fetchRevenueData();
-        fetchPizzasSoldData();
-        fetchPeriodRevenueData();
-        fetchPeriodPizzaSalesData();
-        fetchCustomers();
+        StoreInformation();
+        RevenueInformation();
+        PizzasSoldInformation();
+        PeriodRevenueInformation();
+        PeriodPizzaSalesInformation();
+        CustomersInformation();
     });
 
     $('#view, #year').change(function () {
-        fetchRevenueData();
-        fetchPizzasSoldData();
+        RevenueInformation();
+        PizzasSoldInformation();
     });
 
     $('#periodView, #month, #threeMonthsPeriod, #sixMonthsPeriod').change(function () {
-        fetchPeriodRevenueData();
-        fetchPeriodPizzaSalesData();
+        PeriodRevenueInformation();
+        PeriodPizzaSalesInformation();
     });
 
     $('#customerDropdown').change(function () {
-        fetchCustomerOrdersInfo();
+        CustomerOrderInformation();
     });
 
-    function fetchRevenueData() {
+    function RevenueInformation() {
         var view = $('#view').val();
         var year = $('#year').val();
         var storeID = $('#storeDropdown').val();
 
-        updateTableHeader(view);
+        
 
         $.ajax({
             url: '/BackendTestingJabrail/revenuePerStore.php',
@@ -127,12 +127,12 @@ $(document).ready(function () {
         });
     }
 
-    function fetchPizzasSoldData() {
+    function PizzasSoldInformation() {
         var view = $('#view').val();
         var year = $('#year').val();
         var storeID = $('#storeDropdown').val();
 
-        updateTableHeader(view);
+        
 
         $.ajax({
             url: '/BackendTestingJabrail/pizzaSalesPerStore.php',
@@ -206,19 +206,9 @@ $(document).ready(function () {
         });
     }
 
-    function updatePeriodTableHeader() {
-        const periodTableHeader = $('#periodRevenueTable thead');
-        periodTableHeader.empty();
-        periodTableHeader.append(`
-            <tr>
-                <th>Store ID</th>
-                <th>Year</th>
-                <th>Revenue</th>
-            </tr>
-        `);
-    }
+    
 
-    function fetchPeriodRevenueData() {
+    function PeriodRevenueInformation() {
         var periodType = $('#periodView').val();
         var storeID = $('#storeDropdown').val();
         var periodValue = null;
@@ -231,9 +221,9 @@ $(document).ready(function () {
             periodValue = $('#sixMonthsPeriod').val();
         }
 
-        console.log('fetchPeriodRevenueData:', { storeID, periodType, periodValue });
+        
 
-        updatePeriodTableHeader();
+        
 
         $.ajax({
             url: '/BackendTestingJabrail/periodenRevenuePerYears.php',
@@ -241,7 +231,7 @@ $(document).ready(function () {
             dataType: 'json',
             data: { storeID: storeID, periodType: periodType, periodValue: periodValue },
             success: function (response) {
-                console.log('Period revenue data response:', response); // Log response for debugging
+                
                 if (response.success) {
                     const tableBody = $('#periodRevenueTable tbody');
                     tableBody.empty();
@@ -250,20 +240,20 @@ $(document).ready(function () {
                     let labels = [];
                     let revenues = [];
 
-                    if (data.length > 0) { // Ensure data array is not empty
-                        const revenueData = data[0].data; // Get the correct data array
+                    if (data.length > 0) { 
+                        const revenueData = data[0].data; 
                         revenueData.forEach(function (item) {
-                            console.log('Processing item:', item); // Log each item to check its structure
+                            console.log('Processing item:', item); 
                             const row = $('<tr>');
-                            row.append($('<td>').text(storeID)); // Add storeID to each row
-                            row.append($('<td>').text(item.year)); // Add year to each row
-                            row.append($('<td>').text(item.revenue)); // Add revenue to each row
+                            row.append($('<td>').text(storeID)); 
+                            row.append($('<td>').text(item.year)); 
+                            row.append($('<td>').text(item.revenue)); 
                             labels.push(item.year);
                             revenues.push(item.revenue);
                             tableBody.append(row);
                         });
 
-                        // Initialize or update chart
+                        
                         if (periodRevenueChart) {
                             periodRevenueChart.data.labels = labels;
                             periodRevenueChart.data.datasets[0].data = revenues;
@@ -297,42 +287,32 @@ $(document).ready(function () {
         });
     }
 
-    function updatePeriodPizzaSalesTableHeader() {
-        const periodPizzaSalesTableHeader = $('#periodPizzaSalesTable thead');
-        periodPizzaSalesTableHeader.empty();
-        periodPizzaSalesTableHeader.append(`
-            <tr>
-                <th>Store ID</th>
-                <th>Year</th>
-                <th>Pizza Sales</th>
-            </tr>
-        `);
-    }
+   
 
-    function fetchPeriodPizzaSalesData() {
-        var periodType = $('#periodView').val();
+    function PeriodPizzaSalesInformation() {
+        var periodView = $('#periodView').val();
         var storeID = $('#storeDropdown').val();
-        var periodValue = null;
+        var periodChoose = null;
 
-        if (periodType === 'oneMonth') {
-            periodValue = $('#month').val();
-        } else if (periodType === 'threeMonths') {
-            periodValue = $('#threeMonthsPeriod').val();
-        } else if (periodType === 'sixMonths') {
-            periodValue = $('#sixMonthsPeriod').val();
+        if (periodView === 'oneMonth') {
+            periodChoose = $('#month').val();
+        } else if (periodView === 'threeMonths') {
+            periodChoose = $('#threeMonthsPeriod').val();
+        } else if (periodView === 'sixMonths') {
+            periodChoose = $('#sixMonthsPeriod').val();
         }
 
-        console.log('fetchPeriodPizzaSalesData:', { storeID, periodType, periodValue });
+        
 
-        updatePeriodPizzaSalesTableHeader();
+        
 
         $.ajax({
             url: '/BackendTestingJabrail/periodenPizzaSalesPerStore.php',
             type: 'POST',
             dataType: 'json',
-            data: { storeID: storeID, periodType: periodType, periodValue: periodValue },
+            data: { storeID: storeID, periodType: periodView, periodValue: periodChoose },
             success: function (response) {
-                console.log('Period pizza sales data response:', response); // Log response for debugging
+               
                 if (response.success) {
                     const tableBody = $('#periodPizzaSalesTable tbody');
                     tableBody.empty();
@@ -341,20 +321,20 @@ $(document).ready(function () {
                     let labels = [];
                     let pizzaSales = [];
 
-                    if (data.length > 0) { // Ensure data array is not empty
-                        const pizzaSalesData = data[0].data; // Get the correct data array
+                    if (data.length > 0) { 
+                        const pizzaSalesData = data[0].data; 
                         pizzaSalesData.forEach(function (item) {
-                            console.log('Processing item:', item); // Log each item to check its structure
+                            console.log('Processing item:', item); 
                             const row = $('<tr>');
-                            row.append($('<td>').text(storeID)); // Add storeID to each row
-                            row.append($('<td>').text(item.year)); // Add year to each row
-                            row.append($('<td>').text(item.pizzaQuantity)); // Add pizzaQuantity to each row
+                            row.append($('<td>').text(storeID)); 
+                            row.append($('<td>').text(item.year)); 
+                            row.append($('<td>').text(item.pizzaQuantity)); 
                             labels.push(item.year);
                             pizzaSales.push(item.pizzaQuantity);
                             tableBody.append(row);
                         });
 
-                        // Initialize or update chart
+                        
                         if (periodPizzaSalesChart) {
                             periodPizzaSalesChart.data.labels = labels;
                             periodPizzaSalesChart.data.datasets[0].data = pizzaSales;
@@ -386,7 +366,7 @@ $(document).ready(function () {
         });
     }
 
-    function fetchStoreInfo() {
+    function StoreInformation() {
         $('#loading').show();
 
         const storeID = $('#storeDropdown').val();
@@ -429,69 +409,11 @@ $(document).ready(function () {
         });
     }
 
-    function updateTableHeader(view) {
-        const revenueTableHeader = $('#additionalTable thead');
-        const pizzaSoldTableHeader = $('#pizzaSoldTable thead');
-        revenueTableHeader.empty();
-        pizzaSoldTableHeader.empty();
+    
 
-        if (view === 'yearView') {
-            revenueTableHeader.append(`
-                <tr>
-                    <th>Store ID</th>
-                    <th>Period</th>
-                    <th>Revenue</th>
-                </tr>
-            `);
-            pizzaSoldTableHeader.append(`
-                <tr>
-                    <th>Store ID</th>
-                    <th>Period</th>
-                    <th>Total Pizzas</th>
-                </tr>
-            `);
-        } else if (view === 'monthView' || view === 'weekView') {
-            revenueTableHeader.append(`
-                <tr>
-                    <th>Store ID</th>
-                    <th>Year</th>
-                    <th>Period</th>
-                    <th>Revenue</th>
-                </tr>
-            `);
-            pizzaSoldTableHeader.append(`
-                <tr>
-                    <th>Store ID</th>
-                    <th>Year</th>
-                    <th>Period</th>
-                    <th>Total Pizzas</th>
-                </tr>
-            `);
-        } else if (view === 'dayView') {
-            revenueTableHeader.append(`
-                <tr>
-                    <th>Store ID</th>
-                    <th>Morning</th>
-                    <th>Lunch</th>
-                    <th>Evening</th>
-                    <th>Night</th>
-                </tr>
-            `);
-            pizzaSoldTableHeader.append(`
-                <tr>
-                    <th>Store ID</th>
-                    <th>Morning</th>
-                    <th>Lunch</th>
-                    <th>Evening</th>
-                    <th>Night</th>
-                </tr>
-            `);
-        }
-    }
-
-    function fetchCustomers() {
+    function CustomersInformation() {
         var storeID = $('#storeDropdown').val();
-        console.log('Fetching customers for store ID:', storeID); // Log store ID for debugging
+        
 
         $.ajax({
             url: '/BackendTestingJabrail/clientsDropPerStores.php',
@@ -499,11 +421,11 @@ $(document).ready(function () {
             dataType: 'json',
             data: { storeID: storeID },
             success: function (response) {
-                console.log('Customer list response:', response); // Log response for debugging
+                console.log('Customer list response:', response); 
                 if (response.success) {
                     const customerDropdown = $('#customerDropdown');
                     customerDropdown.empty();
-                    customerDropdown.append('<option value="">Select Customer</option>'); // Default option
+                    customerDropdown.append('<option value="">Select Customer</option>'); 
 
                     const customers = response.data;
                     customers.forEach(function (customer) {
@@ -511,24 +433,21 @@ $(document).ready(function () {
                         customerDropdown.append(option);
                     });
                 } else {
-                    alert('Failed to fetch customers: ' + response.message);
+                    alert('Failed: ' + response.message);
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.error('Error fetching customers:', textStatus, errorThrown); // Log error for debugging
-                alert('Error fetching customers');
+                console.error('Error :', textStatus, errorThrown); 
+                alert('Error');
             }
         });
     }
 
-    function fetchCustomerOrdersInfo() {
+    function CustomerOrderInformation() {
         var storeID = $('#storeDropdown').val();
         var customerID = $('#customerDropdown').val();
 
-        if (!customerID) {
-            alert('Please select a customer');
-            return;
-        }
+       
 
         $.ajax({
             url: '/BackendTestingJabrail/customersDataPerStores.php',
@@ -569,7 +488,7 @@ $(document).ready(function () {
                             }
                         });
                     } else {
-                        $('#customerOrdersTable tbody').html('<tr><td colspan="6">No data available</td></tr>');
+                        $('#customerOrdersTable tbody').html('<tr><td colspan="6">No data a</td></tr>');
                     }
                 } else {
                     $('#customerOrdersTable tbody').html('<tr><td colspan="6">' + response.message + '</td></tr>');
@@ -580,14 +499,11 @@ $(document).ready(function () {
             }
         });
     }
-    function fetchCustomerOrdersInfo() {
+    function CustomerOrderInformation() {
         var storeID = $('#storeDropdown').val();
         var customerID = $('#customerDropdown').val();
     
-        if (!customerID) {
-            alert('Please select a customer');
-            return;
-        }
+       
     
         $.ajax({
             url: '/BackendTestingJabrail/customersDataPerStores.php',
@@ -595,7 +511,7 @@ $(document).ready(function () {
             dataType: 'json',
             data: { storeID: storeID, customerID: customerID },
             success: function (response) {
-                console.log('Customer orders info response:', response);
+                
                 if (response.success) {
                     const tableBody = $('#customerOrdersTable tbody');
                     tableBody.empty();
@@ -628,26 +544,23 @@ $(document).ready(function () {
                             }
                         });
                     } else {
-                        $('#customerOrdersTable tbody').html('<tr><td colspan="6">No data available</td></tr>');
+                        $('#customerOrdersTable tbody').html('<tr><td colspan="6">No data </td></tr>');
                     }
                 } else {
                     $('#customerOrdersTable tbody').html('<tr><td colspan="6">' + response.message + '</td></tr>');
                 }
             },
             error: function () {
-                $('#customerOrdersTable tbody').html('<tr><td colspan="6">Error fetching data</td></tr>');
+                $('#customerOrdersTable tbody').html('<tr><td colspan="6">Error</td></tr>');
             }
         });
     }
-    function fetchCustomerStoreData() {
+    function CustomerStoreInformation() {
         var customerID = $('#customerDropdown').val();
         var view = $('#viewDropdown').val();
         var distance = $('#distance').val();
 
-        if (!customerID) {
-            alert('Please select a customer');
-            return;
-        }
+        
 
         var data = { customerID: customerID, view: view };
         if (view === 'storesInArea' && distance) {
@@ -660,7 +573,7 @@ $(document).ready(function () {
             dataType: 'json',
             data: data,
             success: function(response) {
-                console.log('Customer stores info response:', response);
+                
                 const tableBody = $('#customerStoresTable tbody');
                 tableBody.empty();
 
@@ -683,21 +596,18 @@ $(document).ready(function () {
                         }
                     });
                 } else {
-                    tableBody.html('<tr><td colspan="3">' + (response.message || 'No data available') + '</td></tr>');
+                    tableBody.html('<tr><td colspan="3">' + (response.message || 'No data') + '</td></tr>');
                 }
             },
             error: function() {
-                $('#customerStoresTable tbody').html('<tr><td colspan="3">Error fetching data</td></tr>');
+                $('#customerStoresTable tbody').html('<tr><td colspan="3">Error</td></tr>');
             }
         });
     }
-    function fetchCustomerSpent() {
+    function CustomerSpentInformation() {
         var customerID = $('#customerDropdown').val();
         
-        if (!customerID) {
-            alert('Please select a customer');
-            return;
-        }
+       
     
         $.ajax({
             url: '/BackendTestingJabrail/customersSpent.php',
@@ -705,7 +615,7 @@ $(document).ready(function () {
             dataType: 'json',
             data: { customerID: customerID },
             success: function(response) {
-                console.log('Customer spent data response:', response);
+                
                 const tableBody = $('#customerSpentTable tbody');
                 tableBody.empty();
     
@@ -734,11 +644,11 @@ $(document).ready(function () {
                         }
                     });
                 } else {
-                    tableBody.html('<tr><td colspan="6">' + (response.message || 'No data available') + '</td></tr>');
+                    tableBody.html('<tr><td colspan="6">' + (response.message || 'No dat') + '</td></tr>');
                 }
             },
             error: function() {
-                $('#customerSpentTable tbody').html('<tr><td colspan="6">Error fetching data</td></tr>');
+                $('#customerSpentTable tbody').html('<tr><td colspan="6">Error</td></tr>');
             }
         });
     }
@@ -759,8 +669,8 @@ $(document).ready(function () {
     });
 
     $('#periodView, #month, #threeMonthsPeriod, #sixMonthsPeriod').change(function () {
-        fetchPeriodRevenueData();
-        fetchPeriodPizzaSalesData();
+        PeriodRevenueInformation();
+        PeriodPizzaSalesInformation();
     });
 
     function fetchData(url, tableId) {
@@ -782,17 +692,17 @@ $(document).ready(function () {
 
     $('#view').change(function () {
         fetchData();
-        fetchRevenueData();
-        fetchPizzasSoldData();
+        RevenueInformation();
+        PizzasSoldInformation();
     });
 
     $('#year').change(function () {
-        fetchRevenueData();
-        fetchPizzasSoldData();
+        RevenueInformation();
+        PizzasSoldInformation();
     });
 
     $('#customerDropdown').change(function () {
-        fetchCustomerOrdersInfo();
+        CustomerOrderInformation();
     });
 
     $('#viewDropdown').change(function() {
@@ -803,16 +713,16 @@ $(document).ready(function () {
         }
     });
     $('#customerDropdown').change(function () {
-        fetchCustomerOrdersInfo();
-        fetchCustomerSpent();
+        CustomerOrderInformation();
+        CustomerSpentInformation();
     });
     
-    $('#customerDropdown, #viewDropdown, #distance').change(fetchCustomerStoreData);
+    $('#customerDropdown, #viewDropdown, #distance').change(CustomerStoreInformation);
 
     initializeMap();
-    fetchStoreInfo();
-    fetchRevenueData();
-    fetchPizzasSoldData();
-    fetchPeriodRevenueData();
-    fetchPeriodPizzaSalesData();
+    StoreInformation();
+    RevenueInformation();
+    PizzasSoldInformation();
+    PeriodRevenueInformation();
+    PeriodPizzaSalesInformation();
 });

@@ -1,21 +1,19 @@
 <?php
 header('Content-Type: application/json');
 
-// Start Connection
+
 include '/var/www/html/ajax/includes/connectDB.php';
 
 $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
 $periodType = isset($_POST['periodType']) ? $_POST['periodType'] : null;
 $periodValue = isset($_POST['periodValue']) ? $_POST['periodValue'] : null;
 
-if (!$storeID || !$periodType || !$periodValue) {
-    echo json_encode(['success' => false, 'message' => 'Missing storeID, periodType or periodValue']);
-    exit;
-}
+// также как и взде получение данных для различных views
 
 $sql = "SELECT o.storeID";
 
 switch ($periodType) {
+
     case 'oneMonth':
         $sql .= ", YEAR(o.orderDate) as year, MONTH(o.orderDate) as month, SUM(o.total) as revenue";
         $sql .= " FROM orders o WHERE o.storeID = '$storeID' AND MONTH(o.orderDate) = $periodValue";
@@ -42,7 +40,7 @@ switch ($periodType) {
         break;
 
     default:
-        echo json_encode(['success' => false, 'message' => 'Invalid periodType parameter']);
+        echo json_encode(['success' => false, 'message' => 'No parameter']);
         exit;
 }
 

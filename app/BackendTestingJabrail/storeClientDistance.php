@@ -8,11 +8,9 @@ $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
 $customerID = isset($_POST['customerID']) ? $_POST['customerID'] : null;
 $view = isset($_POST['view']) ? $_POST['view'] : null;
 $distance = isset($_POST['distance']) ? $_POST['distance'] : null;
+ 
 
-if (!$customerID || !$view) {
-    echo json_encode(['success' => false, 'message' => 'Missing customerID or view']);
-    exit;
-}
+// функция с дистанциями сделанная по формуле из интернета
 
 switch ($view) {
     case 'allStoresDistance':

@@ -8,10 +8,7 @@ $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
 $view = isset($_POST['view']) ? $_POST['view'] : null;
 $year = isset($_POST['year']) ? $_POST['year'] : null;
 
-if (!$storeID || !$view) {
-    echo json_encode(['success' => false, 'message' => 'Missing storeID or view']);
-    exit;
-}
+//функция получение денег через магазин немного лагает
 
 
 $sql = "SELECT o.storeID";

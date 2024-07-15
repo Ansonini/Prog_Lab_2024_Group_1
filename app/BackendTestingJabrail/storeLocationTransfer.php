@@ -12,6 +12,6 @@ if ($storeID === 'All') {
     $sql = "SELECT * from stores where storeID = \"$storeID\"";
 }
 
-//make query and return result
+
 include '/var/www/html/ajax/includes/makeQuery.php';
 ?>

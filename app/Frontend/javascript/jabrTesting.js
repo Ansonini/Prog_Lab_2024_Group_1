@@ -1,20 +1,22 @@
 $(document).ready(function () {
-    function fetchStoreInfo() {
+    // Функция для получения данных о магазине
+    function StoreInformation() {
         $('#loading').show();
 
         const storeID = $('#storeDropdown').val();
-
+        // Запрос в пхп файл
         $.ajax({
             url: '/BackendTestingJabrail/storeLocationTransfer.php',
             type: 'POST',
             dataType: 'json',
+            //отправка данных из дропдауна
             data: { storeID: storeID },
             success: function (response) {
                 $('#loading').hide();
                 if (response.success) {
                     const tableBody = $('#storeTable tbody');
                     tableBody.empty();
-
+                    //заполнение таблицы
                     const data = response.data;
                     data.forEach(function (store) {
                         const row = $('<tr>');
@@ -34,33 +36,33 @@ $(document).ready(function () {
             },
             error: function () {
                 $('#loading').hide();
-                $('#storeTable tbody').html('<tr><td colspan="8">Error fetching data</td></tr>');
+                $('#storeTable tbody').html('<tr><td colspan="8">Err</td></tr>');
             }
         });
     }
-
+    //срабатывание функций при выборе магаза
     $('#storeDropdown').change(function () {
-        fetchStoreInfo();
-        fetchRevenueData();
-        fetchPizzasSoldData();
-        fetchCustomers();
+        StoreInformation();
+        RevenueInormation();
+        PizzasSoldInfromation();
+        CustomersInformation();
     });
-
+    //для динамического обновления таблиц колонок
     function updateTableHeader(view) {
-        const revenueTableHeader = $('#additionalTable thead');
-        const pizzaSoldTableHeader = $('#pizzaSoldTable thead');
-        revenueTableHeader.empty();
-        pizzaSoldTableHeader.empty();
+        const revenueTable = $('#additionalTable thead');
+        const pizzaSoldTable = $('#pizzaSoldTable thead');
+        revenueTable.empty();
+        pizzaSoldTable.empty();
 
         if (view === 'yearView') {
-            revenueTableHeader.append(`
+            revenueTable.append(`
                 <tr>
                     <th>Store ID</th>
                     <th>Period</th>
                     <th>Revenue</th>
                 </tr>
             `);
-            pizzaSoldTableHeader.append(`
+            pizzaSoldTable.append(`
                 <tr>
                     <th>Store ID</th>
                     <th>Period</th>
@@ -68,7 +70,7 @@ $(document).ready(function () {
                 </tr>
             `);
         } else if (view === 'monthView' || view === 'weekView') {
-            revenueTableHeader.append(`
+            revenueTable.append(`
                 <tr>
                     <th>Store ID</th>
                     <th>Year</th>
@@ -76,7 +78,7 @@ $(document).ready(function () {
                     <th>Revenue</th>
                 </tr>
             `);
-            pizzaSoldTableHeader.append(`
+            pizzaSoldTable.append(`
                 <tr>
                     <th>Store ID</th>
                     <th>Year</th>
@@ -85,7 +87,7 @@ $(document).ready(function () {
                 </tr>
             `);
         } else if (view === 'dayView') {
-            revenueTableHeader.append(`
+            revenueTable.append(`
                 <tr>
                     <th>Store ID</th>
                     <th>Morning</th>
@@ -94,7 +96,7 @@ $(document).ready(function () {
                     <th>Night</th>
                 </tr>
             `);
-            pizzaSoldTableHeader.append(`
+            pizzaSoldTable.append(`
                 <tr>
                     <th>Store ID</th>
                     <th>Morning</th>
@@ -105,12 +107,13 @@ $(document).ready(function () {
             `);
         }
     }
-
-    function fetchRevenueData() {
+     //функция для получения данных о продажах
+    function RevenueInormation() {
+        //сбор даннхы нужых для отправки
         var view = $('#view').val();
         var year = $('#year').val();
         var storeID = $('#storeDropdown').val();
-
+        //вызывает функция подстройки таблицы под данные
         updateTableHeader(view);
 
         $.ajax({
@@ -122,7 +125,7 @@ $(document).ready(function () {
                 if (response.success) {
                     const tableBody = $('#additionalTable tbody');
                     tableBody.empty();
-
+                    //такое же заполнение
                     const data = response.data;
                     data.forEach(function (item) {
                         item.data.forEach(function (entry) {
@@ -151,12 +154,13 @@ $(document).ready(function () {
                 }
             },
             error: function () {
-                $('#additionalTable tbody').html('<tr><td colspan="4">Error fetching data</td></tr>');
+                $('#additionalTable tbody').html('<tr><td colspan="4">Err</td></tr>');
             }
         });
     }
-
-    function fetchPizzasSoldData() {
+    //фунция о продажах пиццы
+    //отслаьонй фунционал похож
+    function PizzasSoldInfromation() {
         var view = $('#view').val();
         var year = $('#year').val();
         var storeID = $('#storeDropdown').val();
@@ -205,11 +209,11 @@ $(document).ready(function () {
             }
         });
     }
-
+     //также обновление таблицы
     function updatePeriodTableHeader() {
-        const periodTableHeader = $('#periodRevenueTable thead');
-        periodTableHeader.empty();
-        periodTableHeader.append(`
+        const periodTablу = $('#periodRevenueTable thead');
+        periodTablу.empty();
+        periodTablу.append(`
             <tr>
                 <th>Store ID</th>
                 <th>Year</th>
@@ -217,8 +221,8 @@ $(document).ready(function () {
             </tr>
         `);
     }
-    
-    function fetchPeriodRevenueData() {
+    //получения данных о продажах но уже в периоды
+    function PeriodRevenueInformation() {
         var periodType = $('#periodView').val();
         var storeID = $('#storeDropdown').val();
         var periodValue = null;
@@ -241,20 +245,20 @@ $(document).ready(function () {
             dataType: 'json',
             data: { storeID: storeID, periodType: periodType, periodValue: periodValue },
             success: function (response) {
-                console.log('Period revenue data response:', response); // Log response for debugging
+                
                 if (response.success) {
                     const tableBody = $('#periodRevenueTable tbody');
                     tableBody.empty();
     
                     const data = response.data;
-                    if (data.length > 0) { // Ensure data array is not empty
-                        const revenueData = data[0].data; // Get the correct data array
+                    if (data.length > 0) { 
+                        const revenueData = data[0].data; 
                         revenueData.forEach(function (item) {
-                            console.log('Processing item:', item); // Log each item to check its structure
+                            console.log('Processing item:', item); 
                             const row = $('<tr>');
-                            row.append($('<td>').text(storeID)); // Add storeID to each row
-                            row.append($('<td>').text(item.year)); // Add year to each row
-                            row.append($('<td>').text(item.revenue)); // Add revenue to each row
+                            row.append($('<td>').text(storeID)); 
+                            row.append($('<td>').text(item.year)); 
+                            row.append($('<td>').text(item.revenue));
                             tableBody.append(row);
                         });
                     } else {
@@ -265,16 +269,16 @@ $(document).ready(function () {
                 }
             },
             error: function () {
-                $('#periodRevenueTable tbody').html('<tr><td colspan="3">Error fetching data</td></tr>');
+                $('#periodRevenueTable tbody').html('<tr><td colspan="3">Err</td></tr>');
             }
         });
     }
 
-    
+    //тоже обновление таблицы 
         function updatePeriodPizzaSalesTableHeader() {
-            const periodPizzaSalesTableHeader = $('#periodPizzaSalesTable thead');
-            periodPizzaSalesTableHeader.empty();
-            periodPizzaSalesTableHeader.append(`
+            const periodPizzaSalesTabl = $('#periodPizzaSalesTable thead');
+            periodPizzaSalesTabl.empty();
+            periodPizzaSalesTabl.append(`
                 <tr>
                     <th>Store ID</th>
                     <th>Year</th>
@@ -282,7 +286,9 @@ $(document).ready(function () {
                 </tr>
             `);
         }
-        function fetchPeriodPizzaSalesData() {
+
+        //тоже самые пиоды толко пицца
+        function PeriodPizzaSalesInformation() {
             var periodType = $('#periodView').val();
             var storeID = $('#storeDropdown').val();
             var periodValue = null;
@@ -305,20 +311,20 @@ $(document).ready(function () {
                 dataType: 'json',
                 data: { storeID: storeID, periodType: periodType, periodValue: periodValue },
                 success: function (response) {
-                    console.log('Period pizza sales data response:', response); // Log response for debugging
+                    console.log('Period pizza sales data response:', response); 
                     if (response.success) {
                         const tableBody = $('#periodPizzaSalesTable tbody');
                         tableBody.empty();
         
                         const data = response.data;
-                        if (data.length > 0) { // Ensure data array is not empty
-                            const pizzaSalesData = data[0].data; // Get the correct data array
+                        if (data.length > 0) { 
+                            const pizzaSalesData = data[0].data; 
                             pizzaSalesData.forEach(function (item) {
-                                console.log('Processing item:', item); // Log each item to check its structure
+                                console.log('Processing item:', item); 
                                 const row = $('<tr>');
-                                row.append($('<td>').text(storeID)); // Add storeID to each row
-                                row.append($('<td>').text(item.year)); // Add year to each row
-                                row.append($('<td>').text(item.pizzaQuantity)); // Add pizzaQuantity to each row
+                                row.append($('<td>').text(storeID)); 
+                                row.append($('<td>').text(item.year)); 
+                                row.append($('<td>').text(item.pizzaQuantity)); 
                                 tableBody.append(row);
                             });
                         } else {
@@ -329,26 +335,25 @@ $(document).ready(function () {
                     }
                 },
                 error: function () {
-                    $('#periodPizzaSalesTable tbody').html('<tr><td colspan="3">Error fetching data</td></tr>');
+                    $('#periodPizzaSalesTable tbody').html('<tr><td colspan="3">Err</td></tr>');
                 }
             });
         }
-
-        function fetchCustomers() {
+        //инфа о клиентах 
+        function CustomersInformation() {
             var storeID = $('#storeDropdown').val();
-            console.log('Fetching customers for store ID:', storeID); // Log store ID for debugging
-        
+         
             $.ajax({
                 url: '/BackendTestingJabrail/clientsDropPerStores.php',
                 type: 'POST',
                 dataType: 'json',
                 data: { storeID: storeID },
                 success: function (response) {
-                    console.log('Customer list response:', response); // Log response for debugging
+                    console.log('Customer list response:', response); 
                     if (response.success) {
                         const customerDropdown = $('#customerDropdown');
                         customerDropdown.empty();
-                        customerDropdown.append('<option value="">Select Customer</option>'); // Default option
+                        customerDropdown.append('<option value="">Select Customer</option>'); 
         
                         const customers = response.data;
                         customers.forEach(function (customer) {
@@ -360,21 +365,18 @@ $(document).ready(function () {
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Error fetching customers:', textStatus, errorThrown); // Log error for debugging
-                    alert('Error fetching customers');
+                    console.error('Err', textStatus, errorThrown);
+                    alert('Err');
                 }
             });
         }
         
-        
-        function fetchCustomerOrdersInfo() {
+        // инфа о заказах клиентов
+        function CustomerOrdersInformation() {
             var storeID = $('#storeDropdown').val();
             var customerID = $('#customerDropdown').val();
         
-            if (!customerID) {
-                alert('Please select a customer');
-                return;
-            }
+            
         
             $.ajax({
                 url: '/BackendTestingJabrail/customersDataPerStores.php',
@@ -382,7 +384,7 @@ $(document).ready(function () {
                 dataType: 'json',
                 data: { storeID: storeID, customerID: customerID },
                 success: function (response) {
-                    console.log('Customer orders info response:', response);
+                    
                     if (response.success) {
                         const tableBody = $('#customerOrdersTable tbody');
                         tableBody.empty();
@@ -415,26 +417,24 @@ $(document).ready(function () {
                                 }
                             });
                         } else {
-                            $('#customerOrdersTable tbody').html('<tr><td colspan="6">No data available</td></tr>');
+                            $('#customerOrdersTable tbody').html('<tr><td colspan="6">No data </td></tr>');
                         }
                     } else {
                         $('#customerOrdersTable tbody').html('<tr><td colspan="6">' + response.message + '</td></tr>');
                     }
                 },
                 error: function () {
-                    $('#customerOrdersTable tbody').html('<tr><td colspan="6">Error fetching data</td></tr>');
+                    $('#customerOrdersTable tbody').html('<tr><td colspan="6">Err</td></tr>');
                 }
             });
         }
-        function fetchCustomerStoreData() {
+        //расстояние от клинта до магазина , есть еще функци с заданием дистанции
+        function CustomerStoreInformation() {
             var customerID = $('#customerDropdown').val();
             var view = $('#viewDropdown').val();
             var distance = $('#distance').val();
     
-            if (!customerID) {
-                alert('Please select a customer');
-                return;
-            }
+            
     
             var data = { customerID: customerID, view: view };
             if (view === 'storesInArea' && distance) {
@@ -447,7 +447,7 @@ $(document).ready(function () {
                 dataType: 'json',
                 data: data,
                 success: function(response) {
-                    console.log('Customer stores info response:', response);
+                   
                     const tableBody = $('#customerStoresTable tbody');
                     tableBody.empty();
     
@@ -470,15 +470,16 @@ $(document).ready(function () {
                             }
                         });
                     } else {
-                        tableBody.html('<tr><td colspan="3">' + (response.message || 'No data available') + '</td></tr>');
+                        tableBody.html('<tr><td colspan="3">' + (response.message || 'No da') + '</td></tr>');
                     }
                 },
                 error: function() {
-                    $('#customerStoresTable tbody').html('<tr><td colspan="3">Error fetching data</td></tr>');
+                    $('#customerStoresTable tbody').html('<tr><td colspan="3">Error</td></tr>');
                 }
             });
         }
-        function fetchCustomerSpent() {
+        //траты клиентов
+        function CustomerSpentInformatio() {
             var customerID = $('#customerDropdown').val();
             
             if (!customerID) {
@@ -492,7 +493,7 @@ $(document).ready(function () {
                 dataType: 'json',
                 data: { customerID: customerID },
                 success: function(response) {
-                    console.log('Customer spent data response:', response);
+                
                     const tableBody = $('#customerSpentTable tbody');
                     tableBody.empty();
         
@@ -521,11 +522,11 @@ $(document).ready(function () {
                             }
                         });
                     } else {
-                        tableBody.html('<tr><td colspan="6">' + (response.message || 'No data available') + '</td></tr>');
+                        tableBody.html('<tr><td colspan="6">' + (response.message || 'No вфеф') + '</td></tr>');
                     }
                 },
                 error: function() {
-                    $('#customerSpentTable tbody').html('<tr><td colspan="6">Error fetching data</td></tr>');
+                    $('#customerSpentTable tbody').html('<tr><td colspan="6">Error </td></tr>');
                 }
             });
         }
@@ -556,8 +557,8 @@ $(document).ready(function () {
     });
     
     $('#periodView, #month, #threeMonthsPeriod, #sixMonthsPeriod').change(function () {
-        fetchPeriodRevenueData();
-        fetchPeriodPizzaSalesData();
+        PeriodRevenueInformation();
+        PeriodPizzaSalesInformation();
     });
     
     function fetchData(url, tableId) {
@@ -580,14 +581,14 @@ $(document).ready(function () {
     // Включение вызова fetchData при изменении view
     $('#view').change(function () {
         fetchData();
-        fetchRevenueData();
-        fetchPizzasSoldData();
+        RevenueInormation();
+        PizzasSoldInfromation();
     });
 
     // Включение вызова fetchData при изменении года
     $('#year').change(function () {
-        fetchRevenueData();
-        fetchPizzasSoldData();
+        RevenueInormation();
+        PizzasSoldInfromation();
     });
     
 
@@ -595,27 +596,27 @@ $(document).ready(function () {
    
 
     $('#view').change(function () {
-        fetchRevenueData();
-        fetchPizzasSoldData();
+        RevenueInormation();
+        PizzasSoldInfromation();
     });
 
     $('#year').change(function () {
-        fetchRevenueData();
-        fetchPizzasSoldData();
+        RevenueInormation();
+        PizzasSoldInfromation();
     });
     $('#customerDropdown').change(function () {
-        fetchCustomerOrdersInfo();
-        fetchCustomerSpent();
+        CustomerOrdersInformation();
+        CustomerSpentInformatio();
     });
     
-    $('#customerDropdown, #viewDropdown, #distance').change(fetchCustomerStoreData);
+    $('#customerDropdown, #viewDropdown, #distance').change(CustomerStoreInformation);
 
 
-    fetchStoreInfo();
-    fetchRevenueData();
-    fetchPizzasSoldData();
-    fetchPeriodRevenueData();
-    fetchPeriodPizzaSalesData();
+    StoreInformation();
+    RevenueInormation();
+    PizzasSoldInfromation();
+    PeriodRevenueInformation();
+    PeriodPizzaSalesInformation();
     
 
 });

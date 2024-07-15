@@ -5,7 +5,7 @@ $(document).ready(function () {
     $('#graph1And2').hide();
 
     $('#over-view').hide();
-    $('#storeInfoNew').show();
-    $('#jabrailFunctions').hide();
-    
+    $('#storeInfoNew').hide();
+    $('#jabrailFunctions').show();
+
 });

@@ -6,9 +6,10 @@ $(document).ready(function () {
 
     $('#graph1And2').show();
 
-    $('#graph3And4').show();
-    $('#map').show();
-    $('#graphCanvas4').hide();
+    $('#graph3And4').hide();
+    $('#graph3AndMap').show();
+    $('#graphFromRow3').show();
+    
 
 
     $('#over-view').show();
@@ -24,9 +25,6 @@ $(document).ready(function () {
 
 
     //choose file to load and set the tilte
-    var ajaxFile1 = '';
-    //document.getElementById('bigGraphTitle').textContent = 'Sales per store per month';
-
     var ajaxFile2 = 'getSalesPerTimeframe';
     document.getElementById('graphTitle1').textContent = 'Sales during chosen time frame';
 
@@ -81,7 +79,33 @@ $(document).ready(function () {
 
         // if all the relevant data is set, the function continues to make ajax request
         if (ready) {
-            //fetchDataGraph1();
+            // Stacking-Bar-Chart
+            $('#loading-stacking-barchart').show();
+            $.ajax({
+                url: '../ajax/getSalesPerPizza.php',
+                type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week,
+                    perSize: true
+                },
+                success: function (response) {
+                    if (response.success) {
+                        stackedBarChart(response.data);
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-stacking-barchart').hide();
+                }
+            });
             fetchDataGraph2();
             fetchDataGraph3();
             fetchDataGraph4();
@@ -89,65 +113,6 @@ $(document).ready(function () {
         }
     }
 
-    function fetchDataGraph1() {
-        // Abort previous call if it isn't finished yet
-        if (currentAjaxRequest1) {
-            currentAjaxRequest1.abort();
-        }
-
-        var canvas = document.getElementById('bigGraphCanvas');
-        var ctx = canvas.getContext('2d');
-
-        // Get the chart instance associated with the canvas
-        var chartInstance = Chart.getChart(ctx);
-
-        // Check if the chart instance exists and destroy it if it does
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
-
-        var view = $('#view').val();
-        var mode = $('#mode').val();
-        var year = $('#year').val();
-        var month = $('#month').val();
-        var week = $('#week').val();
-        var perSize = $('#perSize').val();
-        var grouping = $('#grouping1').val();
-        var chartType = $('#chartType1').val();
-        var storeSelection = $('#storeSelection').val();
-
-        $('#bigGraphLoading').show(); // Show loading indicator for first table
-        // ajax request for the first data
-        currentAjaxRequest1 = $.ajax({
-            url: '/ajax/' + ajaxFile1 + '.php',
-            type: 'POST',
-            data: {
-                view: view,
-                mode: mode,
-                year: year,
-                month: month,
-                week: week,
-                perSize: perSize,
-                storeSelection: storeSelection
-            },
-            success: function (response) {
-                if (response.success) {
-                    // Call the functions from to display the table and the chart
-
-                } else {
-                    $('#bigGraphCanvas').html('<p>' + response.message + '</p>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log('AJAX Error:', status, error);
-            },
-            complete: function () {
-                $('#bigGraphLoading').hide(); // Hide loading indicator when request is complete
-            }
-        });
-
-
-    }
 
     function fetchDataGraph2() {
 
@@ -300,7 +265,7 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
 
-        $('#graphLoading3').show(); // Show loading indicator for second table 
+        $('#loading-pie-chart-pizza').show(); // Show loading indicator for second table 
         // ajax request for the first data
         currentAjaxRequest4 = $.ajax({
             url: '/ajax/' + ajaxFile4 + '.php',
@@ -318,7 +283,6 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
-
                     pieChartStores(response.data);
 
                 } else {
@@ -329,7 +293,7 @@ $(document).ready(function () {
                 console.log('AJAX Error:', status, error);
             },
             complete: function () {
-                $('#graphLoading3').hide(); // Hide loading indicator when request is complete
+                $('#loading-pie-chart-pizza').hide(); // Hide loading indicator when request is complete
             }
         });
     }
@@ -364,7 +328,7 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
 
-        $('#graphLoading4').show(); // Show loading indicator for second table 
+        $('#loading-map').show(); // Show loading indicator for second table 
         // AJAX request for the second data
         currentAjaxRequest5 = $.ajax({
             url: '/ajax/' + ajaxFile5 + '.php',
@@ -389,7 +353,7 @@ $(document).ready(function () {
                 console.log('AJAX Error:', status, error);
             },
             complete: function () {
-                $('#graphLoading4').hide(); // Hide loading indicator when request is complete
+                $('#loading-map').hide(); // Hide loading indicator when request is complete
             }
         });
     }
@@ -698,11 +662,11 @@ $(document).ready(function () {
     // A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
     function stackedBarChart(data) {
         const barChart = echarts.init(document.getElementById('stacking-barchart-pizza'));
-
+    
         // Extract unique pizza sizes and names
         const pizzaSizes = [...new Set(data.flatMap(pizza => pizza.data.map(item => item.pizzaSize)))];
         const pizzaNames = data.map(pizza => pizza.pizzaName);
-
+    
         // Color map for sizes
         const colorMap = {
             "Extra Large": '#4e79a7',
@@ -710,7 +674,7 @@ $(document).ready(function () {
             "Medium": '#edc949',
             "Small": '#e15759'
         };
-
+    
         const series = pizzaSizes.map(size => ({
             name: size,
             type: 'bar',
@@ -731,7 +695,7 @@ $(document).ready(function () {
                 color: colorMap[size] || '#808080'
             }
         }));
-
+    
         const option = {
             title: {
                 text: 'Pizza Sales by Size',
@@ -762,7 +726,7 @@ $(document).ready(function () {
             },
             series: series
         };
-
+    
         barChart.setOption(option);
         barChart.resize({width: 1000, height: 500});
     }

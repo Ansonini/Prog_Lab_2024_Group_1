@@ -202,7 +202,7 @@
         }
 
         .tab:hover {
-            background-color: #fff;
+            background-color: #e5e5e5;
         }
 
         /*Sidebar plus Sidebar Button*/
@@ -258,14 +258,6 @@
             width: 100% !important;
         }
 
-        #map {
-            margin-top: 20px;
-            margin-right: 30px;
-            margin-left: 10px;
-            margin-bottom: 10px;
-            height: 500px;
-            width: 98%;
-        }
 
         iframe {
             border: none;
@@ -280,15 +272,92 @@
             height: 200px;
         }
 
-        .pie-chart {
+        .row2 {
+            grid-column: 1 / span 3;
+            grid-row: 3;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 0;
+            padding: 20px;
+        }
+
+        .row2 .stacking-barchart {
+            position: relative;
+            grid-column: 1;
+            grid-row: 3;
+            border: 1px solid grey;
+            width: 95%;
+            height: 500px;
+            padding: 10px;
+        }
+
+        .row2 .pie-chart {
             position: relative;
             grid-column: 2;
             grid-row: 3;
             width: 500px;
             height: 500px;
+            border: 1px solid grey;
             padding: 10px;
         }
-        
+
+        .row2 .map-container {
+            position: relative;
+            grid-column-start: 3;
+            grid-row: 3;
+            width: 100%;
+            height: 500px;
+            border: 1px solid grey;
+            padding: 10px;
+            justify-items: stretch;
+        }
+
+        #map {
+            height: 500px;
+            width: 800px;
+        }
+
+        /**/
+        /**/
+        .row3 {
+            grid-column: 1 / span 3;
+            grid-row: 4;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .bump-chart-pizza-canvas {
+            position: relative;
+            grid-column: 1;
+            grid-row: 4;
+            border: 1px solid grey;
+            width: 100%;
+            height: 500px;
+            padding: 10px;
+        }
+
+        .row3 .bump-chart-store-canvas {
+            position: relative;
+            grid-column: 2;
+            grid-row: 4;
+            border: 1px solid grey;
+            width: 100%;
+            height: 500px;
+            padding: 10px;
+        }
+
+        /**/
+        /**/
+        .row4 {
+            grid-column: 1 / span 3;
+            grid-row: 5;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 20px;
+        }
     </style>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -708,12 +777,10 @@
 
                     </div>
                 </div>
-                <div class="pie-chart">
-                    <div id="pie-chart" class="chart-container"></div>
-                </div>
 
                 <canvas id="graphCanvas3" width="400" height="180"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
+
             </div>
 
             <div class="chart-container">
@@ -741,7 +808,7 @@
 
                 <canvas id="graphCanvas4" width="400" height="180"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
-                <div id="map"></div>
+
                 <!-- map will be generated here -->
                 <div id="table4" class="table-container">
                     <!-- The table will be generated here by JavaScript -->
@@ -752,8 +819,41 @@
         </div>
 
 
+        <div id="graph3AndMap" class="container">
+
+            <div class="row2">
+                <div class="stacking-barchart">
+                    <div id="loading-stacking-barchart" class="loading">Loading...</div>
+                    <div id="stacking-barchart-pizza" class="chart-container"></div>
+                </div>
+                <div class="pie-chart">
+                    <div id="loading-pie-chart-pizza">Loading...</div>
+                    <div id="pie-chart" class="chart-container"></div>
+                </div>
+                <div class="map-container">
+                    <div id="loading-map">Loading...</div>
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="graphFromRow3" class="row3">
+            <div class="bump-chart-pizza-canvas">
+                <!--<div id="loading-bump-chart-Pizza"> &lt;!&ndash; class="loading"> &ndash;&gt;Loading...</div>-->
+                <div id="bump-chart-Pizza" class="chart-container"></div>
+            </div>
+            <div class="bump-chart-store-canvas">
+                <!--<div id="loading-bump-chart-Store"> &lt;!&ndash; class="loading"> &ndash;&gt;Loading...</div>-->
+
+            </div>
+        </div>
+
+
+
         <!-- <iframe src="Frontend/over-view.html" width="100%" height="4000px" id="over-view"></iframe> -->
-        <iframe src="/Frontend/Test123.html" width="100%" height="8000px" id="storeInfoNew"></iframe>
+        <iframe src="/Frontend/stores.html" width="100%" height="8000px" id="storeInfoNew"></iframe>
         <iframe src="/jabrTesting.html" width="100%" height="5000px" id="jabrailFunctions"></iframe>
 
     </div>

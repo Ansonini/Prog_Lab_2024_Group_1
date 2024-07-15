@@ -12,10 +12,12 @@ $(document).ready(function () {
     $('#graph1And2').show();
 
     $('#graph3And4').show();
-    $('#map'). hide();
-    $('#graphCanvas4').show();
-    
+    $('#map').hide();
+    $('#graphCanvas4').hide();
+
+    $('#over-view').hide();
     $('#storeInfoNew').hide();
+    $('#jabrailFunctions').hide();
 
 
 
@@ -23,14 +25,16 @@ $(document).ready(function () {
     document.getElementById('bigGraphTitle').textContent = 'Sales per pizza overtime';
 
     var ajaxFile2 = 'getBumpChartPizza';
-    document.getElementById('graphTitle1').textContent = 'Total sales per pizza during chosen timeframe';
+    document.getElementById('graphTitle1').textContent = 'Pizza ranking for the chosen timeframe';
 
     var ajaxFile3 = 'getSalesPerPizza';
-    document.getElementById('graphTitle2').textContent = 'Pizza ranking for the chosen timeframe';
+    document.getElementById('graphTitle2').textContent = 'Total sales per pizza during chosen timeframe';
 
     var ajaxFile4 = 'getPizzaHeatMap';
     document.getElementById('graphTitle3').textContent = 'Pizza bought together';
-    
+
+
+    document.getElementById('graphTitle4').textContent = 'Best sold pizza pairs';
     var ajaxFile5 = '';
 
 
@@ -43,10 +47,9 @@ $(document).ready(function () {
         var month = $('#month').val();
         var week = $('#week').val();
 
-    
+
         // empty the table of previous value each time a dropdown gets changed
         $('#table4').empty();
-        $('#table5').empty();
 
         // check view, show/hide relevant dropdowns and check if the relevant dropdown are set 
         var ready = false
@@ -92,7 +95,7 @@ $(document).ready(function () {
         var canvas = document.getElementById('bigGraphCanvas');
         var ctx = canvas.getContext('2d');
 
-    // Get the chart instance associated with the canvas
+        // Get the chart instance associated with the canvas
         var chartInstance = Chart.getChart(ctx);
 
         // Check if the chart instance exists and destroy it if it does
@@ -113,7 +116,7 @@ $(document).ready(function () {
         $('#bigGraphLoading').show(); // Show loading indicator for first table
         // ajax request for the first data
         currentAjaxRequest1 = $.ajax({
-            url: '/ajax/'+ ajaxFile1 +'.php',
+            url: '/ajax/' + ajaxFile1 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -141,7 +144,7 @@ $(document).ready(function () {
             }
         });
 
-        
+
     }
 
     function fetchDataGraph2() {
@@ -155,7 +158,7 @@ $(document).ready(function () {
         var canvas = document.getElementById('graphCanvas1');
         var ctx = canvas.getContext('2d');
 
-    // Get the chart instance associated with the canvas
+        // Get the chart instance associated with the canvas
         var chartInstance = Chart.getChart(ctx);
 
         // Check if the chart instance exists and destroy it if it does
@@ -173,9 +176,9 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
         $('#graphLoading1').show(); // Show loading indicator for first table
-                // ajax request for the first data
+        // ajax request for the first data
         currentAjaxRequest2 = $.ajax({
-            url: '/ajax/'+ ajaxFile2 +'.php',
+            url: '/ajax/' + ajaxFile2 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -215,7 +218,7 @@ $(document).ready(function () {
         var canvas = document.getElementById('graphCanvas2');
         var ctx = canvas.getContext('2d');
 
-    // Get the chart instance associated with the canvas
+        // Get the chart instance associated with the canvas
         var chartInstance = Chart.getChart(ctx);
 
         // Check if the chart instance exists and destroy it if it does
@@ -231,12 +234,21 @@ $(document).ready(function () {
         var perSize = $('#perSize').val();
         var grouping = $('#grouping3').val();
         var chartType = $('#chartType3').val();
+        var stacked = $('#stacked').val();
         var storeSelection = $('#storeSelection').val();
 
+        if (perSize == "false") {
+            $('#grouping3').hide();
+            $('#stacked').hide();
+        } else {
+            $('#grouping3').show();
+            $('#stacked').show();
+        }
+
         $('#graphLoading2').show(); // Show loading indicator for first table
-                // ajax request for the first data
+        // ajax request for the first data
         currentAjaxRequest3 = $.ajax({
-            url: '/ajax/'+ ajaxFile3 +'.php',
+            url: '/ajax/' + ajaxFile3 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -244,13 +256,13 @@ $(document).ready(function () {
                 year: year,
                 month: month,
                 week: week,
-                perSize:perSize,
+                perSize: perSize,
                 storeSelection: storeSelection
             },
             success: function (response) {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
-                    createChart(response.data, 'graphCanvas2', chartType, grouping);
+                    createChart(response.data, 'graphCanvas2', chartType, grouping, false, stacked);
                 } else {
                     $('#graphCanvas2').html('<p>' + response.message + '</p>');
                 }
@@ -275,7 +287,7 @@ $(document).ready(function () {
         var canvas = document.getElementById('graphCanvas3');
         var ctx = canvas.getContext('2d');
 
-    // Get the chart instance associated with the canvas
+        // Get the chart instance associated with the canvas
         var chartInstance = Chart.getChart(ctx);
 
         // Check if the chart instance exists and destroy it if it does
@@ -295,9 +307,9 @@ $(document).ready(function () {
 
 
         $('#graphLoading3').show(); // Show loading indicator for second table 
-            // ajax request for the first data
+        // ajax request for the first data
         currentAjaxRequest4 = $.ajax({
-            url: '/ajax/'+ ajaxFile4 +'.php',
+            url: '/ajax/' + ajaxFile4 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -310,10 +322,10 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success) {
-
+                    adjustDiagonal(response.data);
                     createHeatMap(response.data, 'graphCanvas3');
-                    displayJsonTable(response.data,'table4');
-
+                    const top4Unique = getTop4Unique(response.data, 5);                    
+                    displayJsonTable(top4Unique, 'table4');
                 } else {
                     $('#graphCanvas3').html('<p>' + response.message + '</p>');
                 }
@@ -358,9 +370,9 @@ $(document).ready(function () {
 
 
         $('#graphLoading4').show(); // Show loading indicator for second table 
-            // AJAX request for the second data
+        // AJAX request for the second data
         currentAjaxRequest5 = $.ajax({
-            url: '/ajax/'+ ajaxFile5 +'.php',
+            url: '/ajax/' + ajaxFile5 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -390,13 +402,13 @@ $(document).ready(function () {
         });
     }
 
-    
+
 
     // Trigger fetchData when any dropdown value changes
     $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType, #storeSelection').change(fetchData);
     $('#chartType1, #grouping1').change(fetchDataGraph1);
     $('#chartType2, #grouping2').change(fetchDataGraph2);
-    $('#chartType3, #grouping3, #perSize').change(fetchDataGraph3);
+    $('#chartType3, #grouping3, #perSize, #stacked').change(fetchDataGraph3);
     $('#chartType4, #grouping4').change(fetchDataGraph4);
     $('#chartType5, #grouping5').change(fetchDataGraph5);
 

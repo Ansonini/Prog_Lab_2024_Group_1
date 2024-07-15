@@ -52,6 +52,8 @@ switch ($view) {
 if($storeSelection == true && $storeSelection!= 'all'){
     $storeFilter = ($timeFilter === '') ? ' WHERE ' : ' AND '; // add where or and depending if a where clause is already there
     $storeFilter .= " o.storeID = \"$storeSelection\"";
+} else {
+    $storeFilter = '';
 }
 
 
@@ -65,6 +67,7 @@ $sql = "SELECT pizza , $groupBy, $rankingFrame
                 FROM orders o
                 JOIN orderItems oi ON o.orderID = oi.orderID
                 $timeFilter
+                $storeFilter
                 GROUP BY oi.sku, $groupBy
             ) as subsub
             JOIN products p ON p.sku = subsub.sku

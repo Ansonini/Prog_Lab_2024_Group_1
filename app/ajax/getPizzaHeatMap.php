@@ -45,12 +45,12 @@ FROM (SELECT sku1, sku2, COUNT(*) as skuSum
             FROM ordMult ordMult1
                      JOIN ordMult ordMult2 on
                 ordMult1.orderID = ordMult2.orderID
-            where ordMult1.orderItemID < ordMult2.orderItemID) as subsub
+            where ordMult1.orderItemID != ordMult2.orderItemID) as subsub
       GROUP BY sku1, sku2) as sub
          JOIN products p on p.sku = sub.sku1
          JOIN products p2 on p2.sku = sub.sku2
 GROUP BY p.pizzaName, p2.pizzaName
-ORDER BY p.pizzaName, p2.pizzaName;";
+ORDER BY p.pizzaName, p2.pizzaName";
 
 // Make query and return result
 include '/var/www/html/ajax/includes/makeQuery.php';

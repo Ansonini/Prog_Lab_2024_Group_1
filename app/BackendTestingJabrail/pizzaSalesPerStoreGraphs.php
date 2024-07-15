@@ -36,6 +36,7 @@ switch ($view) {
         $sql .= " GROUP BY o.storeID, YEAR(o.orderDate), WEEK(o.orderDate, 1)";
         $sql .= " ORDER BY YEAR(o.orderDate), WEEK(o.orderDate, 1)";
         break;
+    
     case 'dayView':
         $sql = "SELECT o.storeID, 
                 SUM(CASE WHEN TIME(o.orderDate) BETWEEN '06:00:00' AND '11:59:59' THEN 1 ELSE 0 END) AS Morning,
@@ -46,6 +47,7 @@ switch ($view) {
                 WHERE o.storeID = '$storeID' AND YEAR(o.orderDate) = $year
                 GROUP BY o.storeID";
         break;
+
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid view parameter']);
         exit;
@@ -53,5 +55,5 @@ switch ($view) {
 
 $multipleDataset = true;
 
-include '/var/www/html/ajax/includes/makeQuery.php';
+include '/var/www/html/ajax/includes/makeQueryExtra.php';
 ?>

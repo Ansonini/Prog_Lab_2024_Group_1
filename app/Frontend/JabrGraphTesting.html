@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jabrTest</title>
+    <style>
+        :root {
+            --main-color: #5c9ddb;
+            --main-content-side-margin: 30px;
+        } 
+        html {
+            background-color: var(--main-color);
+            height: 100%;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between; /* Space out tabs and title */
+            align-items: center; /* Center vertically */
+            background-color: var(--main-color);
+            margin-left: var(--main-content-side-margin);
+            margin-right: var(--main-content-side-margin);
+            font-size: 18px;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ececec;
+            padding-right: 20px;
+        }
+        .body-container {
+            background-color: #fff; /* White background */
+            margin-left: var(--main-content-side-margin);
+            margin-right: var(--main-content-side-margin);
+            padding: 20px;
+            border-radius: 20px; /* Rounded corners */
+        }
+        .container {
+            display: flex;
+            /* Use flexbox for layout */
+        }
+
+        .table-container {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+            /* Table container takes up remaining space */
+            margin: 10px;
+            /* Add some spacing between table and chart */
+        }
+
+        .chart-container {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+            /* Chart container takes up remaining space */
+            margin: 10px;
+            background-color: #fff;
+        }
+
+        /* Style for table and chart */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #fff;
+        }
+
+        /* style for table header and table data */
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .graph-header {
+            display: flex;
+            justify-content: space-between; /* Space out tabs and title */
+            align-items: center; /* Center vertically */
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid black;
+            border-radius: 10px;
+
+            background-color: #b7dcfe;
+        }
+
+        canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+            padding: 10px;
+        }
+
+        .dropdown-container {
+            display: flex;
+            justify-content: flex-end; /* Align dropdowns to the right */
+            align-items: center; /* Center vertically */
+        }
+
+        .dropdown-group {
+            display: flex;
+            flex-wrap: wrap;
+            /* Keep dropdowns in the same group on the same line */
+            margin-right: 40px;
+            /* Space between groups */
+        }
+
+        .dropdown-group:last-child {
+            margin-right: 0;
+            /* Remove space after the last group */
+        }
+
+        .dropdown-with-label {
+            display: flex;
+            flex-direction: column;
+            margin-right: 10px;
+            /* Space between dropdowns in the same group */
+        }
+
+        .dropdown {
+            margin-right: 5px;
+            /* Space between dropdowns in the same group */
+            font-size: 16px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        /* Optional: Remove margin-right for the last dropdown in a group */
+        .dropdown:last-child {
+            margin-right: 0;
+        }
+
+        .group-title {
+            margin: 5px;
+            /* Space between title and dropdowns */
+        }
+
+        .inputs {
+            display: flex;
+            /* Arrange input labels and fields horizontally */
+            margin-right: 10px;
+            /* Space between inputs and dropdowns */
+        }
+
+        .inputs label,
+        .inputs .date-input {
+            margin-right: 10px;
+            /* Space between input elements */
+        }
+
+        .inputs .date-input:last-child {
+            margin-right: 0;
+            /* Remove margin-right for the last input */
+        }
+
+        h3,
+        .loadingDiv {
+            display: inline-block;
+            vertical-align: middle;
+            padding: 5px;
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: flex-start;
+            background-color: var(--main-color);
+        }
+        .tab {
+            padding: 20px 40px;
+            margin-left: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: var(--main-color);
+            border-bottom: none;
+            transition: background-color 0.3s;
+            border-top-left-radius: 10px; /* Rounded corners for top-left */
+            border-top-right-radius: 10px; /* Rounded corners for top-right */
+
+        }
+        .tab.selected {
+            background-color: #fff;
+        }
+        .tab:hover {
+            background-color: #fff;
+        }
+
+        /*Sidebar plus Sidebar Button*/
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            background-color: lightgrey;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidebar a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: darkgrey;
+        }
+
+        .sidebar .sidebarClose {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        .sidebarOpen {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-right: 1%;
+        }
+
+        .sidebarOpen:hover {
+            background-color: lightgrey;
+        }
+        /*Sidebar Content*/
+        .table-changable-container {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        #map {
+            margin-top: 20px;
+            margin-right: 30px;
+            margin-left: 10px;
+            margin-bottom: 10px;
+            height: 500px;
+            width: 98%;
+        }
+        iframe {
+            border: none;
+        }
+        
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <!-- scripts for ajax -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+
+    <!-- scripts for chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@^3" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.1" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@^2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1" defer></script>
+
+    <!-- script for Echarts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js" defer></script>
+
+    
+
+    
+    <script src="/Frontend/javascript/displayJsonData2.js" defer></script>
+    <script src="/Frontend/javascript/jabrGraphTest.js" defer></script>
+
+</head>
+
+<body>
+    
+    <div class="header">
+
+       <div class="dropdown-container">
+
+              <div class="dropdown-group">
+
+                <div class="dropdown-with-label">
+                    <label for="storeSelection">Select Store</label>
+                    <select class="dropdown" id="storeSelection">
+                        
+                                <option value="Select">Select</option>
+                                <option value="All">All Stores</option>
+                                <option value="S013343">S013343</option>
+                                <option value="S048150">S048150</option>
+                                <option value="S058118">S058118</option>
+                                <option value="S062214">S062214</option>
+                                <option value="S064089">S064089</option>
+                                <option value="S068548">S068548</option>
+                                <option value="S080157">S080157</option>
+                                <option value="S122017">S122017</option>
+                                <option value="S147185">S147185</option>
+                                <option value="S216043">S216043</option>
+                                <option value="S263879">S263879</option>
+                                <option value="S276746">S276746</option>
+                                <option value="S302800">S302800</option>
+                                <option value="S351225">S351225</option>
+                                <option value="S361257">S361257</option>
+                                <option value="S370494">S370494</option>
+                                <option value="S396799">S396799</option>
+                                <option value="S449313">S449313</option>
+                                <option value="S476770">S476770</option>
+                                <option value="S486166">S486166</option>
+                                <option value="S490972">S490972</option>
+                                <option value="S505400">S505400</option>
+                                <option value="S588444">S588444</option>
+                                <option value="S606312">S606312</option>
+                                <option value="S669665">S669665</option>
+                                <option value="S688745">S688745</option>
+                                <option value="S750231">S750231</option>
+                                <option value="S799887">S799887</option>
+                                <option value="S817950">S817950</option>
+                                <option value="S872983">S872983</option>
+                                <option value="S918734">S918734</option>
+                                <option value="S948821">S948821</option>
+                            
+                        
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+    <h1>Stores basic information</h1>
+    <table id="storeTable">
+        <thead>
+            <tr>
+                <th>Store ID</th>
+                <th>Zipcode</th>
+                <th>State Abbreviation</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Distance</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div id="loading" style="display: none;">Loading...</div>
+
+    <h3>Graphics</h3>
+
+    <div class="dropdown-container">
+        <div class="dropdown-group">
+            <label class="group-title">Chose view</label>
+            <select class="dropdown" id="view">
+                <option value="yearView">Year View</option>
+                <option value="monthView">Month View</option>
+                <option value="weekView">Week View</option>
+                <option value="dayView">Day View</option>
+            </select>
+        </div>
+
+        <div class="dropdown-group" id="timeframeSettings" style="display: none;">
+            <label id="timeframeSettingsLabel" class="group-title">Chose timeframe</label>
+            <select class="dropdown" id="year">
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="graph1And2" class="container">
+
+        <div class="chart-container">
+
+            <div class="graph-header">
+
+                <label id="graphTitle1" style="padding: 7px;">Revenue in chosen Store</label>
+
+                <div class="dropdown-group">
+
+                    <!-- Loading indicator -->
+                    <div class=loadingDiv style="display: none;" id="graphLoading1">Data is loading...</div>
+                        
+                    <select class="dropdown" id="chartType2">
+                        <option value="line">Line Chart</option>
+                        <option value="bar">Bar Chart</option>
+                    </select>
+        
+                   
+                    
+                </div>
+            </div>
+            
+            <canvas id="graphCanvas1" width="400" height="170"></canvas>
+            <!-- The chart will be generated here by JavaScript -->
+        </div>
+
+        <div class="chart-container">
+
+            <div class="graph-header">
+
+                <label id="graphTitle2" style="padding: 7px;">Pizza sales in chosen Store</label>
+
+                <div class="dropdown-group">
+
+                    <!-- Loading indicator -->
+                    <div class=loadingDiv style="display: none;" id="graphLoading2">Data is loading...</div>
+                        
+                    <select class="dropdown" id="chartType3">
+                        <option value="bar">Bar Chart</option>
+                        <option value="line">Line Chart</option>
+                    </select>
+        
+                    
+
+                    
+                    
+                </div>
+            </div>
+
+            <canvas id="graphCanvas2" width="400" height="170"></canvas>
+            <!-- The chart will be generated here by JavaScript -->
+        </div>
+
+    </div>
+
+    

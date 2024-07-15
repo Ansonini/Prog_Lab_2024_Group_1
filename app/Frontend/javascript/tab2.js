@@ -12,7 +12,10 @@ $(document).ready(function () {
     $('#graph1And2').show();
 
     $('#graph3And4').show();
-    $('#map').hide();
+    
+    $('#graph3AndMap').hide();
+    $('#graphFromRow3').hide();
+
     $('#graphCanvas4').hide();
 
     $('#over-view').hide();

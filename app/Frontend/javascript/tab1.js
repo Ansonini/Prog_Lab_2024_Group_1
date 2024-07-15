@@ -6,9 +6,10 @@ $(document).ready(function () {
 
     $('#graph1And2').show();
 
-    $('#graph3And4').show();
-    $('#map').show();
-    $('#graphCanvas4').hide();
+    $('#graph3And4').hide();
+    $('#graph3AndMap').show();
+    $('#graphFromRow3').show();
+    
 
 
     $('#over-view').show();
@@ -24,9 +25,6 @@ $(document).ready(function () {
 
 
     //choose file to load and set the tilte
-    var ajaxFile1 = '';
-    //document.getElementById('bigGraphTitle').textContent = 'Sales per store per month';
-
     var ajaxFile2 = 'getSalesPerTimeframe';
     document.getElementById('graphTitle1').textContent = 'Sales during chosen time frame';
 
@@ -81,7 +79,33 @@ $(document).ready(function () {
 
         // if all the relevant data is set, the function continues to make ajax request
         if (ready) {
-            //fetchDataGraph1();
+            // Stacking-Bar-Chart
+            $('#loading-stacking-barchart').show();
+            $.ajax({
+                url: '../ajax/getSalesPerPizza.php',
+                type: 'POST',
+                data: {
+                    view: view,
+                    mode: mode,
+                    year: year,
+                    month: month,
+                    week: week,
+                    perSize: true
+                },
+                success: function (response) {
+                    if (response.success) {
+                        stackedBarChart(response.data);
+                    } else {
+                        $('#chart-container').html('<p>' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                },
+                complete: function () {
+                    $('#loading-stacking-barchart').hide();
+                }
+            });
             fetchDataGraph2();
             fetchDataGraph3();
             fetchDataGraph4();
@@ -89,65 +113,6 @@ $(document).ready(function () {
         }
     }
 
-    function fetchDataGraph1() {
-        // Abort previous call if it isn't finished yet
-        if (currentAjaxRequest1) {
-            currentAjaxRequest1.abort();
-        }
-
-        var canvas = document.getElementById('bigGraphCanvas');
-        var ctx = canvas.getContext('2d');
-
-        // Get the chart instance associated with the canvas
-        var chartInstance = Chart.getChart(ctx);
-
-        // Check if the chart instance exists and destroy it if it does
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
-
-        var view = $('#view').val();
-        var mode = $('#mode').val();
-        var year = $('#year').val();
-        var month = $('#month').val();
-        var week = $('#week').val();
-        var perSize = $('#perSize').val();
-        var grouping = $('#grouping1').val();
-        var chartType = $('#chartType1').val();
-        var storeSelection = $('#storeSelection').val();
-
-        $('#bigGraphLoading').show(); // Show loading indicator for first table
-        // ajax request for the first data
-        currentAjaxRequest1 = $.ajax({
-            url: '/ajax/' + ajaxFile1 + '.php',
-            type: 'POST',
-            data: {
-                view: view,
-                mode: mode,
-                year: year,
-                month: month,
-                week: week,
-                perSize: perSize,
-                storeSelection: storeSelection
-            },
-            success: function (response) {
-                if (response.success) {
-                    // Call the functions from to display the table and the chart
-
-                } else {
-                    $('#bigGraphCanvas').html('<p>' + response.message + '</p>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log('AJAX Error:', status, error);
-            },
-            complete: function () {
-                $('#bigGraphLoading').hide(); // Hide loading indicator when request is complete
-            }
-        });
-
-
-    }
 
     function fetchDataGraph2() {
 
@@ -300,7 +265,7 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
 
-        $('#graphLoading3').show(); // Show loading indicator for second table 
+        $('#loading-pie-chart-pizza').show(); // Show loading indicator for second table 
         // ajax request for the first data
         currentAjaxRequest4 = $.ajax({
             url: '/ajax/' + ajaxFile4 + '.php',
@@ -318,7 +283,6 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
-
                     pieChartStores(response.data);
 
                 } else {
@@ -329,7 +293,7 @@ $(document).ready(function () {
                 console.log('AJAX Error:', status, error);
             },
             complete: function () {
-                $('#graphLoading3').hide(); // Hide loading indicator when request is complete
+                $('#loading-pie-chart-pizza').hide(); // Hide loading indicator when request is complete
             }
         });
     }
@@ -364,7 +328,7 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
 
-        $('#graphLoading4').show(); // Show loading indicator for second table 
+        $('#loading-map').show(); // Show loading indicator for second table 
         // AJAX request for the second data
         currentAjaxRequest5 = $.ajax({
             url: '/ajax/' + ajaxFile5 + '.php',
@@ -389,7 +353,7 @@ $(document).ready(function () {
                 console.log('AJAX Error:', status, error);
             },
             complete: function () {
-                $('#graphLoading4').hide(); // Hide loading indicator when request is complete
+                $('#loading-map').hide(); // Hide loading indicator when request is complete
             }
         });
     }
@@ -696,93 +660,75 @@ $(document).ready(function () {
     }
 
     // A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
-    function stackingBarChart(data) {
-        var chartDom = document.getElementById('stacking-barchart-pizza');
-        var myChart = echarts.init(chartDom);
-
-        // Extract pizza names and selling days
-        const pizzaNames = data.map(item => item.pizzaName);
-        const sellingMonth = data[0].map(item => item.sellingMonth);
-
-        // Prepare raw data
-        const rawData = data.map(pizza =>
-            pizza.data.map(day => parseInt(day.unitsSold))
-        );
-
-        // Calculate total data
-        const totalData = [];
-        for (let i = 0; i < rawData[0].length; ++i) {
-            let sum = 0;
-            for (let j = 0; j < rawData.length; ++j) {
-                sum += rawData[j][i];
-            }
-            totalData.push(sum);
-        }
-
-        const grid = {
-            left: 100,
-            right: 100,
-            top: 50,
-            bottom: 50
+    function stackedBarChart(data) {
+        const barChart = echarts.init(document.getElementById('stacking-barchart-pizza'));
+    
+        // Extract unique pizza sizes and names
+        const pizzaSizes = [...new Set(data.flatMap(pizza => pizza.data.map(item => item.pizzaSize)))];
+        const pizzaNames = data.map(pizza => pizza.pizzaName);
+    
+        // Color map for sizes
+        const colorMap = {
+            "Extra Large": '#4e79a7',
+            "Large": '#59a14f',
+            "Medium": '#edc949',
+            "Small": '#e15759'
         };
-
-        const series = pizzaNames.map((name, sid) => {
-            return {
-                name,
-                type: 'bar',
-                stack: 'total',
-                barWidth: '60%',
-                label: {
-                    show: true,
-                    formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
-                },
-                data: rawData[sid].map((d, did) =>
-                    totalData[did] <= 0 ? 0 : d / totalData[did]
-                )
-            };
-        });
-
-        var option = {
+    
+        const series = pizzaSizes.map(size => ({
+            name: size,
+            type: 'bar',
+            stack: 'total',
+            label: {
+                show: true,
+                position: 'inside',
+                formatter: '{c}'
+            },
+            emphasis: {
+                focus: 'series'
+            },
+            data: data.map(pizza => {
+                const sizeData = pizza.data.find(item => item.pizzaSize === size);
+                return sizeData ? parseInt(sizeData.unitsSold) : 0;
+            }),
+            itemStyle: {
+                color: colorMap[size] || '#808080'
+            }
+        }));
+    
+        const option = {
             title: {
-                text: 'Pizza Sales Stacked Bar Chart'
+                text: 'Pizza Sales by Size',
+                left: 'center'
             },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'shadow'
-                },
-                formatter: function(params) {
-                    let tooltip = params[0].axisValue + '<br/>';
-                    let total = 0;
-                    params.forEach(param => {
-                        const actualValue = rawData[param.seriesIndex][param.dataIndex];
-                        total += actualValue;
-                        tooltip += param.marker + param.seriesName + ': ' +
-                            actualValue + ' (' +
-                            (param.value * 100).toFixed(2) + '%)<br/>';
-                    });
-                    tooltip += 'Total: ' + total;
-                    return tooltip;
                 }
             },
             legend: {
-                data: pizzaNames,
-                selectedMode: false
+                data: pizzaSizes,
+                top: '5%'
             },
-            grid,
-            yAxis: {
-                type: 'value',
-                axisLabel: {
-                    formatter: '{value}%'
-                }
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
             },
             xAxis: {
                 type: 'category',
-                data: sellingMonth
+                data: pizzaNames
             },
-            series
+            yAxis: {
+                type: 'value'
+            },
+            series: series
         };
-        myChart.setOption(option);
+    
+        barChart.setOption(option);
+        barChart.resize({width: 1000, height: 500});
     }
 
     function pieChartStores(data) {

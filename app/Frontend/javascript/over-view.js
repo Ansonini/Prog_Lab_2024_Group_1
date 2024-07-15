@@ -131,11 +131,12 @@ $(document).ready(function () {
                     mode: mode,
                     year: year,
                     month: month,
-                    week: week
+                    week: week,
+                    perSize: true
                 },
                 success: function (response) {
                     if (response.success) {
-                        stackingBarChart(response.data);
+                        stackedBarChart(response.data);
                     } else {
                         $('#chart-container').html('<p>' + response.message + '</p>');
                     }
@@ -275,15 +276,14 @@ $(document).ready(function () {
             // Bump-Chart1
             $('#loading-bump-chart-Pizza').show();
             $.ajax({
-                url: '../ajax/getSalesPerPizzaOverTime.php',
+                url: '../ajax/getBumpChartPizza.php',
                 type: 'POST',
                 data: {
-                    view: 'completeView',
-                    mode: 'units',
+                    view: view,
+                    mode: mode,
                     year: year,
                     month: month,
                     week: week,
-                    perSize: false,
                     storeSelection: 'all'
                 },
                 success: function (response) {
@@ -303,7 +303,7 @@ $(document).ready(function () {
             // Bump-Chart2
             $('#loading-bump-chart-Store').show();
             $.ajax({
-                url: '../ajax/getSalesPerStore.php',
+                url: '../ajax/getBumpChartStores.php',
                 type: 'POST',
                 data: {
                     view: 'completeView',
@@ -623,93 +623,75 @@ function storesPercentBarChart(data) {
 }
 
 // A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
-function stackingBarChart(data) {
-    var chartDom = document.getElementById('stacking-barchart-pizza');
-    var myChart = echarts.init(chartDom);
+function stackedBarChart(data) {
+    const barChart = echarts.init(document.getElementById('stacking-barchart-pizza'));
 
-    // Extract pizza names and selling days
-    const pizzaNames = data.map(item => item.pizzaName);
-    const sellingMonth = data[0].map(item => item.sellingMonth);
+    // Extract unique pizza sizes and names
+    const pizzaSizes = [...new Set(data.flatMap(pizza => pizza.data.map(item => item.pizzaSize)))];
+    const pizzaNames = data.map(pizza => pizza.pizzaName);
 
-    // Prepare raw data
-    const rawData = data.map(pizza =>
-        pizza.data.map(day => parseInt(day.unitsSold))
-    );
-
-    // Calculate total data
-    const totalData = [];
-    for (let i = 0; i < rawData[0].length; ++i) {
-        let sum = 0;
-        for (let j = 0; j < rawData.length; ++j) {
-            sum += rawData[j][i];
-        }
-        totalData.push(sum);
-    }
-
-    const grid = {
-        left: 100,
-        right: 100,
-        top: 50,
-        bottom: 50
+    // Color map for sizes
+    const colorMap = {
+        "Extra Large": '#4e79a7',
+        "Large": '#59a14f',
+        "Medium": '#edc949',
+        "Small": '#e15759'
     };
 
-    const series = pizzaNames.map((name, sid) => {
-        return {
-            name,
-            type: 'bar',
-            stack: 'total',
-            barWidth: '60%',
-            label: {
-                show: true,
-                formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
-            },
-            data: rawData[sid].map((d, did) =>
-                totalData[did] <= 0 ? 0 : d / totalData[did]
-            )
-        };
-    });
+    const series = pizzaSizes.map(size => ({
+        name: size,
+        type: 'bar',
+        stack: 'total',
+        label: {
+            show: true,
+            position: 'inside',
+            formatter: '{c}'
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: data.map(pizza => {
+            const sizeData = pizza.data.find(item => item.pizzaSize === size);
+            return sizeData ? parseInt(sizeData.unitsSold) : 0;
+        }),
+        itemStyle: {
+            color: colorMap[size] || '#808080'
+        }
+    }));
 
-    var option = {
+    const option = {
         title: {
-            text: 'Pizza Sales Stacked Bar Chart'
+            text: 'Pizza Sales by Size',
+            left: 'center'
         },
         tooltip: {
             trigger: 'axis',
             axisPointer: {
                 type: 'shadow'
-            },
-            formatter: function(params) {
-                let tooltip = params[0].axisValue + '<br/>';
-                let total = 0;
-                params.forEach(param => {
-                    const actualValue = rawData[param.seriesIndex][param.dataIndex];
-                    total += actualValue;
-                    tooltip += param.marker + param.seriesName + ': ' +
-                        actualValue + ' (' +
-                        (param.value * 100).toFixed(2) + '%)<br/>';
-                });
-                tooltip += 'Total: ' + total;
-                return tooltip;
             }
         },
         legend: {
-            data: pizzaNames,
-            selectedMode: false
+            data: pizzaSizes,
+            top: '5%'
         },
-        grid,
-        yAxis: {
-            type: 'value',
-            axisLabel: {
-                formatter: '{value}%'
-            }
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
         },
         xAxis: {
             type: 'category',
-            data: sellingMonth
+            data: pizzaNames
         },
-        series
+        yAxis: {
+            type: 'value'
+        },
+        series: series
     };
-    myChart.setOption(option);
+
+    barChart.setOption(option);
+    barChart.resize({width: 1000, height: 500});
 }
 
 // shows a piechart based the most sold Pizza times (based on size of the pizza, can also show all pizzas)
@@ -909,60 +891,40 @@ function bumpChartPizzaRanking(data) {
 
 // shows a bump chart of the Top 10 stores ranked based on the sales/toggle between units and revenue
 function bumpChartStoreRanking(data) {
-    var myChart = document.getElementById('bump-chart-Stores');
+    var myChart = document.getElementById('bump-chart-Store');
+    var option;
+    var storeIds = data.map(store => store.storeID);
+    var years = [...new Set(data.flatMap(store => store.data.map(d => d.sellingYear)))].sort();
 
-    // Extract store names and years from the data
-    const stores = data.map(item => item.storeName);
-    const years = Object.keys(data[0]).filter(key => key !== 'storeName');
-
-    // Generate ranking data
-    const generateRankingData = () => {
-        const map = new Map();
-        for (const year of years) {
-            const yearSales = stores.map(store => ({
-                store: store,
-                unitsSold: data.find(item => item.storeName === store)[year]
-            }));
-            yearSales.sort((a, b) => b.unitsSold - a.unitsSold);
-            yearSales.forEach((item, index) => {
-                const rank = index + 1;
-                map.set(item.store, (map.get(item.store) || []).concat(rank));
-            });
-        }
-        return map;
-    };
-
-    // Generate series list
-    const generateSeriesList = () => {
-        const seriesList = [];
-        const rankingMap = generateRankingData();
-        rankingMap.forEach((data, store) => {
-            const series = {
-                name: store,
-                symbolSize: 20,
-                type: 'line',
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                endLabel: {
-                    show: true,
-                    formatter: '{a}',
-                    distance: 20
-                },
-                lineStyle: {
-                    width: 4
-                },
-                data: data
-            };
-            seriesList.push(series);
+    const seriesList = data.map(store => {
+        const data = years.map(year => {
+            const yearData = store.data.find(d => d.sellingYear === year);
+            return yearData ? parseInt(yearData.yearlyRank) : null;
         });
-        return seriesList;
-    };
 
-    const option = {
+        return {
+            name: store.storeID,
+            symbolSize: 20,
+            type: 'line',
+            smooth: true,
+            emphasis: {
+                focus: 'series'
+            },
+            endLabel: {
+                show: true,
+                formatter: '{a}',
+                distance: 20
+            },
+            lineStyle: {
+                width: 4
+            },
+            data: data
+        };
+    });
+
+    option = {
         title: {
-            text: 'Store Ranking Bump Chart (by Units Sold)'
+            text: 'Store Ranking Bump Chart'
         },
         tooltip: {
             trigger: 'item'
@@ -1000,10 +962,12 @@ function bumpChartStoreRanking(data) {
             inverse: true,
             interval: 1,
             min: 1,
-            max: stores.length
+            max: storeIds.length
         },
-        series: generateSeriesList()
+        series: seriesList
     };
+
+    option && myChart.setOption(option);
 }
 
 // to filter the dropdown list of stores

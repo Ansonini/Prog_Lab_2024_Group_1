@@ -385,7 +385,6 @@ $(document).ready(function () {
             }
         });
     }
-   
 
     function fetchStoreInfo() {
         $('#loading').show();
@@ -581,8 +580,6 @@ $(document).ready(function () {
             }
         });
     }
-    
-    
 
     $('#periodView').change(function () {
         var periodType = $(this).val();

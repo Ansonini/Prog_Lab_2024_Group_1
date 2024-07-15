@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    
+
     //diplay option graph
 
     $('#bigGraph').hide();
@@ -9,15 +9,18 @@ $(document).ready(function () {
     $('#graph3And4').show();
     $('#map').show();
     $('#graphCanvas4').hide();
-    
+
+
+    $('#over-view').show();
     $('#storeInfoNew').hide();
+    $('#jabrailFunctions').hide();
 
 
 
-    $('#chartType1, #chartType2, #chartType3, #chartType4, #chartType5').hide();
+    $('#chartType1, #chartType2, #chartType3, #chartType4, #chartType5, #stacked').hide();
     $('#grouping1, #grouping2, #grouping3, #grouping4, #grouping5').hide();
     $('#perSize').hide()
-    
+
 
 
     //choose file to load and set the tilte
@@ -31,8 +34,10 @@ $(document).ready(function () {
     document.getElementById('graphTitle2').textContent = 'Sales per store during the chosen time frame';
 
     var ajaxFile4 = 'getSalesPerPizza';
+    document.getElementById('graphTitle3').textContent = 'Pizza Sales';
 
-    var ajaxFile5 = 'getCustomerCoordinatesPerStore';
+
+    var ajaxFile5 = 'getStoreInfo';
     document.getElementById('graphTitle4').textContent = 'Map of Store and Customers';
 
 
@@ -45,10 +50,9 @@ $(document).ready(function () {
         var week = $('#week').val();
         var toggle_percent = $('#stores-sold-toggle').val();
 
-    
+
         // empty the table of previous value each time a dropdown gets changed
-        $('#tablePerTime').empty();
-        $('#tablePerStore').empty();
+        $('#table4').empty();
 
         // check view, show/hide relevant dropdowns and check if the relevant dropdown are set 
         var ready = false
@@ -94,7 +98,7 @@ $(document).ready(function () {
         var canvas = document.getElementById('bigGraphCanvas');
         var ctx = canvas.getContext('2d');
 
-    // Get the chart instance associated with the canvas
+        // Get the chart instance associated with the canvas
         var chartInstance = Chart.getChart(ctx);
 
         // Check if the chart instance exists and destroy it if it does
@@ -115,7 +119,7 @@ $(document).ready(function () {
         $('#bigGraphLoading').show(); // Show loading indicator for first table
         // ajax request for the first data
         currentAjaxRequest1 = $.ajax({
-            url: '/ajax/'+ ajaxFile1 +'.php',
+            url: '/ajax/' + ajaxFile1 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -129,7 +133,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
-                    
+
                 } else {
                     $('#bigGraphCanvas').html('<p>' + response.message + '</p>');
                 }
@@ -142,7 +146,7 @@ $(document).ready(function () {
             }
         });
 
-        
+
     }
 
     function fetchDataGraph2() {
@@ -156,7 +160,7 @@ $(document).ready(function () {
         var canvas = document.getElementById('graphCanvas1');
         var ctx = canvas.getContext('2d');
 
-    // Get the chart instance associated with the canvas
+        // Get the chart instance associated with the canvas
         var chartInstance = Chart.getChart(ctx);
 
         // Check if the chart instance exists and destroy it if it does
@@ -175,9 +179,9 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
         $('#graphLoading1').show(); // Show loading indicator for first table
-                // ajax request for the first data
+        // ajax request for the first data
         currentAjaxRequest2 = $.ajax({
-            url: '/ajax/'+ ajaxFile2 +'.php',
+            url: '/ajax/' + ajaxFile2 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -185,7 +189,7 @@ $(document).ready(function () {
                 year: year,
                 month: month,
                 week: week,
-                perSize:perSize,
+                perSize: perSize,
                 storeSelection: storeSelection
             },
             success: function (response) {
@@ -217,7 +221,7 @@ $(document).ready(function () {
         var canvas = document.getElementById('graphCanvas2');
         var ctx = canvas.getContext('2d');
 
-    // Get the chart instance associated with the canvas
+        // Get the chart instance associated with the canvas
         var chartInstance = Chart.getChart(ctx);
 
         // Check if the chart instance exists and destroy it if it does
@@ -236,9 +240,9 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
         $('#graphLoading2').show(); // Show loading indicator for first table
-                // ajax request for the first data
+        // ajax request for the first data
         currentAjaxRequest3 = $.ajax({
-            url: '/ajax/'+ ajaxFile3 +'.php',
+            url: '/ajax/' + ajaxFile3 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -246,7 +250,7 @@ $(document).ready(function () {
                 year: year,
                 month: month,
                 week: week,
-                perSize:perSize,
+                perSize: perSize,
                 storeSelection: storeSelection
             },
             success: function (response) {
@@ -277,7 +281,7 @@ $(document).ready(function () {
         var canvas = document.getElementById('graphCanvas3');
         var ctx = canvas.getContext('2d');
 
-    // Get the chart instance associated with the canvas
+        // Get the chart instance associated with the canvas
         var chartInstance = Chart.getChart(ctx);
 
         // Check if the chart instance exists and destroy it if it does
@@ -297,9 +301,9 @@ $(document).ready(function () {
 
 
         $('#graphLoading3').show(); // Show loading indicator for second table 
-            // ajax request for the first data
+        // ajax request for the first data
         currentAjaxRequest4 = $.ajax({
-            url: '/ajax/'+ ajaxFile4 +'.php',
+            url: '/ajax/' + ajaxFile4 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -315,7 +319,7 @@ $(document).ready(function () {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
 
-                    createChart(response.data, 'graphCanvas3', chartType, grouping);
+                    createChart(response.data, 'graphCanvas3', chartType, 'reversedGrouping');
 
                 } else {
                     $('#graphCanvas3').html('<p>' + response.message + '</p>');
@@ -361,9 +365,9 @@ $(document).ready(function () {
 
 
         $('#graphLoading4').show(); // Show loading indicator for second table 
-            // AJAX request for the second data
+        // AJAX request for the second data
         currentAjaxRequest5 = $.ajax({
-            url: '/ajax/'+ ajaxFile5 +'.php',
+            url: '/ajax/' + ajaxFile5 + '.php',
             type: 'POST',
             data: {
                 view: view,
@@ -393,15 +397,34 @@ $(document).ready(function () {
     // a map function that shows all stores on a map with their store ID and distance from the main store
     function mapStores(data) {
         var map = L.map('map').setView([40, -120], 4.5);
+        const stores = [];
 
+        var keys = Object.keys(data[0]);
+        var storeID = keys[0];
+        var latitude = 'latitude';
+        var longitude = 'longitude';
+        var city = 'city';
+
+        data.forEach(store => {
+            stores.push({
+                lat: parseFloat(store[latitude]),
+                lng: parseFloat(store[longitude]),
+                name: store[storeID],
+                city: store[city]
+            });
+        });
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        // var stores = [
+        //     { lat: 41.328852, lng: -116.12251, name: 'Tuscarora', StoreID: 'S490972'},
+        //     { lat: 37.593883, lng: -121.88281, name: 'Sunol', StoreID: 'S476770' }
+        // ];
 
         stores.forEach(store => {
             L.marker([store.lat, store.lng]).addTo(map)
-                .bindPopup(store.name)
+                .bindPopup(`<b>${store.city}</b><br>Store ID: ${store.name}`)
                 .openPopup();
         });
     }
@@ -409,7 +432,8 @@ $(document).ready(function () {
 
 
 
-    
+
+
 
     // Trigger fetchData when any dropdown value changes
     $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType, #storeSelection').change(fetchData);

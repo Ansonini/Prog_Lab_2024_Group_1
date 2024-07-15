@@ -8,6 +8,7 @@
     <style>
         :root {
             --main-color: #5c9ddb;
+            --secondary-color: #b7dcfe;
             --main-content-side-margin: 30px;
         } 
         html {
@@ -84,7 +85,7 @@
             border: 1px solid black;
             border-radius: 10px;
 
-            background-color: #b7dcfe;
+            background-color: var(--secondary-color);
         }
 
         canvas {
@@ -173,7 +174,7 @@
             margin-left: 10px;
             font-size: 18px;
             cursor: pointer;
-            background-color: var(--main-color);
+            background-color: var(--secondary-color);
             border-bottom: none;
             transition: background-color 0.3s;
             border-top-left-radius: 10px; /* Rounded corners for top-left */
@@ -291,6 +292,7 @@
             <div class="tab" onclick="loadTab('/Frontend/javascript/tab1.js', this)">Main Page</div>
             <div class="tab" onclick="loadTab('/Frontend/javascript/tab2.js', this)">Pizza Details</div>
             <div class="tab" onclick="loadTab('/Frontend/javascript/tab3.js', this)">Store Details</div>
+            <div class="tab" onclick="loadTab('/Frontend/javascript/tab4.js', this)">Store and Customers Details</div>
         </div>
 
         <div class="dropdown-container">
@@ -534,7 +536,7 @@
                     <div class="dropdown-group">
 
                         <!-- Loading indicator -->
-                        <div class=loadingDiv style="display: none;" id="bigGraphraphLoading">Data is loading...</div>
+                        <div class=loadingDiv style="display: none;" id="bigGraphLoading">Data is loading...</div>
     
                         <select class="dropdown" id="chartType1">
                             <option value="line">Line Chart</option>
@@ -604,6 +606,11 @@
                         <select class="dropdown" id="grouping3">
                             <option value=reversedGrouping>Group by Pizza</option>
                             <option value=defaultGrouping>Group by Size</option>
+                        </select>
+
+                        <select class="dropdown" id="stacked">
+                            <option value=false>Not Stacked</option>
+                            <option value=true>Stacked</option>
                         </select>
 
                         <select class="dropdown" id="perSize">
@@ -676,21 +683,18 @@
                 <!-- The chart will be generated here by JavaScript -->
                 <div id="map"></div>
                 <!-- map will be generated here -->
+                <div id="table4" class="table-container">
+                    <!-- The table will be generated here by JavaScript -->
+                </div>
 
             </div>
 
         </div>
-
-        <div id="table4&5" class="container">
-            <div id="table4" class="table-container">
-                <!-- The table will be generated here by JavaScript -->
-            </div>
-            <div id="table5" class="table-container">
-                <!-- The table will be generated here by JavaScript -->
-            </div>
-        </div>
-
-        <iframe src="Frontend/storeInfoNew.html" width="100%" height="500px" id="storeInfoNew"></iframe>
+        
+        
+        <!-- <iframe src="Frontend/over-view.html" width="100%" height="4000px" id="over-view"></iframe> -->
+        <iframe src="/Frontend/Test123.html" width="100%" height="5000px" id="storeInfoNew"></iframe>
+        <iframe src="/jabrTesting.html" width="100%" height="5000px" id="jabrailFunctions"></iframe>
     
     </div>
 </body>

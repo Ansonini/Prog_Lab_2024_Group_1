@@ -10,15 +10,19 @@
             --main-color: #5c9ddb;
             --secondary-color: #b7dcfe;
             --main-content-side-margin: 30px;
-        } 
+        }
+
         html {
             background-color: var(--main-color);
             height: 100%;
         }
+
         .header {
             display: flex;
-            justify-content: space-between; /* Space out tabs and title */
-            align-items: center; /* Center vertically */
+            justify-content: space-between;
+            /* Space out tabs and title */
+            align-items: center;
+            /* Center vertically */
             background-color: var(--main-color);
             margin-left: var(--main-content-side-margin);
             margin-right: var(--main-content-side-margin);
@@ -31,13 +35,17 @@
             color: #ececec;
             padding-right: 20px;
         }
+
         .body-container {
-            background-color: #fff; /* White background */
+            background-color: #fff;
+            /* White background */
             margin-left: var(--main-content-side-margin);
             margin-right: var(--main-content-side-margin);
             padding: 20px;
-            border-radius: 20px; /* Rounded corners */
+            border-radius: 20px;
+            /* Rounded corners */
         }
+
         .container {
             display: flex;
             /* Use flexbox for layout */
@@ -78,8 +86,10 @@
 
         .graph-header {
             display: flex;
-            justify-content: space-between; /* Space out tabs and title */
-            align-items: center; /* Center vertically */
+            justify-content: space-between;
+            /* Space out tabs and title */
+            align-items: center;
+            /* Center vertically */
             padding: 10px;
             font-size: 16px;
             border: 1px solid black;
@@ -97,8 +107,10 @@
 
         .dropdown-container {
             display: flex;
-            justify-content: flex-end; /* Align dropdowns to the right */
-            align-items: center; /* Center vertically */
+            justify-content: flex-end;
+            /* Align dropdowns to the right */
+            align-items: center;
+            /* Center vertically */
         }
 
         .dropdown-group {
@@ -169,6 +181,7 @@
             justify-content: flex-start;
             background-color: var(--main-color);
         }
+
         .tab {
             padding: 20px 40px;
             margin-left: 10px;
@@ -177,13 +190,17 @@
             background-color: var(--secondary-color);
             border-bottom: none;
             transition: background-color 0.3s;
-            border-top-left-radius: 10px; /* Rounded corners for top-left */
-            border-top-right-radius: 10px; /* Rounded corners for top-right */
+            border-top-left-radius: 10px;
+            /* Rounded corners for top-left */
+            border-top-right-radius: 10px;
+            /* Rounded corners for top-right */
 
         }
+
         .tab.selected {
             background-color: #fff;
         }
+
         .tab:hover {
             background-color: #fff;
         }
@@ -234,12 +251,13 @@
         .sidebarOpen:hover {
             background-color: lightgrey;
         }
+
         /*Sidebar Content*/
         .table-changable-container {
             display: block;
             width: 100% !important;
-            height: 100% !important;
         }
+
         #map {
             margin-top: 20px;
             margin-right: 30px;
@@ -248,13 +266,32 @@
             height: 500px;
             width: 98%;
         }
+
         iframe {
             border: none;
+        }
+
+        *The Note and Save Section*/ .noteField {
+            width: 500px;
+        }
+
+        #noteField {
+            width: 100%;
+            height: 200px;
+        }
+
+        .pie-chart {
+            position: relative;
+            grid-column: 2;
+            grid-row: 3;
+            width: 500px;
+            height: 500px;
+            padding: 10px;
         }
         
     </style>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
     <!-- scripts for ajax -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
@@ -280,14 +317,15 @@
 </head>
 
 <body>
-    
+
     <div class="header">
 
         <div class="tab-container">
-            <button class="sidebarOpen" onclick="openSideBar()" style="background-color: #00000000; margin-left: 10px; margin-right: 10px; border: none; align-items: center;">
+            <button class="sidebarOpen" onclick="openSideBar()"
+                style="background-color: #00000000; margin-left: 10px; margin-right: 10px; border: none; align-items: center;">
                 <img src="Frontend/icons/burger-menu.svg" alt="Check Icon" style="width: 40px; height: 40px;">
             </button>
-            
+
 
             <div class="tab" onclick="loadTab('/Frontend/javascript/tab1.js', this)">Main Page</div>
             <div class="tab" onclick="loadTab('/Frontend/javascript/tab2.js', this)">Pizza Details</div>
@@ -367,13 +405,13 @@
                             // Array of all valid storeID 
                             const values = [
                                 "all", "S013343", "S048150", "S058118", "S062214", "S064089", "S068548", "S080157", "S122017", "S147185", "S216043",
-                                "S263879", "S276746", "S302800", "S351225", "S361257", "S370494", "S396799", "S449313", "S476770", "S486166", "S490972", 
-                                "S505400", "S588444", "S606312", "S669665","S688745", "S750231", "S799887", "S817950", "S872983", "S918734", "S948821"
+                                "S263879", "S276746", "S302800", "S351225", "S361257", "S370494", "S396799", "S449313", "S476770", "S486166", "S490972",
+                                "S505400", "S588444", "S606312", "S669665", "S688745", "S750231", "S799887", "S817950", "S872983", "S918734", "S948821"
                             ];
-                    
+
                             // Reference to the dropdown element
                             const dropdown = document.getElementById('storeSelection');
-                    
+
                             // Populate the dropdown with options
                             values.forEach(value => {
                                 const option = document.createElement('option');
@@ -398,37 +436,42 @@
             <div class="loadingTable">Loading...</div>
             <table id="storeLocationsTable">
                 <thead>
-                <tr>
-                    <th>Number of Stores</th>
-                    <th>Total Revenue in $</th>
-                    <th>Total Units Sold</th>
-                </tr>
-                <tr>
-                    <td>32</td>
-                    <td>1000</td>
-                    <td>100</td>
-                </tr>
-                <tr>
-                    <th>Number of Stores in State</th>
-                    <th>Total Revenue by State in $</th>
-                    <th>Total Units Sold by State</th>
-                </tr>
-                <tr>
-                    <td>CA: 32</td>
-                    <td>CA: 1000</td>
-                    <td>CA: 100</td>
-                </tr>
-                <tr>
-                    <td>NV: 32</td>
-                    <td>NV: 1000</td>
-                    <td>NV: 100</td>
+                    <tr>
+                        <th>Number of Stores</th>
+                        <th>Total Revenue in $</th>
+                        <th>Total Units Sold</th>
+                    </tr>
+                    <tr>
+                        <td>32</td>
+                        <td><b><span id="totalRevenueFix"></span></b></td>
+                        <td><b><span id="totalUnitsFix"></span></b></td>
+                    </tr>
+                    <tr>
+                        <th>Number of Stores in State</th>
+                        <th>Total Revenue by State in $</th>
+                        <th>Total Units Sold by State</th>
+                    </tr>
+                    <tr>
+                        <td><b>CA:</b> 17</td>
+                        <td><b>CA:</b> <span id="revenueCA"></span> </td>
+                        <td><b>CA:</b> <span id="unitsCA"></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>NV:</b> 13</td>
+                        <td><b>NV:</b> <span id="revenueNV"></span></td>
+                        <td><b>NV:</b> <span id="unitsNV"></span></td>
 
-                </tr>
-                <tr>
-                    <td>UT: 32</td>
-                    <td>UT: 1000</td>
-                    <td>UT: 100</td>
-                </tr>
+                    </tr>
+                    <tr>
+                        <td><b>UT:</b> 1</td>
+                        <td><b>UT:</b> <span id="revenueUT"></span></td>
+                        <td><b>UT:</b> <span id="unitsUT"></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>AZ:</b> 1</td>
+                        <td><b>AZ:</b> <span id="revenueAZ"></span></td>
+                        <td><b>AZ:</b> <span id="unitsAZ"></span></td>
+                    </tr>
                 </thead>
                 <tbody>
 
@@ -440,7 +483,7 @@
             <!--The Selector to Change the Values of choice Table-->
             <div class="dropdown-container">
                 <div class="dropdown-group">
-                    <label class="group-title">View Settings</label>
+                    <label class="group-title" for="view">View Settings</label>
                     <select class="dropdown" id="view">
                         <option value="completeView">Complete View</option>
                         <option value="yearView">Year View</option>
@@ -489,36 +532,50 @@
             <div class="loadingTable">Loading...</div>
             <table id="table-choice-container">
                 <thead>
-                <tr>
-                    <th>Total Revenue in $</th>
-                    <th>Total Units Sold</th>
-                </tr>
-                <tr>
-                    <td>1000</td>
-                    <td>100</td>
-                </tr>
-                <tr>
-                    <th>Total Revenue by State in $</th>
-                    <th>Total Units Sold by State</th>
-                </tr>
-                <tr>
-                    <td>CA: 1000</td>
-                    <td>CA: 100</td>
-                </tr>
-                <tr>
-                    <td>NV: 1000</td>
-                    <td>NV: 100</td>
+                    <tr>
+                        <th>Total Revenue in $</th>
+                        <th>Total Units Sold</th>
+                    </tr>
+                    <tr>
+                        <td><b><span id="totalRevenueChoice"></span></b></td>
+                        <td><b><span id="totalUnitsChoice"></span></b></td>
+                    </tr>
+                    <tr>
+                        <th>Total Revenue by State in $</th>
+                        <th>Total Units Sold by State</th>
+                    </tr>
+                    <tr>
+                        <td><b>CA:</b> <span id="changableRevenueCA"></span> </td>
+                        <td><b>CA:</b> : <span id="changableUnitsCA"></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>NV:</b> <span id="changableRevenueNV"></span></td>
+                        <td><b>NV:</b> <span id="changableUnitsNV"></span></td>
 
-                </tr>
-                <tr>
-                    <td>UT: 1000</td>
-                    <td>UT: 100</td>
-                </tr>
+                    </tr>
+                    <tr>
+                        <td><b>UT:</b> <span id="changableRevenueUT"></span></td>
+                        <td><b>UT:</b> <span id="changableUnitsUT"></span></td>
+                    </tr>
+                    <tr>
+                        <td><b>AZ:</b> <span id="changableRevenueAZ"></span></td>
+                        <td><b>AZ:</b> <span id="changableUnitsAZ"></span></td>
+                    </tr>
                 </thead>
                 <tbody>
-                <!-- Rows will be added here by JavaScript -->
+                    <!-- Rows will be added here by JavaScript -->
                 </tbody>
             </table>
+        </div>
+
+        <div class="noteField">
+            <h3>Notes</h3>
+            <div class="save-button-container">
+                <button id="saveNote" onclick="saveText()">Save Note</button>
+                <button id="saveGraphs" onclick="saveGraphs()">Save Graphs</button>
+            </div>
+            <textarea id="noteField" placeholder="Enter notes here..."></textarea>
+
         </div>
     </div>
 
@@ -532,17 +589,17 @@
 
                 <div class="graph-header">
                     <label id="bigGraphTitle" style="padding: 7px;">Graph Title</label>
-                
+
                     <div class="dropdown-group">
 
                         <!-- Loading indicator -->
                         <div class=loadingDiv style="display: none;" id="bigGraphLoading">Data is loading...</div>
-    
+
                         <select class="dropdown" id="chartType1">
                             <option value="line">Line Chart</option>
                             <option value="bar">Bar Chart</option>
                         </select>
-            
+
                         <select class="dropdown" id="grouping1">
                             <option value=defaultGrouping>Default Grouping</option>
                             <option value=reversedGrouping>Reversed Grouping</option>
@@ -569,20 +626,20 @@
 
                         <!-- Loading indicator -->
                         <div class=loadingDiv style="display: none;" id="graphLoading1">Data is loading...</div>
-                            
+
                         <select class="dropdown" id="chartType2">
                             <option value="line">Line Chart</option>
                             <option value="bar">Bar Chart</option>
                         </select>
-            
+
                         <select class="dropdown" id="grouping2">
                             <option value=defaultGrouping>Default Grouping</option>
                             <option value=reversedGrouping>Reversed Grouping</option>
                         </select>
-                        
+
                     </div>
                 </div>
-                
+
                 <canvas id="graphCanvas1" width="400" height="170"></canvas>
                 <!-- The chart will be generated here by JavaScript -->
             </div>
@@ -597,12 +654,12 @@
 
                         <!-- Loading indicator -->
                         <div class=loadingDiv style="display: none;" id="graphLoading2">Data is loading...</div>
-                            
+
                         <select class="dropdown" id="chartType3">
                             <option value="bar">Bar Chart</option>
                             <option value="line">Line Chart</option>
                         </select>
-            
+
                         <select class="dropdown" id="grouping3">
                             <option value=reversedGrouping>Group by Pizza</option>
                             <option value=defaultGrouping>Group by Size</option>
@@ -617,7 +674,7 @@
                             <option value=false>not separated per size</option>
                             <option value=true>separated per size</option>
                         </select>
-                        
+
                     </div>
                 </div>
 
@@ -638,18 +695,21 @@
 
                         <!-- Loading indicator -->
                         <div class=loadingDiv style="display: none;" id="graphLoading3">Data is loading...</div>
-     
+
                         <select class="dropdown" id="chartType4">
                             <option value="bar">Bar Chart</option>
                             <option value="line">Line Chart</option>
                         </select>
-            
+
                         <select class="dropdown" id="grouping4">
                             <option value=defaultGrouping>Default Grouping</option>
                             <option value=reversedGrouping>Reversed Grouping</option>
                         </select>
-                        
+
                     </div>
+                </div>
+                <div class="pie-chart">
+                    <div id="pie-chart" class="chart-container"></div>
                 </div>
 
                 <canvas id="graphCanvas3" width="400" height="180"></canvas>
@@ -665,17 +725,17 @@
 
                         <!-- Loading indicator -->
                         <div class=loadingDiv style="display: none;" id="graphLoading4">Data is loading...</div>
-        
+
                         <select class="dropdown" id="chartType5">
                             <option value="line">Line Chart</option>
                             <option value="bar">Bar Chart</option>
                         </select>
-            
+
                         <select class="dropdown" id="grouping5">
                             <option value=defaultGrouping>Default Grouping</option>
                             <option value=reversedGrouping>Reversed Grouping</option>
                         </select>
-                        
+
                     </div>
                 </div>
 
@@ -690,12 +750,12 @@
             </div>
 
         </div>
-        
-        
+
+
         <!-- <iframe src="Frontend/over-view.html" width="100%" height="4000px" id="over-view"></iframe> -->
-        <iframe src="/Frontend/Test123.html" width="100%" height="5000px" id="storeInfoNew"></iframe>
+        <iframe src="/Frontend/Test123.html" width="100%" height="8000px" id="storeInfoNew"></iframe>
         <iframe src="/jabrTesting.html" width="100%" height="5000px" id="jabrailFunctions"></iframe>
-    
+
     </div>
 </body>
 

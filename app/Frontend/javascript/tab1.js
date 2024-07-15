@@ -319,7 +319,7 @@ $(document).ready(function () {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
 
-                    createChart(response.data, 'graphCanvas3', chartType, 'reversedGrouping');
+                    pieChartStores(response.data);
 
                 } else {
                     $('#graphCanvas3').html('<p>' + response.message + '</p>');

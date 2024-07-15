@@ -478,6 +478,57 @@ $(document).ready(function () {
                 }
             });
         }
+        function fetchCustomerSpent() {
+            var customerID = $('#customerDropdown').val();
+            
+            if (!customerID) {
+                alert('Please select a customer');
+                return;
+            }
+        
+            $.ajax({
+                url: '/BackendTestingJabrail/customersSpent.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { customerID: customerID },
+                success: function(response) {
+                    console.log('Customer spent data response:', response);
+                    const tableBody = $('#customerSpentTable tbody');
+                    tableBody.empty();
+        
+                    if (response.success && response.data) {
+                        response.data.forEach(function(item) {
+                            if (item.data && item.data.length > 0) {
+                                item.data.forEach(function(entry) {
+                                    const row = $('<tr>');
+                                    row.append($('<td>').text(item.customerID));
+                                    row.append($('<td>').text(entry.orderCount));
+                                    row.append($('<td>').text(entry.totalItems));
+                                    row.append($('<td>').text(entry.totalSpent));
+                                    row.append($('<td>').text(entry.averageItemPrice));
+                                    row.append($('<td>').text(entry.averageOrderValue));
+                                    tableBody.append(row);
+                                });
+                            } else {
+                                const row = $('<tr>');
+                                row.append($('<td>').text(item.customerID));
+                                row.append($('<td>').text('N/A'));
+                                row.append($('<td>').text('N/A'));
+                                row.append($('<td>').text('N/A'));
+                                row.append($('<td>').text('N/A'));
+                                row.append($('<td>').text('N/A'));
+                                tableBody.append(row);
+                            }
+                        });
+                    } else {
+                        tableBody.html('<tr><td colspan="6">' + (response.message || 'No data available') + '</td></tr>');
+                    }
+                },
+                error: function() {
+                    $('#customerSpentTable tbody').html('<tr><td colspan="6">Error fetching data</td></tr>');
+                }
+            });
+        }
     
         
         
@@ -554,6 +605,7 @@ $(document).ready(function () {
     });
     $('#customerDropdown').change(function () {
         fetchCustomerOrdersInfo();
+        fetchCustomerSpent();
     });
     
     $('#customerDropdown, #viewDropdown, #distance').change(fetchCustomerStoreData);

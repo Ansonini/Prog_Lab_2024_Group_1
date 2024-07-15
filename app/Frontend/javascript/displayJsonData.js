@@ -35,7 +35,7 @@ function displayJsonTable(data, tableContainerId) {
 
 
 // Create a line or bar chart out of any json file 
-function createChart(data, chartID, chartType, grouping = "defaultGrouping", isBumpChart = false) {
+function createChart(data, chartID, chartType, grouping = "defaultGrouping", isBumpChart = false, stacked = false) {
     var canvas = document.getElementById(chartID);
     var ctx = canvas.getContext('2d');
 
@@ -48,6 +48,12 @@ function createChart(data, chartID, chartType, grouping = "defaultGrouping", isB
     }
     var labels, datasets;
     if ("data" in data[0]) {
+        if (stacked == 'true') {
+            stacked == true
+        } else {
+            stacked = false
+        }
+
 
         if (grouping == 'reversedGrouping') {
             var flatenedData = flattenData(data);
@@ -129,6 +135,7 @@ function createChart(data, chartID, chartType, grouping = "defaultGrouping", isB
             scales: {
                 x: {
                     type: 'category',
+                    stacked: stacked,
                     title: {
                         display: true,
                         text: xLabel
@@ -137,6 +144,7 @@ function createChart(data, chartID, chartType, grouping = "defaultGrouping", isB
                 y: {
                     beginAtZero: true,
                     reverse: isBumpChart,
+                    stacked: stacked,
                     title: {
                         display: true,
                         text: yLabel
@@ -208,15 +216,15 @@ function getColor(datasetLabel, opacity, multipleDataset, chartType = 'default')
         'S918734': 'rgba(255, 99, 132, ',
         'S948821': 'rgba(54, 162, 235, ',
         // for the pizza
-        "Margherita Pizza": "rgba(255, 99, 132, ",
-        "Pepperoni Pizza": "rgba(54, 130, 235, ",
-        "Hawaiian Pizza": "rgba(255, 206, 86, ",
+        "Margherita Pizza": "rgba(255, 0, 0, ",
+        "Pepperoni Pizza": "rgba(255, 123, 46, ",
+        "Hawaiian Pizza": "rgba(255, 206, 10, ",
         "Meat Lover's Pizza": "rgba(75, 192, 192, ",
-        "Veggie Pizza": "rgba(34, 139, 34, ",
-        "BBQ Chicken Pizza": "rgba(255, 159, 64, ",
-        "Buffalo Chicken Pizza": "rgba(255, 99, 71, ",
+        "Veggie Pizza": "rgba(34, 200, 34, ",
+        "BBQ Chicken Pizza": "rgba(160, 81, 36, ",
+        "Buffalo Chicken Pizza": "rgba(40, 83, 255, ",
         "Sicilian Pizza": "rgba(123, 40, 238, ",
-        "Oxtail Pizza": "rgba(153, 102, 255, ",
+        "Oxtail Pizza": "rgba(255, 29, 251, ",
         // for pizza size
         "Smale": "rgba(rgba(75, 192, 192, ",
         "Medium": "rgba(54, 130, 235, ",
@@ -400,6 +408,7 @@ function createHeatMap(jsonData, chartID) {
 
     const minValue = Math.min(...jsonData.map(obj => parseInt(obj.v, 10)));
     const maxValue = Math.max(...jsonData.map(obj => parseInt(obj.v, 10)));
+    const hightestTransparency = 0.1*(maxValue - minValue);
 
     const data = {
         datasets: [{
@@ -407,12 +416,12 @@ function createHeatMap(jsonData, chartID) {
             data: heatmapData,
             backgroundColor(ctx) {
                 const value = ctx.dataset.data[ctx.dataIndex].v;
-                const alpha = (value - minValue) / (maxValue - minValue);
+                const alpha = (hightestTransparency+value - minValue) / (hightestTransparency+maxValue - minValue);
                 return `rgba(34, 139, 34, ${alpha})`;
             },
             borderColor(ctx) {
                 const value = ctx.dataset.data[ctx.dataIndex].v;
-                const alpha = (value - minValue) / (maxValue - minValue);
+                const alpha = (hightestTransparency+value - minValue) / (hightestTransparency+maxValue - minValue);
                 return `rgba(44, 149, 44, ${alpha})`;
             },
             borderWidth: 1,
@@ -460,5 +469,47 @@ function createHeatMap(jsonData, chartID) {
         type: 'matrix',
         data: data,
         options: options
+    });
+}
+
+// Function to get the top 4 objects with the biggest 'v' values, ignoring duplicates
+function getTop4Unique(data, topAmount) {
+    // Parse 'v' as a number for comparison
+    data.forEach(item => item.v = parseInt(item.v, 10));
+
+    // Sort the array in descending order based on 'v'
+    data.sort((a, b) => b.v - a.v);
+
+    // Use a Set to keep track of unique 'Pizza 1' values
+    const uniqueSet = new Set();
+    const top4 = [];
+
+    // Loop through the sorted array and pick top 4 unique items
+    for (const item of data) {
+        if (!uniqueSet.has(item.v)) {
+            uniqueSet.add(item.v);
+            top4.push(item);
+        }
+        if (top4.length === topAmount) {
+            break;
+        }
+    }
+
+    // Map the objects to the new format
+    const top4Mapped = top4.map(item => ({
+        "Pizza 1": item.x,
+        "Pizza 2": item.y,
+        "Pair sold": item.v
+    }));
+
+    return top4Mapped;
+}
+
+// Function to adjust 'v' values where 'x' is the same as 'y'
+function adjustDiagonal(data) {
+    data.forEach(item => {
+        if (item.x === item.y) {
+            item.v = (parseInt(item.v, 10) / 2).toString();
+        }
     });
 }

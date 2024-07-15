@@ -1,16 +1,28 @@
 $(document).ready(function () {
-    const bodyContainer = document.getElementById('bodyContainer');
-    bodyContainer.style.borderTopLeftRadius = '20px';
+   
+    $('#bigGraph').hide();
+    $('#graph3And4').hide();
+    $('#graph1And2').hide();
+    $('#storeInfoNew').show();
 
-    var ajaxFile1 = 'getCustomerCoordinatesPerStore';
-    var ajaxFile2 = 'getSalesPerTimeframe';
-    var ajaxFile3 = 'getSalesPerStorePerMonth';
-    var ajaxFile4 = 'getSalesPerPizza';
-    var ajaxFile5 = 'getSalesPerTimeframe';
+
+
+    var ajaxFile1 = 'getPizzaHeatMap';
+    document.getElementById('bigGraphTitle').textContent = 'Sales per pizza overtime';
+
+    var ajaxFile2 = 'getPizzaHeatMap';
+    document.getElementById('graphTitle1').textContent = 'Total sales per pizza during chosen timeframe';
+
+    var ajaxFile3 = 'getSalesPerPizza';
+    document.getElementById('graphTitle2').textContent = 'Pizza ranking for the chosen timeframe';
+
+    var ajaxFile4 = '';
+    var ajaxFile5 = '';
 
 
     // Function to fetch and display data
     function fetchData() {
+
         var view = $('#view').val();
         var mode = $('#mode').val();
         var year = $('#year').val();
@@ -19,8 +31,8 @@ $(document).ready(function () {
 
     
         // empty the table of previous value each time a dropdown gets changed
-        $('#tablePerTime').empty();
-        $('#tablePerStore').empty();
+        $('#table4').empty();
+        $('#table5').empty();
 
         // check view, show/hide relevant dropdowns and check if the relevant dropdown are set 
         var ready = false
@@ -63,7 +75,7 @@ $(document).ready(function () {
             currentAjaxRequest1.abort();
         }
 
-        var canvas = document.getElementById('graphCanvas1');
+        var canvas = document.getElementById('bigGraphCanvas');
         var ctx = canvas.getContext('2d');
 
     // Get the chart instance associated with the canvas
@@ -84,10 +96,10 @@ $(document).ready(function () {
         var chartType = $('#chartType1').val();
         var storeSelection = $('#storeSelection').val();
 
-        $('#graphLoading1').show(); // Show loading indicator for first table
+        $('#bigGraphLoading').show(); // Show loading indicator for first table
         // ajax request for the first data
         currentAjaxRequest1 = $.ajax({
-            url: '/ajax/'+ ajaxFile1 +'.php',
+            url: '/BackendTestingJabrail/pizzaSalesPerPlacement.php',
             type: 'POST',
             data: {
                 view: view,
@@ -102,7 +114,68 @@ $(document).ready(function () {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
                     console.log(grouping);
-                    createChart(response.data, 'graphCanvas1', chartType, grouping);
+                    createChart(response.data, 'bigGraphCanvas', chartType, grouping);
+                } else {
+                    $('#bigGraphCanvas').html('<p>' + response.message + '</p>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log('AJAX Error:', status, error);
+            },
+            complete: function () {
+                $('#bigGraphLoading').hide(); // Hide loading indicator when request is complete
+            }
+        });
+
+        
+    }
+
+    function fetchDataGraph2() {
+
+        // Abort previous call if it isn't finished yet
+        if (currentAjaxRequest2) {
+            currentAjaxRequest2.abort();
+        }
+
+        // Remove previous chart
+        var canvas = document.getElementById('graphCanvas1');
+        var ctx = canvas.getContext('2d');
+
+    // Get the chart instance associated with the canvas
+        var chartInstance = Chart.getChart(ctx);
+
+        // Check if the chart instance exists and destroy it if it does
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        var view = $('#view').val();
+        var mode = $('#mode').val();
+        var year = $('#year').val();
+        var month = $('#month').val();
+        var week = $('#week').val();
+        var grouping = $('#grouping2').val();
+        var chartType = $('#chartType2').val();
+        var storeSelection = $('#storeSelection').val();
+
+        $('#graphLoading1').show(); // Show loading indicator for first table
+                // ajax request for the first data
+        currentAjaxRequest2 = $.ajax({
+            url: '/ajax/'+ ajaxFile2 +'.php',
+            type: 'POST',
+            data: {
+                view: view,
+                mode: mode,
+                year: year,
+                month: month,
+                week: week,
+                perPizza: true,
+                storeSelection: storeSelection
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Call the functions from to display the table and the chart
+                    createChart(response.data, 'graphCanvas1', chartType, grouping, true);
                 } else {
                     $('#graphCanvas1').html('<p>' + response.message + '</p>');
                 }
@@ -115,14 +188,13 @@ $(document).ready(function () {
             }
         });
 
-        
     }
 
-    function fetchDataGraph2() {
+    function fetchDataGraph3() {
 
         // Abort previous call if it isn't finished yet
-        if (currentAjaxRequest2) {
-            currentAjaxRequest2.abort();
+        if (currentAjaxRequest3) {
+            currentAjaxRequest3.abort();
         }
 
         // Remove previous chart
@@ -143,14 +215,14 @@ $(document).ready(function () {
         var month = $('#month').val();
         var week = $('#week').val();
         var perSize = $('#perSize').val();
-        var grouping = $('#grouping2').val();
-        var chartType = $('#chartType2').val();
+        var grouping = $('#grouping3').val();
+        var chartType = $('#chartType3').val();
         var storeSelection = $('#storeSelection').val();
 
         $('#graphLoading2').show(); // Show loading indicator for first table
                 // ajax request for the first data
-        currentAjaxRequest2 = $.ajax({
-            url: '/ajax/'+ ajaxFile2 +'.php',
+        currentAjaxRequest3 = $.ajax({
+            url: '/ajax/'+ ajaxFile3 +'.php',
             type: 'POST',
             data: {
                 view: view,
@@ -159,7 +231,6 @@ $(document).ready(function () {
                 month: month,
                 week: week,
                 perSize:perSize,
-                perPizza: true,
                 storeSelection: storeSelection
             },
             success: function (response) {
@@ -177,67 +248,6 @@ $(document).ready(function () {
                 $('#graphLoading2').hide(); // Hide loading indicator when request is complete
             }
         });
-
-    }
-
-    function fetchDataGraph3() {
-
-        // Abort previous call if it isn't finished yet
-        if (currentAjaxRequest3) {
-            currentAjaxRequest3.abort();
-        }
-
-        // Remove previous chart
-        var canvas = document.getElementById('graphCanvas3');
-        var ctx = canvas.getContext('2d');
-
-    // Get the chart instance associated with the canvas
-        var chartInstance = Chart.getChart(ctx);
-
-        // Check if the chart instance exists and destroy it if it does
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
-
-        var view = $('#view').val();
-        var mode = $('#mode').val();
-        var year = $('#year').val();
-        var month = $('#month').val();
-        var week = $('#week').val();
-        var perSize = $('#perSize').val();
-        var grouping = $('#grouping3').val();
-        var chartType = $('#chartType3').val();
-        var storeSelection = $('#storeSelection').val();
-
-        $('#graphLoading3').show(); // Show loading indicator for first table
-                // ajax request for the first data
-        currentAjaxRequest3 = $.ajax({
-            url: '/ajax/'+ ajaxFile3 +'.php',
-            type: 'POST',
-            data: {
-                view: view,
-                mode: mode,
-                year: year,
-                month: month,
-                week: week,
-                perSize:perSize,
-                storeSelection: storeSelection
-            },
-            success: function (response) {
-                if (response.success) {
-                    // Call the functions from to display the table and the chart
-                    createChart(response.data, 'graphCanvas3', chartType, grouping);
-                } else {
-                    $('#graphCanvas3').html('<p>' + response.message + '</p>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log('AJAX Error:', status, error);
-            },
-            complete: function () {
-                $('#graphLoading3').hide(); // Hide loading indicator when request is complete
-            }
-        });
     }
 
     function fetchDataGraph4() {
@@ -248,7 +258,7 @@ $(document).ready(function () {
         }
 
         // Remove previous chart
-        var canvas = document.getElementById('graphCanvas4');
+        var canvas = document.getElementById('graphCanvas3');
         var ctx = canvas.getContext('2d');
 
     // Get the chart instance associated with the canvas
@@ -270,7 +280,7 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
 
-        $('#graphLoading4').show(); // Show loading indicator for second table 
+        $('#graphLoading3').show(); // Show loading indicator for second table 
             // ajax request for the first data
         currentAjaxRequest4 = $.ajax({
             url: '/ajax/'+ ajaxFile4 +'.php',
@@ -281,25 +291,23 @@ $(document).ready(function () {
                 year: year,
                 month: month,
                 week: week,
-                perSize:perSize,
                 storeSelection: storeSelection
 
             },
             success: function (response) {
                 if (response.success) {
-                    // Call the functions from to display the table and the chart
-                    displayJsonTable(response.data, "table4");
 
-                    createChart(response.data, 'graphCanvas4', chartType, grouping);
+                    createChart(response.data, 'graphCanvas3', chartType, grouping, );
+
                 } else {
-                    $('#graphCanvas4').html('<p>' + response.message + '</p>');
+                    $('#graphCanvas3').html('<p>' + response.message + '</p>');
                 }
             },
             error: function (xhr, status, error) {
                 console.log('AJAX Error:', status, error);
             },
             complete: function () {
-                $('#graphLoading4').hide(); // Hide loading indicator when request is complete
+                $('#graphLoading3').hide(); // Hide loading indicator when request is complete
             }
         });
     }
@@ -312,7 +320,7 @@ $(document).ready(function () {
         }
 
         // Remove previous chart
-        var canvas = document.getElementById('graphCanvas5');
+        var canvas = document.getElementById('graphCanvas4');
         var ctx = canvas.getContext('2d');
 
         // Get the chart instance associated with the canvas
@@ -334,7 +342,7 @@ $(document).ready(function () {
         var storeSelection = $('#storeSelection').val();
 
 
-        $('#graphLoading5').show(); // Show loading indicator for second table 
+        $('#graphLoading4').show(); // Show loading indicator for second table 
             // AJAX request for the second data
         currentAjaxRequest5 = $.ajax({
             url: '/ajax/'+ ajaxFile5 +'.php',
@@ -349,19 +357,20 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success) {
-                    // Call the function from showTable.js
-                    displayJsonTable(response.data, "table5");
 
-                    createChart(response.data, 'graphCanvas5', chartType, grouping, true);
+                    createChart(response.data, 'graphCanvas4', chartType, grouping, true);
+
                 } else {
-                    $('#graphCanvas5').html('<p>' + response.message + '</p>');
+
+                    $('#graphCanvas4').html('<p>' + response.message + '</p>');
+
                 }
             },
             error: function (xhr, status, error) {
                 console.log('AJAX Error:', status, error);
             },
             complete: function () {
-                $('#graphLoading5').hide(); // Hide loading indicator when request is complete
+                $('#graphLoading4').hide(); // Hide loading indicator when request is complete
             }
         });
     }
@@ -369,10 +378,10 @@ $(document).ready(function () {
     
 
     // Trigger fetchData when any dropdown value changes
-    $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType, #perSize, #storeSelection').change(fetchData);
+    $('#view, #mode, #year, #month, #week, #endDate, #startDate, #timeframeType, #storeSelection').change(fetchData);
     $('#chartType1, #grouping1').change(fetchDataGraph1);
     $('#chartType2, #grouping2').change(fetchDataGraph2);
-    $('#chartType3, #grouping3').change(fetchDataGraph3);
+    $('#chartType3, #grouping3, #perSize').change(fetchDataGraph3);
     $('#chartType4, #grouping4').change(fetchDataGraph4);
     $('#chartType5, #grouping5').change(fetchDataGraph5);
 

@@ -1,10 +1,16 @@
 $(document).ready(function () {
     
     //diplay option graph
+
     $('#bigGraph').hide();
+
+    $('#graph1And2').show();
+
     $('#graph3And4').show();
     $('#map').show();
     $('#graphCanvas4').hide();
+    
+    $('#storeInfoNew').hide();
 
 
 
@@ -24,7 +30,7 @@ $(document).ready(function () {
     var ajaxFile3 = 'getSalesPerStore';
     document.getElementById('graphTitle2').textContent = 'Sales per store during the chosen time frame';
 
-    var ajaxFile4 = '';
+    var ajaxFile4 = 'getSalesPerPizza';
 
     var ajaxFile5 = 'getCustomerCoordinatesPerStore';
     document.getElementById('graphTitle4').textContent = 'Map of Store and Customers';
@@ -301,16 +307,16 @@ $(document).ready(function () {
                 year: year,
                 month: month,
                 week: week,
-                perSize:perSize,
+                perSize: true,
                 storeSelection: storeSelection
 
             },
             success: function (response) {
                 if (response.success) {
                     // Call the functions from to display the table and the chart
-                    displayJsonTable(response.data, "table4");
 
                     createChart(response.data, 'graphCanvas3', chartType, grouping);
+
                 } else {
                     $('#graphCanvas3').html('<p>' + response.message + '</p>');
                 }
@@ -365,7 +371,7 @@ $(document).ready(function () {
                 year: year,
                 month: month,
                 week: week,
-                rankingSize: 10
+                storeSelection: storeSelection
             },
             success: function (response) {
                 if (response.success) {
@@ -403,6 +409,9 @@ $(document).ready(function () {
                 .openPopup();
         });
     }
+
+
+
 
     
 

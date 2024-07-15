@@ -521,135 +521,20 @@ function storesValueBarChart(data) {
 }
 
 // Showing the percentage of total Sales/Revenue for each store in comparison to the total sales in the selected time frame
-function storesPercentBarChart(data) {
-    var keys = Object.keys(data[0]);
-    var storeData = keys[0];
-    var storeID = keys[1];
-
-    const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
-
-    var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
-    if (existingChart) {
-        echarts.dispose(existingChart);
-    }
-
-    var storeDataWithStoreID = data.map(item => ({
-        value: item[storeID],
-        category: item[storeData]
-    }));
-
-    storeDataWithStoreID.sort((a, b) => b.value - a.value);
-
-    var totalValue = storeDataWithStoreID.reduce((sum, item) => sum + parseFloat(item.value), 0);
-
-    var sortedStoreData = storeDataWithStoreID.map(item => {
-        return parseFloat(((item.value / totalValue) * 100).toFixed(2));
-    });
-
-    var sortedStoreID = storeDataWithStoreID.map(item => item.category);
-
-    var yAxisLabel;
-    if (document.getElementById('data-display').value === 'units') {
-        yAxisLabel = 'Percentage of Units Sold';
-    } else {
-        yAxisLabel = 'Percentage of Revenue';
-    }
-
-    var option = {
-        title: {
-            text: 'Sales Data'
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            },
-            formatter: function (params) {
-                var total = 0;
-                params.forEach(function (item) {
-                    total += item.value;
-                });
-                return params[0].name + '<br>' + params.map(function (item) {
-                    return item.marker + item.seriesName + ' % : ' + item.value.toFixed(2) + '%';
-                })//.join('<br>') + '<br>Total: ' + total.toFixed(2) + '%';
-            }
-        },
-
-        grid: {
-            left: '8%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            data: sortedStoreID,
-            name: 'Store Names',
-            nameLocation: 'middle',
-            nameGap: 50,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}',
-                rotate: 45
-            },
-        },
-        yAxis: {
-            type: 'value',
-            name: yAxisLabel,
-            nameLocation: 'end',
-            nameGap: 10,
-            nameTextStyle: {
-                fontSize: 16
-            },
-            axisLabel: {
-                formatter: '{value}%',
-                rotate: 45,
-                padding: [0, 20, 0, 0]
-            }
-        },
-        series: [{
-            name: 'Sales',
-            type: 'bar',
-            data: sortedStoreData,
-            itemStyle: {
-                color: 'rgba(75, 192, 192, 0.8)'
-            }
-        }]
-    };
-
-    sortedBarchartStores.setOption(option);
-    sortedBarchartStores.resize({width: 1000, height: 500});
-}
-
-// A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
 function stackedBarChart(data) {
     const barChart = echarts.init(document.getElementById('stacking-barchart-pizza'));
 
-    // Process data
-    const processedData = data.map(pizza => ({
-        name: pizza.pizzaName,
-        value: pizza.data.reduce((sum, size) => sum + parseInt(size.unitsSold), 0)
-    }));
+    // Extract unique pizza sizes and names
+    const pizzaSizes = ['Extra Large', 'Large', 'Medium', 'Small'];
+    const pizzaNames = data.map(pizza => pizza.pizzaName);
 
-    processedData.sort((a, b) => b.value - a.value);
-
+    // Color map for sizes
     const colorMap = {
-        "Margherita Pizza": 'rgba(255, 99, 132)',
-        "Pepperoni Pizza": "rgba(54, 130, 235)",
-        "Hawaiian Pizza": "rgba(255, 206, 86)",
-        "Meat Lover's Pizza": "rgba(75, 192, 192)",
-        "Veggie Pizza": "rgba(34, 139, 34)",
-        "BBQ Chicken Pizza": "rgba(255, 159, 64)",
-        "Buffalo Chicken Pizza": "rgba(255, 99, 71)",
-        "Sicilian Pizza": "rgba(123, 40, 238)",
-        "Oxtail Pizza": "rgba(153, 102, 255)",
+        "Extra Large": '#4e79a7',
+        "Large": '#59a14f',
+        "Medium": '#edc949',
+        "Small": '#e15759'
     };
-
-    // Prepare data for stacked bar chart
-    const pizzaNames = processedData.map(item => item.name);
-    const pizzaSizes = data[0].data.map(item => item.pizzaSize);
 
     const series = pizzaSizes.map(size => ({
         name: size,
@@ -657,6 +542,7 @@ function stackedBarChart(data) {
         stack: 'total',
         label: {
             show: true,
+            position: 'inside',
             formatter: '{c}'
         },
         emphasis: {
@@ -664,10 +550,82 @@ function stackedBarChart(data) {
         },
         data: data.map(pizza => {
             const sizeData = pizza.data.find(item => item.pizzaSize === size);
-            return parseInt(sizeData ? sizeData.unitsSold : 0);
+            return sizeData ? parseInt(sizeData.unitsSold) : 0;
         }),
         itemStyle: {
-            color: (params) => colorMap[pizzaNames[params.dataIndex]] || '#808080'
+            color: colorMap[size]
+        }
+    }));
+
+    const option = {
+        title: {
+            text: 'Pizza Sales by Size',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {
+            data: pizzaSizes,
+            top: '5%'
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: pizzaNames,
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: series
+    };
+
+    barChart.setOption(option);
+    barChart.resize({width: 1000, height: 500});
+}
+
+// A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
+function stackedBarChart(data) {
+    const barChart = echarts.init(document.getElementById('stacking-barchart-pizza'));
+
+    // Extract unique pizza sizes and names
+    const pizzaSizes = [...new Set(data.flatMap(pizza => pizza.data.map(item => item.pizzaSize)))];
+    const pizzaNames = data.map(pizza => pizza.pizzaName);
+
+    // Color map for sizes
+    const colorMap = {
+        "Extra Large": '#4e79a7',
+        "Large": '#59a14f',
+        "Medium": '#edc949',
+        "Small": '#e15759'
+    };
+
+    const series = pizzaSizes.map(size => ({
+        name: size,
+        type: 'bar',
+        stack: 'total',
+        label: {
+            show: true,
+            position: 'inside',
+            formatter: '{c}'
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: data.map(pizza => {
+            const sizeData = pizza.data.find(item => item.pizzaSize === size);
+            return sizeData ? parseInt(sizeData.unitsSold) : 0;
+        }),
+        itemStyle: {
+            color: colorMap[size] || '#808080'
         }
     }));
 

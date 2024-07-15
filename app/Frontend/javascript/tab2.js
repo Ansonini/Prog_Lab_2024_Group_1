@@ -8,9 +8,14 @@ $(document).ready(function () {
 
     //diplay option graph
     $('#bigGraph').show();
+
+    $('#graph1And2').show();
+
     $('#graph3And4').show();
-    $('#map').hide();
+    $('#map'). hide();
     $('#graphCanvas4').show();
+    
+    $('#storeInfoNew').hide();
 
 
 
@@ -23,7 +28,9 @@ $(document).ready(function () {
     var ajaxFile3 = 'getSalesPerPizza';
     document.getElementById('graphTitle2').textContent = 'Pizza ranking for the chosen timeframe';
 
-    var ajaxFile4 = '';
+    var ajaxFile4 = 'getPizzaHeatMap';
+    document.getElementById('graphTitle3').textContent = 'Pizza bought together';
+    
     var ajaxFile5 = '';
 
 
@@ -161,7 +168,6 @@ $(document).ready(function () {
         var year = $('#year').val();
         var month = $('#month').val();
         var week = $('#week').val();
-        var perSize = $('#perSize').val();
         var grouping = $('#grouping2').val();
         var chartType = $('#chartType2').val();
         var storeSelection = $('#storeSelection').val();
@@ -177,7 +183,6 @@ $(document).ready(function () {
                 year: year,
                 month: month,
                 week: week,
-                perSize:perSize,
                 perPizza: true,
                 storeSelection: storeSelection
             },
@@ -306,7 +311,8 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
 
-                    createChart(response.data, 'graphCanvas3', chartType, grouping, );
+                    createHeatMap(response.data, 'graphCanvas3');
+                    displayJsonTable(response.data,'table4');
 
                 } else {
                     $('#graphCanvas3').html('<p>' + response.message + '</p>');

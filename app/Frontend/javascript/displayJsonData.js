@@ -385,3 +385,80 @@ function groupBy(jsonData, groupByKeyIndex) {
 
     return groupedArray;
 }
+
+
+
+function createHeatMap(jsonData, chartID) {
+    const ctx = document.getElementById(chartID).getContext('2d');
+
+    // Convert the JSON data to the format required by the matrix plugin
+    const heatmapData = jsonData.map(obj => ({
+        x: obj.x,
+        y: obj.y,
+        v: parseInt(obj.v, 10)  // Parse v as an integer
+    }));
+
+    const minValue = Math.min(...jsonData.map(obj => parseInt(obj.v, 10)));
+    const maxValue = Math.max(...jsonData.map(obj => parseInt(obj.v, 10)));
+
+    const data = {
+        datasets: [{
+            label: 'Heatmap Dataset',
+            data: heatmapData,
+            backgroundColor(ctx) {
+                const value = ctx.dataset.data[ctx.dataIndex].v;
+                const alpha = (value - minValue) / (maxValue - minValue);
+                return `rgba(34, 139, 34, ${alpha})`;
+            },
+            borderColor(ctx) {
+                const value = ctx.dataset.data[ctx.dataIndex].v;
+                const alpha = (value - minValue) / (maxValue - minValue);
+                return `rgba(44, 149, 44, ${alpha})`;
+            },
+            borderWidth: 1,
+            width: ctx => ctx.chart.scales.x.getPixelForTick(1) - ctx.chart.scales.x.getPixelForTick(0) - 1,
+            height: ctx => ctx.chart.scales.y.getPixelForTick(1) - ctx.chart.scales.y.getPixelForTick(0) - 1
+        }]
+    };
+
+    const options = {
+        layout: {
+            padding: {
+                right: 20 // Adjust the padding to provide space for x-axis labels
+            }
+        },
+        scales: {
+            x: {
+                type: 'category',
+                labels: [...new Set(heatmapData.map(item => item.x))] // Get unique x labels from heatmapData
+            },
+            y: {
+                type: 'category',
+                labels: [...new Set(heatmapData.map(item => item.y))], // Get unique y labels from heatmapData
+                offset: true
+            }
+        },
+        plugins: {
+            legend: {
+                display: false  // Hide the legend
+            },
+            tooltip: {
+                callbacks: {
+                    title() {
+                        return '';
+                    },
+                    label(context) {
+                        const v = context.dataset.data[context.dataIndex];
+                        return ['x: ' + v.x, 'y: ' + v.y, 'v: ' + v.v];
+                    }
+                }
+            }
+        },
+    };
+
+    new Chart(ctx, {
+        type: 'matrix',
+        data: data,
+        options: options
+    });
+}

@@ -148,7 +148,7 @@ tr:hover {
 
 .chart canvas {
     width: 100% !important;
-    height: 200px !important; /* Control chart height here */
+    height: 150px !important; /* Adjust chart height here to match the desired size */
 }
 
 @media screen and (max-width: 600px) {

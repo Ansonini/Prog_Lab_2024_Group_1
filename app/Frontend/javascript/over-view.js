@@ -124,7 +124,7 @@ $(document).ready(function () {
             // Stacking-Bar-Chart
             $('#loading-stacking-barchart').show();
             $.ajax({
-                url: '../ajax/getSalesPerPizzaOverTime.php',
+                url: '../ajax/getSalesPerPizza.php',
                 type: 'POST',
                 data: {
                     view: view,
@@ -629,30 +629,47 @@ function stackingBarChart(data) {
 
     // Extract pizza names and selling days
     const pizzaNames = data.map(item => item.pizzaName);
-    const sellingDays = data[0].data.map(item => item.sellingDay);
+    const sellingMonth = data[0].map(item => item.sellingMonth);
 
     // Prepare raw data
-    const rawData = data.map(pizza => pizza.data.map(day => parseInt(day.unitsSold)));
-
-    // Calculate total data for each day
-    const totalData = rawData[0].map((_, dayIndex) =>
-        rawData.reduce((sum, pizzaData) => sum + pizzaData[dayIndex], 0)
+    const rawData = data.map(pizza =>
+        pizza.data.map(day => parseInt(day.unitsSold))
     );
 
-    // Prepare series data
-    const series = rawData.map((pizzaData, index) => ({
-        name: pizzaNames[index],
-        type: 'bar',
-        stack: 'total',
-        barWidth: '60%',
-        label: {
-            show: true,
-            formatter: (params) => `${(params.value / totalData[params.dataIndex] * 100).toFixed(2)}%`
-        },
-        data: pizzaData.map((value, i) => (totalData[i] === 0 ? 0 : value / totalData[i]))
-    }));
+    // Calculate total data
+    const totalData = [];
+    for (let i = 0; i < rawData[0].length; ++i) {
+        let sum = 0;
+        for (let j = 0; j < rawData.length; ++j) {
+            sum += rawData[j][i];
+        }
+        totalData.push(sum);
+    }
 
-    const option = {
+    const grid = {
+        left: 100,
+        right: 100,
+        top: 50,
+        bottom: 50
+    };
+
+    const series = pizzaNames.map((name, sid) => {
+        return {
+            name,
+            type: 'bar',
+            stack: 'total',
+            barWidth: '60%',
+            label: {
+                show: true,
+                formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
+            },
+            data: rawData[sid].map((d, did) =>
+                totalData[did] <= 0 ? 0 : d / totalData[did]
+            )
+        };
+    });
+
+    var option = {
         title: {
             text: 'Pizza Sales Stacked Bar Chart'
         },
@@ -665,9 +682,10 @@ function stackingBarChart(data) {
                 let tooltip = params[0].axisValue + '<br/>';
                 let total = 0;
                 params.forEach(param => {
-                    total += rawData[param.seriesIndex][param.dataIndex];
+                    const actualValue = rawData[param.seriesIndex][param.dataIndex];
+                    total += actualValue;
                     tooltip += param.marker + param.seriesName + ': ' +
-                        rawData[param.seriesIndex][param.dataIndex] + ' (' +
+                        actualValue + ' (' +
                         (param.value * 100).toFixed(2) + '%)<br/>';
                 });
                 tooltip += 'Total: ' + total;
@@ -675,29 +693,23 @@ function stackingBarChart(data) {
             }
         },
         legend: {
-            data: pizzaNames
+            data: pizzaNames,
+            selectedMode: false
         },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            data: sellingDays
-        },
+        grid,
         yAxis: {
             type: 'value',
             axisLabel: {
                 formatter: '{value}%'
             }
         },
-        series: series
+        xAxis: {
+            type: 'category',
+            data: sellingMonth
+        },
+        series
     };
     myChart.setOption(option);
-    option && myChart.setOption(option);
-
 }
 
 // shows a piechart based the most sold Pizza times (based on size of the pizza, can also show all pizzas)

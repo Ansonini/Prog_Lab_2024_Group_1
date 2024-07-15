@@ -430,6 +430,455 @@ $(document).ready(function () {
     }
 
 
+// Showing the total Sales in a given timeframe
+    function lineChartSales(data) {
+
+        var keys = Object.keys(data[0]);
+        var storeID = keys[0];
+        var storeValue = keys[1];
+
+        var storeNames = data.map(item => item[storeID]);
+        var storeValues = data.map(item => item[storeValue]);
+
+        const overAllSold = echarts.init(document.getElementById('line-chart-sales'));
+
+        var existingChart = echarts.getInstanceByDom(overAllSold);
+        if (existingChart) {
+            echarts.dispose(existingChart);
+        }
+        if (document.getElementById('data-display').value === 'units') {
+            var yAxisLabel = 'Units Sold in Thousands';
+        } else {
+            var yAxisLabel = 'Revenue in Thousands';
+        }
+        if (document.getElementById('sold-time').value === 'weekView') {
+            var xAxisLabel = 'Week Days';
+        } else if (document.getElementById('sold-time').value === 'monthView') {
+            var xAxisLabel = 'Month in Days';
+        } else {
+            var xAxisLabel = 'Year in Months';
+        }
+        var option = {
+            title: {
+                text: 'Sales Data'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '6%',
+                right: '2%',
+                bottom: '5%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: storeNames,
+                name: xAxisLabel,
+                nameLocation: 'middle',
+                nameGap: 25,
+                nameTextStyle: {
+                    fontSize: 16
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: yAxisLabel,
+                nameTextStyle: {
+                    fontSize: 16
+                },
+            },
+            series: [{
+                name: 'Sales',
+                type: 'line',
+                data: storeValues,
+                itemStyle: {
+                    color: 'rgba(75, 192, 192, 0.8)'
+                }
+            }]
+        };
+
+        overAllSold.setOption(option);
+        option && overAllSold.setOption(option);
+        overAllSold.resize({width: 1000, height: 400})
+
+    }
+
+// Showing the total Sales/Revenue for each store in the selected time frame
+    function storesValueBarChart(data) {
+        var keys = Object.keys(data[0]);
+        var storeID = keys[0];
+        var storeValue = keys[1];
+
+
+        const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
+
+        var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
+        if (existingChart) {
+            echarts.dispose(existingChart);
+        }
+
+        var storeDataWithStoreID = data.map(item => ({
+            value: item[storeValue],
+            category: item[storeID]
+        }));
+
+        storeDataWithStoreID.sort((a, b) => b.value - a.value);
+
+        var sortedStoreData = storeDataWithStoreID.map(item => item.value);
+        var sortedStoreID = storeDataWithStoreID.map(item => item.category);
+
+        if (document.getElementById('data-display').value === 'units') {
+            var yAxisLabel = 'Units Sold in Thousands';
+        } else {
+            var yAxisLabel = 'Revenue in Thousands';
+        }
+        var option = {
+            title: {
+                text: 'Sales Data'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '8%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: sortedStoreID,
+                name: 'Store Names',
+                nameLocation: 'middle',
+                nameGap: 50,
+                nameTextStyle: {
+                    fontSize: 16
+                },
+                axisLabel: {
+                    formatter: '{value}',
+                    rotate: 45
+                },
+            },
+            yAxis: {
+                type: 'value',
+                name: yAxisLabel,
+                nameTextStyle: {
+                    fontSize: 16
+                },
+                axisLabel: {
+                    formatter: '{value}',
+                    rotate: 45
+                }
+            },
+            series: [{
+                name: 'Sales',
+                type: 'bar',
+                data: sortedStoreData,
+                itemStyle: {
+                    color: 'rgba(75, 192, 192, 0.8)'
+                }
+            }]
+        };
+
+        option && sortedBarchartStores.setOption(option);
+        sortedBarchartStores.resize({width: 1000, height: 500})
+    }
+
+// Showing the percentage of total Sales/Revenue for each store in comparison to the total sales in the selected time frame
+    function storesPercentBarChart(data) {
+        var keys = Object.keys(data[0]);
+        var storeData = keys[0];
+        var storeID = keys[1];
+
+        const sortedBarchartStores = echarts.init(document.getElementById('stores-sold-barchart'));
+
+        var existingChart = echarts.getInstanceByDom(sortedBarchartStores);
+        if (existingChart) {
+            echarts.dispose(existingChart);
+        }
+
+        var storeDataWithStoreID = data.map(item => ({
+            value: item[storeID],
+            category: item[storeData]
+        }));
+
+        storeDataWithStoreID.sort((a, b) => b.value - a.value);
+
+        var totalValue = storeDataWithStoreID.reduce((sum, item) => sum + parseFloat(item.value), 0);
+
+        var sortedStoreData = storeDataWithStoreID.map(item => {
+            return parseFloat(((item.value / totalValue) * 100).toFixed(2));
+        });
+
+        var sortedStoreID = storeDataWithStoreID.map(item => item.category);
+
+        var yAxisLabel;
+        if (document.getElementById('data-display').value === 'units') {
+            yAxisLabel = 'Percentage of Units Sold';
+        } else {
+            yAxisLabel = 'Percentage of Revenue';
+        }
+
+        var option = {
+            title: {
+                text: 'Sales Data'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: function (params) {
+                    var total = 0;
+                    params.forEach(function (item) {
+                        total += item.value;
+                    });
+                    return params[0].name + '<br>' + params.map(function (item) {
+                        return item.marker + item.seriesName + ' % : ' + item.value.toFixed(2) + '%';
+                    })//.join('<br>') + '<br>Total: ' + total.toFixed(2) + '%';
+                }
+            },
+
+            grid: {
+                left: '8%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: sortedStoreID,
+                name: 'Store Names',
+                nameLocation: 'middle',
+                nameGap: 50,
+                nameTextStyle: {
+                    fontSize: 16
+                },
+                axisLabel: {
+                    formatter: '{value}',
+                    rotate: 45
+                },
+            },
+            yAxis: {
+                type: 'value',
+                name: yAxisLabel,
+                nameLocation: 'end',
+                nameGap: 10,
+                nameTextStyle: {
+                    fontSize: 16
+                },
+                axisLabel: {
+                    formatter: '{value}%',
+                    rotate: 45,
+                    padding: [0, 20, 0, 0]
+                }
+            },
+            series: [{
+                name: 'Sales',
+                type: 'bar',
+                data: sortedStoreData,
+                itemStyle: {
+                    color: 'rgba(75, 192, 192, 0.8)'
+                }
+            }]
+        };
+
+        sortedBarchartStores.setOption(option);
+        sortedBarchartStores.resize({width: 1000, height: 500});
+    }
+
+    // A Stacking Bar Chart visualizing the percentage of sales for each store together with Pizzas Ordered
+    function stackingBarChart(data) {
+        var chartDom = document.getElementById('stacking-barchart-pizza');
+        var myChart = echarts.init(chartDom);
+
+        // Extract pizza names and selling days
+        const pizzaNames = data.map(item => item.pizzaName);
+        const sellingMonth = data[0].map(item => item.sellingMonth);
+
+        // Prepare raw data
+        const rawData = data.map(pizza =>
+            pizza.data.map(day => parseInt(day.unitsSold))
+        );
+
+        // Calculate total data
+        const totalData = [];
+        for (let i = 0; i < rawData[0].length; ++i) {
+            let sum = 0;
+            for (let j = 0; j < rawData.length; ++j) {
+                sum += rawData[j][i];
+            }
+            totalData.push(sum);
+        }
+
+        const grid = {
+            left: 100,
+            right: 100,
+            top: 50,
+            bottom: 50
+        };
+
+        const series = pizzaNames.map((name, sid) => {
+            return {
+                name,
+                type: 'bar',
+                stack: 'total',
+                barWidth: '60%',
+                label: {
+                    show: true,
+                    formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
+                },
+                data: rawData[sid].map((d, did) =>
+                    totalData[did] <= 0 ? 0 : d / totalData[did]
+                )
+            };
+        });
+
+        var option = {
+            title: {
+                text: 'Pizza Sales Stacked Bar Chart'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: function(params) {
+                    let tooltip = params[0].axisValue + '<br/>';
+                    let total = 0;
+                    params.forEach(param => {
+                        const actualValue = rawData[param.seriesIndex][param.dataIndex];
+                        total += actualValue;
+                        tooltip += param.marker + param.seriesName + ': ' +
+                            actualValue + ' (' +
+                            (param.value * 100).toFixed(2) + '%)<br/>';
+                    });
+                    tooltip += 'Total: ' + total;
+                    return tooltip;
+                }
+            },
+            legend: {
+                data: pizzaNames,
+                selectedMode: false
+            },
+            grid,
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: '{value}%'
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: sellingMonth
+            },
+            series
+        };
+        myChart.setOption(option);
+    }
+
+    function pieChartStores(data) {
+        const pieChart = echarts.init(document.getElementById('pie-chart'));
+
+        const processedData = data.map(pizza => ({
+            name: pizza.pizzaName,
+            value: pizza.data.reduce((sum, size) => sum + parseInt(size.unitsSold), 0)
+        }));
+
+        processedData.sort((a, b) => b.value - a.value);
+
+        const colorMap = {
+            "Margherita Pizza": 'rgba(255, 99, 132)',
+            "Pepperoni Pizza": "rgba(54, 130, 235)",
+            "Hawaiian Pizza": "rgba(255, 206, 86)",
+            "Meat Lover's Pizza": "rgba(75, 192, 192)",
+            "Veggie Pizza": "rgba(34, 139, 34)",
+            "BBQ Chicken Pizza": "rgba(255, 159, 64)",
+            "Buffalo Chicken Pizza": "rgba(255, 99, 71)",
+            "Sicilian Pizza": "rgba(123, 40, 238)",
+            "Oxtail Pizza": "rgba(153, 102, 255)",
+        };
+        const option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            legend: {
+                top: '5%',
+                left: 'center'
+            },
+            series: [
+                {
+                    name: 'Pizza Sales',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: 20,
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: processedData.map(item => ({
+                        ...item,
+                        itemStyle: {
+                            color: colorMap[item.name] || '#808080'
+                        }
+                    }))
+                }
+            ]
+        };
+
+        pieChart.setOption(option);
+        pieChart.resize({width: 500, height: 500});
+    }
+
+// a map function that shows all stores on a map with their store ID and distance from the main store
+    function mapStores(data) {
+        var map = L.map('map').setView([40, -120], 4.5);
+        const stores = [];
+
+        var keys = Object.keys(data[0]);
+        var storeID = keys[0];
+        var latitude = 'latitude';
+        var longitude = 'longitude';
+        var city = 'city';
+
+        data.forEach(store => {
+            stores.push({
+                lat: parseFloat(store.latitude),
+                lng: parseFloat(store.longitude),
+                name: store.storeID,
+                city: store.city
+            });
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        stores.forEach(store => {
+            L.marker([store.lat, store.lng]).addTo(map)
+                .bindPopup(`<b>${store.city}</b><br>Store ID: ${store.name}`)
+                .openPopup();
+        });
+    }
 
 
 

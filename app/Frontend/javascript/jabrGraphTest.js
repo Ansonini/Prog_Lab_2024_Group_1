@@ -87,7 +87,7 @@ $(document).ready(function () {
         var storeID = $('#storeSelection').val();
         $('#graphLoading2').show();
         $.ajax({
-            url: '/BackendTestingJabrail/pizzaSalesPerStoreGraphs.php',
+            url: '/BackendTestingJabrail/pizzaSalesPerStorGraph.php',
             type: 'POST',
             dataType: 'json',
             data: { storeID: storeID, view: view, year: year },

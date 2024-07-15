@@ -153,6 +153,6 @@ tr:hover {
 
 @media screen and (max-width: 600px) {
     .chart {
-        flex: 1 1 100%; /* Each chart takes full width on small screens */
+        flex: 1 1 50%; /* Each chart takes full width on small screens */
     }
 }

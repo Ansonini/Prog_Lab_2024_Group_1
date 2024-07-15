@@ -702,38 +702,26 @@ function stackingBarChart(data) {
 
 // shows a piechart based the most sold Pizza times (based on size of the pizza, can also show all pizzas)
 function pieChartStores(data) {
-    const chartContainer = document.getElementById('pie-chart');
-    if (!chartContainer) {
-        console.error("Cannot find element with id 'pie-chart'");
-        return;
-    }
-    if (!Array.isArray(data) || data.length === 0) {
-        console.error("Invalid or empty data received");
-        return;
-    }
     const pieChart = echarts.init(document.getElementById('pie-chart'));
 
-    const colorMap = {
-        "Margherita Pizza": 'rgba(255, 99, 132, ',
-        "Pepperoni Pizza": "rgba(54, 130, 235, ",
-        "Hawaiian Pizza": "rgba(255, 206, 86, ",
-        "Meat Lover's Pizza": "rgba(75, 192, 192, ",
-        "Veggie Pizza": "rgba(34, 139, 34, ",
-        "BBQ Chicken Pizza": "rgba(255, 159, 64, ",
-        "Buffalo Chicken Pizza": "rgba(255, 99, 71, ",
-        "Sicilian Pizza": "rgba(123, 40, 238, ",
-        "Oxtail Pizza": "rgba(153, 102, 255, ",
-
-    };
-
-    const sortedData = data.sort((a, b) => b.value - a.value);
-
-    const coloredData = sortedData.map(item => ({
-        ...item,
-        itemStyle: {
-            color: colorMap[item.name] || '#808080'
-        }
+    const processedData = data.map(pizza => ({
+        name: pizza.pizzaName,
+        value: pizza.data.reduce((sum, size) => sum + parseInt(size.unitsSold), 0)
     }));
+
+    processedData.sort((a, b) => b.value - a.value);
+
+    const colorMap = {
+        "Margherita Pizza": 'rgba(255, 99, 132)',
+        "Pepperoni Pizza": "rgba(54, 130, 235)",
+        "Hawaiian Pizza": "rgba(255, 206, 86)",
+        "Meat Lover's Pizza": "rgba(75, 192, 192)",
+        "Veggie Pizza": "rgba(34, 139, 34)",
+        "BBQ Chicken Pizza": "rgba(255, 159, 64)",
+        "Buffalo Chicken Pizza": "rgba(255, 99, 71)",
+        "Sicilian Pizza": "rgba(123, 40, 238)",
+        "Oxtail Pizza": "rgba(153, 102, 255)",
+    };
     const option = {
         tooltip: {
             trigger: 'item',
@@ -763,7 +751,12 @@ function pieChartStores(data) {
                 labelLine: {
                     show: false
                 },
-                data: coloredData,
+                data: processedData.map(item => ({
+                    ...item,
+                    itemStyle: {
+                        color: colorMap[item.name] || '#808080'
+                    }
+                }))
             }
         ]
     };

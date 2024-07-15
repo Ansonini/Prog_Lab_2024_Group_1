@@ -8,7 +8,13 @@ include '/var/www/html/ajax/includes/connectDB.php';
 // Verify input
 include '/var/www/html/ajax/includes/checkInput.php';
 
-
+if ($storeSelection == true && $storeSelection != 'all') {
+        // set filter depending on if there is already one before
+        $storeFilter = ($view === 'completeView') ? '  WHERE ' : ' AND ';
+        $storeFilter .= " o.storeID = \"$storeSelection\" ";
+} else {
+        $storeFilter = '';
+}
 
 if ($view == 'completeView' || $view == 'yearView') {
         $sql = "SELECT p.pizzaName, sub.sellingMonth";
@@ -47,15 +53,19 @@ $sql .= " COUNT(oi.SKU) as soldPizzas
 
 switch ($view) {
         case 'completeView':
+                $sql .= "$storeFilter";
                 break;
         case 'yearView':
-                $sql .= " WHERE YEAR(o.orderDate) = $year";
+                $sql .= " WHERE YEAR(o.orderDate) = $year
+                                $storeFilter";
                 break;
         case 'monthView':
-                $sql .= " WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month";
+                $sql .= " WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month
+                                $storeFilter";
                 break;
         case 'weekView':
-                $sql .= " WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week";
+                $sql .= " WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week
+                                $storeFilter";
                 break;
 }
 if ($view == 'completeView' || $view == 'yearView') {

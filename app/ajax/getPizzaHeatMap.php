@@ -5,6 +5,56 @@ header('Content-Type: application/json');
 // include the DB connect file. ../ because its outside of this folder
 include '/var/www/html/ajax/includes/connectDB.php';
 
+include '/var/www/html/ajax/includes/checkInput.php';
+
+switch ($view) {
+    case 'completeView':
+        $timeFilter = '';
+        break;
+    case 'yearView':
+        $timeFilter = "AND YEAR(orderDate) = $year";
+        break;
+    case 'monthView':
+        $timeFilter = "AND YEAR(orderDate) = $year AND MONTH(orderDate) = $month";
+        break;
+    case 'weekView':
+        $timeFilter = "AND YEAR(orderDate) = $year AND WEEK(orderDate, 1) = $week";
+        break;
+}
+
+if ($storeSelection == true && $storeSelection!= 'all') {
+    $storeFilter = " AND o.storeID = \"$storeSelection\"";
+} else {
+    $storeFilter = '';
+}
+
+$sql = "WITH ordMult as (SELECT oi.orderID,
+                        orderItemID,
+                        oi.sku as sku
+                 FROM orders o
+                          JOIN orderItems oi on oi.orderID = o.orderID
+                 WHERE nItems > 1 
+                    $timeFilter
+                    $storeFilter
+                 order by orderID)
+
+
+SELECT p.pizzaName as x, p2.pizzaName as y, sum(skuSum) as v
+FROM (SELECT sku1, sku2, COUNT(*) as skuSum
+      FROM (SELECT ordMult1.sku as sku1, ordMult2.sku as sku2
+            FROM ordMult ordMult1
+                     JOIN ordMult ordMult2 on
+                ordMult1.orderID = ordMult2.orderID
+            where ordMult1.orderItemID < ordMult2.orderItemID) as subsub
+      GROUP BY sku1, sku2) as sub
+         JOIN products p on p.sku = sub.sku1
+         JOIN products p2 on p2.sku = sub.sku2
+GROUP BY p.pizzaName, p2.pizzaName
+ORDER BY p.pizzaName, p2.pizzaName;";
+
+// Make query and return result
+include '/var/www/html/ajax/includes/makeQuery.php';
+
 // $sql = "SELECT
 //             p.pizzaName as name1,
 //             p2.pizzaName as name2
@@ -77,20 +127,3 @@ include '/var/www/html/ajax/includes/connectDB.php';
 
 // echo json_encode(['success' => true, 'data' => $heatmap]);
 
-$sql = "SELECT p.pizzaName as x, p2.pizzaName as y, sum(skuSum) as v
-FROM (SELECT sku1, sku2, COUNT(*) as skuSum
-      FROM (SELECT oi.orderID,
-                   oi.sku  as sku1,
-                   oi2.sku as sku2
-            FROM orderItems oi
-                     JOIN orderItems oi2 on
-                oi.orderID = oi2.orderID
-            where oi.orderItemID < oi2.orderItemID) as subsub
-      GROUP BY sku1, sku2) as sub
-         JOIN products p on p.sku = sub.sku1
-            JOIN products p2 on p2.sku=sub.sku2
-GROUP BY p.pizzaName, p2.pizzaName
-ORDER BY p.pizzaName, p2.pizzaName";
-
-// Make query and return result
-include '/var/www/html/ajax/includes/makeQuery.php';

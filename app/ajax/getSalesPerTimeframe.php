@@ -12,7 +12,17 @@ if ($conn->connect_error) {
 }
 
 // Prepare and execute SQL query
+
+if ($storeSelection == true && $storeSelection != 'all') {
+    // set filter depending on if there is already one before
+    $storeFilter = ($view === 'completeView') ? '  WHERE ' : ' AND ';
+    $storeFilter .= " o.storeID = \"$storeSelection\" ";
+} else {
+    $storeFilter = '';
+}
+
 // set the selected field depending on the view
+
 
 switch ($view) {
     case 'completeView':
@@ -54,15 +64,18 @@ $sql .= " FROM orders o $joinForPerPizza";
 // set the where and group statement depending on the view
 switch ($view) {
     case 'completeView':
-        $sql .= " GROUP BY sellingYear $groupByPizza ORDER BY sellingYear";
+        $sql .= "$storeFilter
+                 GROUP BY sellingYear $groupByPizza ORDER BY sellingYear";
         break;
     case 'yearView':
         $sql .= " WHERE YEAR(o.orderDate) = $year
+                    $storeFilter
                 GROUP BY sellingMonth $groupByPizza
                 ORDER BY sellingMonth";
         break;
     case 'monthView':
         $sql .= " WHERE YEAR(o.orderDate) = $year AND MONTH(o.orderDate) = $month
+                    $storeFilter
                 GROUP BY sellingDay $groupByPizza
                 ORDER BY sellingDay";
         //         GROUP BY sellingWeek
@@ -70,6 +83,7 @@ switch ($view) {
         break;
     case 'weekView':
         $sql .= " WHERE YEAR(o.orderDate) = $year AND WEEK(o.orderDate, 1) = $week
+                    $storeFilter
                 GROUP BY WEEKDAY(o.orderDate), sellingDay $groupByPizza
                 ORDER BY WEEKDAY(o.orderDate)";
         break;
